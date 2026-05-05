@@ -43,8 +43,16 @@ You bring the GPUs and the models. LLMesh provides the trust boundary, the proto
 
 ## Quick Start (single host)
 
+For users:
+
 ```bash
-# 1. Install
+pip install llmesh-mcp
+```
+
+For local development from a cloned repository:
+
+```bash
+# 1. Install development dependencies
 pip install -e ".[dev]"
 
 # 2. Run the test suite
@@ -53,6 +61,13 @@ python -m pytest          # → 526 passed
 # 3. Optional: static security scan
 python -m bandit -r llmesh/ -ll
 ```
+
+Published package:
+
+- PyPI: <https://pypi.org/project/llmesh-mcp/>
+- GitHub Release: <https://github.com/furuse-kazufumi/llmesh/releases/tag/v0.1.0>
+- Qiita launch article: <https://qiita.com/furuse-kazufumi/items/ac398349ec42e40913f1>
+- LinkedIn launch post: <https://www.linkedin.com/feed/update/urn:li:share:7457372822668230657/>
 
 ### Running a single MCP node
 
