@@ -2,6 +2,8 @@
 
 **Secure Local LLM Swarm over MCP** — a security-first peer-to-peer mesh for collaborative local LLM workflows.
 
+Translations: [日本語](docs/README.ja.md) / [中文](docs/README.zh.md)
+
 LLMesh lets multiple local LLM nodes (Ollama, llama.cpp) cooperate on coding tasks — code generation, test generation, security review, output critique — over signed MCP (Model Context Protocol) calls, with a fail-closed firewall, schema-validated tool I/O, append-only audit trail, and SCA dependency gating built in from the start.
 
 > **Status (local review):** 526 tests passing · 0 failures · 0 Critical · 0 High security findings.
@@ -110,6 +112,8 @@ For two or more physical machines on a LAN, see [`PEERING.md`](PEERING.md). It c
 | File | Contents |
 |---|---|
 | [`README.md`](README.md) | This file — entry point, status, quick start |
+| [`docs/README.ja.md`](docs/README.ja.md) | Japanese overview and quick start |
+| [`docs/README.zh.md`](docs/README.zh.md) | Chinese overview and quick start |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | Module map, OutputValidator 7-stage gate, dataflow, DataLevel taxonomy |
 | [`SETUP.md`](SETUP.md) | Install, single-node, Docker Compose PoC, troubleshooting |
 | [`PEERING.md`](PEERING.md) | Multi-PC, TLS, TOFU, rendezvous, gossip, threat model |
