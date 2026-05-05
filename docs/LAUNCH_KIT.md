@@ -376,3 +376,7 @@ It connects trusted local LLM nodes for distributed coding workflows, with signe
 - [x] Publish to PyPI via GitHub Actions: https://pypi.org/project/llmesh-mcp/
 - [x] Publish Qiita article: https://qiita.com/furuse-kazufumi/items/ac398349ec42e40913f1
 - [x] Publish LinkedIn post: https://www.linkedin.com/feed/update/urn:li:share:7457372822668230657/
+- [x] Publish multilingual GitHub docs: `docs/README.ja.md`, `docs/README.zh.md`
+- [x] Publish PyPI v0.1.1 multilingual metadata update: https://pypi.org/project/llmesh-mcp/
+- [x] Publish LinkedIn English multilingual update (published; standalone URL not extracted)
+- [x] Publish LinkedIn Chinese multilingual update: https://www.linkedin.com/feed/update/urn:li:share:7457375964730265600/
