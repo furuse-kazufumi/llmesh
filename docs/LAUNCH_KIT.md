@@ -159,6 +159,32 @@ PyPI:
 python -m twine upload dist/*
 ```
 
+### Trusted Publishing status
+
+The repository includes a GitHub Actions workflow for PyPI Trusted Publishing:
+
+```text
+.github/workflows/publish.yml
+```
+
+To finish PyPI setup, log in to PyPI and add a pending trusted publisher:
+
+```text
+PyPI project name: llmesh-mcp
+Owner: furuse-kazufumi
+Repository name: llmesh
+Workflow name: publish.yml
+Environment name: pypi
+```
+
+Trusted Publisher setup page:
+
+```text
+https://pypi.org/manage/account/publishing/
+```
+
+After the pending publisher is created, run the `Publish Python package` GitHub Actions workflow manually or publish a new release.
+
 ### PyPI short description
 
 ```text
@@ -345,4 +371,4 @@ It connects trusted local LLM nodes for distributed coding workflows, with signe
 - [ ] Configure PyPI Trusted Publisher for `llmesh-mcp`
 - [ ] Publish to PyPI via GitHub Actions
 - [x] Publish Qiita article: https://qiita.com/furuse-kazufumi/items/ac398349ec42e40913f1
-- [ ] Publish LinkedIn post
+- [ ] Publish LinkedIn post after browser session is stable
