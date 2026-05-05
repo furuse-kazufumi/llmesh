@@ -339,9 +339,10 @@ It connects trusted local LLM nodes for distributed coding workflows, with signe
 - [x] Run `python -m pytest`
 - [x] Run `python -m build`
 - [x] Run `python -m twine check dist/*`
+- [x] Add GitHub Actions Trusted Publishing workflow for PyPI
 - [ ] Publish GitHub repository
 - [ ] Create GitHub release v0.1.0
-- [ ] Publish to TestPyPI
-- [ ] Publish to PyPI
+- [ ] Configure PyPI Trusted Publisher for `llmesh-mcp`
+- [ ] Publish to PyPI via GitHub Actions
 - [ ] Publish Qiita article
 - [ ] Publish LinkedIn post
