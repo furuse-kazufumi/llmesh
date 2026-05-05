@@ -1,5 +1,11 @@
 # LLMesh
 
+[![CI](https://github.com/furuse-kazufumi/llmesh/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/furuse-kazufumi/llmesh/actions/workflows/ci.yml)
+[![Security](https://github.com/furuse-kazufumi/llmesh/actions/workflows/security.yml/badge.svg?branch=main)](https://github.com/furuse-kazufumi/llmesh/actions/workflows/security.yml)
+[![PyPI version](https://img.shields.io/pypi/v/llmesh-mcp.svg)](https://pypi.org/project/llmesh-mcp/)
+[![Python versions](https://img.shields.io/pypi/pyversions/llmesh-mcp.svg)](https://pypi.org/project/llmesh-mcp/)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
 **Secure Local LLM Swarm over MCP** — a security-first peer-to-peer mesh for collaborative local LLM workflows.
 
 Translations: [日本語](docs/README.ja.md) / [中文](docs/README.zh.md)
