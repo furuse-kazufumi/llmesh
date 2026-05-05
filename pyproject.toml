@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "llmesh-mcp"
-version = "0.1.1"
+version = "0.1.2"
 description = "Secure Local LLM Swarm over MCP"
 readme = "README.md"
 requires-python = ">=3.11"

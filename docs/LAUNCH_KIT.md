@@ -380,3 +380,4 @@ It connects trusted local LLM nodes for distributed coding workflows, with signe
 - [x] Publish PyPI v0.1.1 multilingual metadata update: https://pypi.org/project/llmesh-mcp/
 - [x] Publish LinkedIn English multilingual update (published; standalone URL not extracted)
 - [x] Publish LinkedIn Chinese multilingual update: https://www.linkedin.com/feed/update/urn:li:share:7457375964730265600/
+- [x] Prepare PyPI v0.1.2 README badge metadata update
