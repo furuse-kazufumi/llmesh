@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+build/
+dist/
+.eggs/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual envs
+.venv/
+venv/
+env/
+
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# LLMesh runtime artefacts — NEVER commit
+# Private keys, certificates, identities
+*.key
+*.pem
+*.bin
+certs/
+config/node.key.bin
+config/node_identity.json
+config/trusted_peers.json
+nodes/
+
+# Audit logs (HMAC keys + chain state)
+*.jsonl
+audit*.log
+audit*.jsonl
+
+# Local environment files
+.env
+.env.local
+*.local
+
+# Pyodide / build outputs
+*.tar.gz
+*.zip
