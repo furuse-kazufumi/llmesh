@@ -183,7 +183,11 @@ Trusted Publisher setup page:
 https://pypi.org/manage/account/publishing/
 ```
 
-After the pending publisher is created, run the `Publish Python package` GitHub Actions workflow manually or publish a new release.
+The first PyPI publication completed through GitHub Actions:
+
+```text
+https://pypi.org/project/llmesh-mcp/
+```
 
 ### PyPI short description
 
@@ -368,7 +372,7 @@ It connects trusted local LLM nodes for distributed coding workflows, with signe
 - [x] Add GitHub Actions Trusted Publishing workflow for PyPI
 - [x] Publish GitHub repository
 - [x] Create GitHub release v0.1.0
-- [ ] Configure PyPI Trusted Publisher for `llmesh-mcp`
-- [ ] Publish to PyPI via GitHub Actions
+- [x] Configure PyPI Trusted Publisher for `llmesh-mcp`
+- [x] Publish to PyPI via GitHub Actions: https://pypi.org/project/llmesh-mcp/
 - [x] Publish Qiita article: https://qiita.com/furuse-kazufumi/items/ac398349ec42e40913f1
-- [ ] Publish LinkedIn post after browser session is stable
+- [x] Publish LinkedIn post: https://www.linkedin.com/feed/update/urn:li:share:7457372822668230657/
