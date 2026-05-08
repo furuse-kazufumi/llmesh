@@ -1,0 +1,196 @@
+# LLMesh 5-node PoC — Docker Compose
+#
+# Network topology:
+#   llmesh-internal (internal: true)
+#     - All LLM nodes + orchestrator + osv-proxy
+#     - No external egress from this network
+#   llmesh-egress (internal: false)
+#     - osv-proxy only — sole container allowed to reach the internet
+#     - Forwards /v1/querybatch to api.osv.dev on behalf of nodes
+#
+# SCA Gate wiring:
+#   Each node sets LLMESH_OSV_URL=http://osv-proxy:8080/v1/querybatch
+#   so sca_gate.py routes CVE queries through the proxy instead of directly
+#   to api.osv.dev (which would fail on the internal-only network).
+#
+# Security baseline per node:
+#   - read_only: true        — read-only root filesystem
+#   - cap_drop: [ALL]        — all Linux capabilities dropped
+#   - security_opt: [no-new-privileges:true]
+#   - tmpfs /tmp             — only writable mount, noexec
+#   - env: NODE_ROLE + NODE_PORT + LLMESH_OSV_URL only — no secrets
+
+version: "3.9"
+
+networks:
+  llmesh-internal:
+    driver: bridge
+    internal: true   # LLM nodes — no external egress
+  llmesh-egress:
+    driver: bridge
+    internal: false  # osv-proxy only — controlled external egress
+
+services:
+
+  # ------------------------------------------------------------------ #
+  # osv-proxy: OSV API sidecar (sole egress point)                     #
+  #                                                                     #
+  # Listens on port 8080, forwards POST /v1/querybatch to api.osv.dev. #
+  # Sits on both networks: internal (nodes can reach it) and egress    #
+  # (it can reach the internet).  All other paths return 404.          #
+  # ------------------------------------------------------------------ #
+  osv-proxy:
+    build:
+      context: .
+      dockerfile: docker/osv-proxy/Dockerfile
+    image: llmesh-osv-proxy:latest
+    container_name: llmesh-osv-proxy
+    networks:
+      - llmesh-internal
+      - llmesh-egress
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=8m,noexec,nosuid,nodev
+
+  # ------------------------------------------------------------------ #
+  # node-a: generate_code tool                                          #
+  # ------------------------------------------------------------------ #
+  node-a:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: llmesh-node:latest
+    container_name: llmesh-node-a
+    ports:
+      - "8001:8000"
+    environment:
+      NODE_ROLE: code_gen
+      NODE_PORT: "8001"
+      LLMESH_OSV_URL: "http://osv-proxy:8080/v1/querybatch"
+    networks:
+      - llmesh-internal
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid,nodev
+    depends_on:
+      - osv-proxy
+
+  # ------------------------------------------------------------------ #
+  # node-b: generate_tests tool                                         #
+  # ------------------------------------------------------------------ #
+  node-b:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: llmesh-node:latest
+    container_name: llmesh-node-b
+    ports:
+      - "8002:8000"
+    environment:
+      NODE_ROLE: test_gen
+      NODE_PORT: "8002"
+      LLMESH_OSV_URL: "http://osv-proxy:8080/v1/querybatch"
+    networks:
+      - llmesh-internal
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid,nodev
+    depends_on:
+      - osv-proxy
+
+  # ------------------------------------------------------------------ #
+  # node-c: review_code tool                                            #
+  # ------------------------------------------------------------------ #
+  node-c:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: llmesh-node:latest
+    container_name: llmesh-node-c
+    ports:
+      - "8003:8000"
+    environment:
+      NODE_ROLE: reviewer
+      NODE_PORT: "8003"
+      LLMESH_OSV_URL: "http://osv-proxy:8080/v1/querybatch"
+    networks:
+      - llmesh-internal
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid,nodev
+    depends_on:
+      - osv-proxy
+
+  # ------------------------------------------------------------------ #
+  # node-d: critique_output tool                                        #
+  # ------------------------------------------------------------------ #
+  node-d:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: llmesh-node:latest
+    container_name: llmesh-node-d
+    ports:
+      - "8004:8000"
+    environment:
+      NODE_ROLE: critic
+      NODE_PORT: "8004"
+      LLMESH_OSV_URL: "http://osv-proxy:8080/v1/querybatch"
+    networks:
+      - llmesh-internal
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid,nodev
+    depends_on:
+      - osv-proxy
+
+  # ------------------------------------------------------------------ #
+  # orchestrator: LocalSynthesizer + node management                   #
+  # ------------------------------------------------------------------ #
+  orchestrator:
+    build:
+      context: .
+      dockerfile: docker/node/Dockerfile
+    image: llmesh-node:latest
+    container_name: llmesh-orchestrator
+    ports:
+      - "8005:8000"
+    environment:
+      NODE_ROLE: orchestrator
+      NODE_PORT: "8005"
+      LLMESH_OSV_URL: "http://osv-proxy:8080/v1/querybatch"
+    networks:
+      - llmesh-internal
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:size=64m,noexec,nosuid,nodev
+    depends_on:
+      - node-a
+      - node-b
+      - node-c
+      - node-d
+      - osv-proxy

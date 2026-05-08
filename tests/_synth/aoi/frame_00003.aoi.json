@@ -1,0 +1,26 @@
+{
+  "result": "ng",
+  "board_id": "BOARD-00003",
+  "defects": [
+    {
+      "label": "scratch",
+      "confidence": 0.748,
+      "bbox": [
+        139,
+        70,
+        31,
+        16
+      ]
+    },
+    {
+      "label": "open",
+      "confidence": 0.783,
+      "bbox": [
+        16,
+        115,
+        12,
+        29
+      ]
+    }
+  ]
+}

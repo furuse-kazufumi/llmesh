@@ -1,0 +1,36 @@
+{
+  "result": "ng",
+  "board_id": "BOARD-00001",
+  "defects": [
+    {
+      "label": "short",
+      "confidence": 0.944,
+      "bbox": [
+        192,
+        158,
+        11,
+        25
+      ]
+    },
+    {
+      "label": "scratch",
+      "confidence": 0.933,
+      "bbox": [
+        214,
+        30,
+        11,
+        30
+      ]
+    },
+    {
+      "label": "misalignment",
+      "confidence": 0.954,
+      "bbox": [
+        118,
+        84,
+        6,
+        10
+      ]
+    }
+  ]
+}

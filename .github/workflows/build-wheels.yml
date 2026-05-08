@@ -1,0 +1,157 @@
+name: Build Wheels (Multi-Platform)
+
+# Build llmesh + llmesh_rust wheels for all major platforms.
+# Triggered manually or on tag push.
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  # -------------------------------------------------------------------------
+  # 1. Pure-Python wheel (single artefact, works everywhere)
+  # -------------------------------------------------------------------------
+  build-pure:
+    name: pure-python (any os)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install build
+      - run: python -m build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llmesh-pure
+          path: dist/*
+
+  # -------------------------------------------------------------------------
+  # 2. Rust extension wheels — multi-platform via maturin-action
+  # -------------------------------------------------------------------------
+  build-rust:
+    name: rust ${{ matrix.target }} (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Linux x86_64 (manylinux + musl)
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            manylinux: 2_28
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-musl
+            manylinux: musllinux_1_2
+          # Linux aarch64 (Raspberry Pi 4/5, AWS Graviton)
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
+            manylinux: 2_28
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-musl
+            manylinux: musllinux_1_2
+          # Windows x86_64
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+          # Windows aarch64 (ARM Surface)
+          - os: windows-latest
+            target: aarch64-pc-windows-msvc
+          # macOS x86_64 + arm64 (Apple Silicon)
+          - os: macos-13
+            target: x86_64-apple-darwin
+          - os: macos-14
+            target: aarch64-apple-darwin
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Build wheel via maturin-action
+        uses: PyO3/maturin-action@v1
+        with:
+          working-directory: rust_ext
+          target: ${{ matrix.target }}
+          manylinux: ${{ matrix.manylinux || 'auto' }}
+          args: --release --out dist
+          sccache: true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llmesh-rust-${{ matrix.target }}
+          path: rust_ext/dist/*
+
+  # -------------------------------------------------------------------------
+  # 3. Source distribution (sdist) for Rust crate
+  # -------------------------------------------------------------------------
+  build-sdist:
+    name: rust sdist
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: PyO3/maturin-action@v1
+        with:
+          working-directory: rust_ext
+          command: sdist
+          args: --out dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: llmesh-rust-sdist
+          path: rust_ext/dist/*.tar.gz
+
+  # -------------------------------------------------------------------------
+  # 4. Smoke test: install built wheel + run pytest on each platform
+  # -------------------------------------------------------------------------
+  test-wheels:
+    name: smoke test on ${{ matrix.os }}
+    needs: [build-pure, build-rust]
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.12"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: llmesh-rust-*
+          merge-multiple: true
+          path: wheels
+      - name: Install matching Rust wheel + pure llmesh
+        shell: bash
+        run: |
+          pip install -e ".[dev,industrial]" || pip install -e ".[dev]"
+          # Try to install the matching Rust wheel (best-effort)
+          pip install wheels/*.whl || echo "no matching rust wheel — falling back to pure-python"
+      - name: pytest
+        run: pytest -q --tb=short
+
+  # -------------------------------------------------------------------------
+  # 5. PyPI release (only on tag push)
+  # -------------------------------------------------------------------------
+  publish:
+    name: publish to PyPI
+    needs: [build-pure, build-rust, build-sdist, test-wheels]
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write   # Trusted Publishing (no token needed)
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist

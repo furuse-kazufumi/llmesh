@@ -1,0 +1,19 @@
+[package]
+name = "llmesh_rust"
+version = "0.1.0"
+edition = "2021"
+authors = ["LLMesh Contributors"]
+description = "Rust acceleration for LLMesh hot paths (PointCloud, DVS encode/decode)"
+license = "Apache-2.0"
+
+[lib]
+name = "llmesh_rust"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.22", features = ["extension-module", "abi3-py311"] }
+
+[profile.release]
+lto = true
+codegen-units = 1
+strip = true

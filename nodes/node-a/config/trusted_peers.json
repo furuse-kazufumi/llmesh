@@ -1,0 +1,10 @@
+{
+  "peer:D9MDkaQf9Frao8c81RiSjjgquCTHbseaA8bWrrU5Mw1J": {
+    "public_key_hex": "b46fc09336dd82f54e43aed3185e768054135d2396e801a86747078fbf32a6a9",
+    "did": "did:key:z6MkrbcGLpf6UoM3udSpgzgHaqEqimj91ktvr9WSh8S6H9ng",
+    "endpoint": "http://127.0.0.1:8002",
+    "fingerprint": "c0:38:17:9a:5f:16:83:e0:d8:47:01:29:7b:e6:0e:94",
+    "source": "manual",
+    "added_at": "2026-05-05T07:58:31.830550+00:00"
+  }
+}

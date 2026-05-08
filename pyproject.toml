@@ -1,0 +1,113 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "llmesh"
+version = "3.1.0"
+description = "Secure Local LLM Swarm over MCP"
+requires-python = ">=3.11"
+dependencies = [
+    "cryptography>=42.0",
+    "jsonschema>=4.21",
+    "base58>=2.1",
+    "fastapi>=0.111",
+    "uvicorn[standard]>=0.29",
+]
+
+[project.scripts]
+llmesh = "llmesh.__main__:main"
+
+[project.entry-points."llmesh.adapters"]
+http       = "llmesh.protocol.http_adapter:HTTPAdapter"
+tcp        = "llmesh.protocol.tcp_adapter:TCPAdapter"
+tcp_stream = "llmesh.protocol.tcp_stream_adapter:TCPStreamAdapter"
+udp        = "llmesh.protocol.udp_adapter:UDPAdapter"
+ssh        = "llmesh.protocol.ssh_adapter:SSHAdapter"
+sftp       = "llmesh.protocol.sftp_adapter:SFTPAdapter"
+smtp       = "llmesh.protocol.smtp_adapter:SMTPAdapter"
+imap       = "llmesh.protocol.imap_adapter:IMAPAdapter"
+pop3       = "llmesh.protocol.pop3_adapter:POP3Adapter"
+ftp        = "llmesh.protocol.ftp_adapter:FTPAdapter"
+snmp       = "llmesh.protocol.snmp_adapter:SNMPAdapter"
+localfile  = "llmesh.protocol.local_file_adapter:LocalFileAdapter"
+ros2       = "llmesh.protocol.ros2_adapter:ROS2Adapter"
+ros1       = "llmesh.protocol.ros1_adapter:ROS1Adapter"
+modbus     = "llmesh.industrial.modbus_adapter:ModbusAdapter"
+serial     = "llmesh.industrial.serial_adapter:SerialAdapter"
+opcua      = "llmesh.industrial.opcua_adapter:OPCUAAdapter"
+mqtt       = "llmesh.industrial.mqtt_adapter:MQTTAdapter"
+ethercat   = "llmesh.industrial.ethercat_adapter:EtherCATAdapter"
+can        = "llmesh.industrial.can_adapter:CANAdapter"
+bacnet     = "llmesh.industrial.bacnet_adapter:BACnetAdapter"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.23",
+    "pytest-cov>=5.0",
+    "bandit>=1.8",
+    "httpx>=0.27",
+    "hypothesis>=6.0",
+    "ruff>=0.5",
+    "coverage>=7.0",
+]
+msgpack   = ["msgpack>=1.0"]
+claude    = ["mcp>=1.0"]
+localfile = ["watchdog>=3.0"]
+vision    = ["Pillow>=10.0"]
+# Multi-protocol adapters (v0.3.0+)
+udp   = ["zeroconf>=0.131"]
+ssh   = ["paramiko>=3.4"]
+email = ["aiosmtpd>=1.4"]
+ftp   = ["pyftpdlib>=2.0"]
+mgmt  = ["pysnmp>=6.1", "ntplib>=0.4"]
+industrial = [
+    "pymodbus>=3.6",       # Modbus TCP/RTU
+    "pyserial>=3.5",       # RS-232 / RS-485
+    "asyncua>=1.0",        # OPC-UA
+    "paho-mqtt>=2.0",      # MQTT v3/v5
+    "tomli-w>=1.0",        # TOML write-back for llmesh configure
+    "numpy>=1.26",         # MT-method / SPC engines
+    "scipy>=1.12",         # MT-method covariance / SPC statistics
+]
+ethercat = ["pysoem>=1.1"]       # Linux only; requires CAP_NET_RAW or root
+can      = ["python-can>=4.3"]   # SocketCAN/Vector/PCAN/Kvaser/IXXAT/virtual
+bacnet   = ["bacpypes3>=0.0.98"] # ASHRAE 135 BACnet/IP for BMS
+# v3 privacy hardening — Microsoft Presidio for PII detection (E-2.1)
+presidio = [
+    "presidio-analyzer>=2.2",
+    # spaCy + the small English NLP model (Presidio's default backend).
+    # Users can swap in larger / multilingual models post-install.
+    "spacy>=3.7",
+]
+# v3 RAG (Retrieval-Augmented Generation) — F-1
+# Default backend is a pure-numpy in-memory store with .npz persistence.
+# SqliteVectorStore is stdlib-only (no numpy needed).
+rag = [
+    "numpy>=1.26",
+]
+# v3-N7 SCADA — DNP3 outstation client (Linux/Windows)
+# pydnp3 is the wire-protocol driver; the LLMesh adapter is a thin
+# normalisation layer around it.
+dnp3 = [
+    "pydnp3>=0.1",
+]
+# v3-N15 multimodal SPC — Vision LLM caption parsing.
+# vlm extra adds Pillow on top of the existing vision extra so the
+# MockVisionCaptioner can produce richer captions.
+vlm = [
+    "Pillow>=10.0",
+]
+all   = ["zeroconf>=0.131", "paramiko>=3.4", "aiosmtpd>=1.4",
+         "pyftpdlib>=2.0", "pysnmp>=6.1", "ntplib>=0.4",
+         "watchdog>=3.0", "Pillow>=10.0"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--tb=short -q"
+asyncio_mode = "auto"
+
+[tool.bandit]
+skips = []
+exclude_dirs = ["tests"]
