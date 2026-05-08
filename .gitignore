@@ -60,10 +60,23 @@ nodes/**/certs/*.pem
 .env
 .env.*
 *.key.hex
+*.key.bin
 audit*.jsonl
 nonces.sqlite
 timeline.sqlite
 unit_spaces/
+
+# Per-instance config (local node identity, peer trust list, overrides).
+# Must not be committed — each deployment owns its own copy.
+config/node.key.bin
+config/node_identity.json
+config/trusted_peers.json
+config/node_overrides.json
+# Per-node fixtures (used in local docker-compose poc, not for distribution)
+nodes/**/config/node.key.bin
+nodes/**/config/trusted_peers.json
+nodes/**/config/node_identity.json
+nodes/**/config/node_overrides.json
 
 # Ad-hoc artifacts from running examples / dev scripts
 *.npz
