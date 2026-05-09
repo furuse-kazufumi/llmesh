@@ -84,7 +84,7 @@ class _Registry:
 
     def put(self, record: NodeRecord) -> None:
         with self._lock:
-            self._records[node_id := record.node_id] = record
+            self._records[record.node_id] = record
 
     def all(self) -> list[NodeRecord]:
         with self._lock:
