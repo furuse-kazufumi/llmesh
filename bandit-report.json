@@ -1,17 +1,17 @@
 {
   "errors": [],
-  "generated_at": "2026-05-09T01:22:38Z",
+  "generated_at": "2026-05-09T01:23:33Z",
   "metrics": {
     "_totals": {
       "CONFIDENCE.HIGH": 0,
-      "CONFIDENCE.LOW": 0,
-      "CONFIDENCE.MEDIUM": 1,
+      "CONFIDENCE.LOW": 1,
+      "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 22487,
+      "loc": 22482,
       "nosec": 0,
       "skipped_tests": 21
     },
@@ -1993,46 +1993,40 @@
     },
     "llmesh/timeline\\store.py": {
       "CONFIDENCE.HIGH": 0,
-      "CONFIDENCE.LOW": 0,
-      "CONFIDENCE.MEDIUM": 1,
+      "CONFIDENCE.LOW": 1,
+      "CONFIDENCE.MEDIUM": 0,
       "CONFIDENCE.UNDEFINED": 0,
       "SEVERITY.HIGH": 0,
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 211,
+      "loc": 206,
       "nosec": 0,
       "skipped_tests": 0
     }
   },
   "results": [
     {
-      "code": "191             rows = self._conn.execute(\n192                 f\"\"\"\n193                 SELECT task_id,\n194                        node_id,\n195                        event_type   AS last_event,\n196                        timestamp_utc AS last_ts\n197                 FROM   timeline_events t1\n198                 WHERE  event_id = (\n199                            SELECT MAX(event_id) FROM timeline_events t2\n200                            WHERE t2.task_id = t1.task_id\n201                        )\n202                 AND    event_type NOT IN ({placeholders})\n203                 ORDER  BY last_ts DESC\n204                 \"\"\",\n205                 tuple(_TERMINAL_EVENTS),\n",
-      "col_offset": 16,
-      "end_col_offset": 19,
+      "code": "39 _RESUMABLE_TASKS_SQL: str = (\n40     \"SELECT task_id, node_id, event_type AS last_event, timestamp_utc AS last_ts \"\n41     \"FROM timeline_events t1 \"\n42     \"WHERE event_id = (\"\n43     \"    SELECT MAX(event_id) FROM timeline_events t2 \"\n44     \"    WHERE t2.task_id = t1.task_id\"\n45     \") \"\n46     \"AND event_type NOT IN (\" + \",\".join(\"?\" for _ in _TERMINAL_EVENTS) + \") \"\n47     \"ORDER BY last_ts DESC\"\n",
+      "col_offset": 4,
+      "end_col_offset": 29,
       "filename": "llmesh/timeline\\store.py",
-      "issue_confidence": "MEDIUM",
+      "issue_confidence": "LOW",
       "issue_cwe": {
         "id": 89,
         "link": "https://cwe.mitre.org/data/definitions/89.html"
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 192,
+      "line_number": 40,
       "line_range": [
-        192,
-        193,
-        194,
-        195,
-        196,
-        197,
-        198,
-        199,
-        200,
-        201,
-        202,
-        203,
-        204
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",
