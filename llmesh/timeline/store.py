@@ -184,10 +184,11 @@ class TimelineStore:
         These are tasks the client may retry with a fresh nonce. Each entry is:
           {"task_id": ..., "node_id": ..., "last_event": ..., "last_ts": ..., "idle_sec": ...}
         """
+        # _TERMINAL_EVENTS is a module-level literal tuple; not user input.
         terminal_list = ", ".join(f"'{e}'" for e in _TERMINAL_EVENTS)
         with self._lock:
-            rows = self._conn.execute(
-                f"""  # nosec B608 - interpolated value is _TERMINAL_EVENTS literal tuple.
+            rows = self._conn.execute(  # nosec B608 - interpolated value is _TERMINAL_EVENTS literal tuple.
+                f"""
                 SELECT task_id,
                        node_id,
                        event_type   AS last_event,

@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2026-05-09T01:21:31Z",
+  "generated_at": "2026-05-09T01:21:56Z",
   "metrics": {
     "_totals": {
       "CONFIDENCE.HIGH": 0,
@@ -2007,7 +2007,7 @@
   },
   "results": [
     {
-      "code": "189             rows = self._conn.execute(\n190                 f\"\"\"  # nosec B608 - interpolated value is _TERMINAL_EVENTS literal tuple.\n191                 SELECT task_id,\n192                        node_id,\n193                        event_type   AS last_event,\n194                        timestamp_utc AS last_ts\n195                 FROM   timeline_events t1\n196                 WHERE  event_id = (\n197                            SELECT MAX(event_id) FROM timeline_events t2\n198                            WHERE t2.task_id = t1.task_id\n199                        )\n200                 AND    event_type NOT IN ({terminal_list})\n201                 ORDER  BY last_ts DESC\n202                 \"\"\"\n203             ).fetchall()\n",
+      "code": "190             rows = self._conn.execute(  # nosec B608 - interpolated value is _TERMINAL_EVENTS literal tuple.\n191                 f\"\"\"\n192                 SELECT task_id,\n193                        node_id,\n194                        event_type   AS last_event,\n195                        timestamp_utc AS last_ts\n196                 FROM   timeline_events t1\n197                 WHERE  event_id = (\n198                            SELECT MAX(event_id) FROM timeline_events t2\n199                            WHERE t2.task_id = t1.task_id\n200                        )\n201                 AND    event_type NOT IN ({terminal_list})\n202                 ORDER  BY last_ts DESC\n203                 \"\"\"\n204             ).fetchall()\n",
       "col_offset": 16,
       "end_col_offset": 19,
       "filename": "llmesh/timeline\\store.py",
@@ -2018,9 +2018,8 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 190,
+      "line_number": 191,
       "line_range": [
-        190,
         191,
         192,
         193,
@@ -2032,7 +2031,8 @@
         199,
         200,
         201,
-        202
+        202,
+        203
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",
