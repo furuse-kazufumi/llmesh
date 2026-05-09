@@ -522,9 +522,11 @@ def _cmd_mt_infer(args: list[str]) -> int:
     i = 0
     while i < len(args):
         if args[i] == "--model" and i + 1 < len(args):
-            model_path = args[i + 1]; i += 2
+            model_path = args[i + 1]
+            i += 2
         elif args[i] == "--threshold" and i + 1 < len(args):
-            threshold = float(args[i + 1]); i += 2
+            threshold = float(args[i + 1])
+            i += 2
         else:
             i += 1
 
