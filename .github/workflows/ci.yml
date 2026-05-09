@@ -20,7 +20,9 @@ jobs:
           cache: pip
 
       - name: Install dependencies
-        run: pip install -e ".[dev]"
+        # `[all]` brings in optional protocol drivers (paramiko, pyftpdlib, …) so
+        # `import llmesh.protocol` succeeds and the test suite can collect.
+        run: pip install -e ".[dev,all]"
 
       - name: Lint with ruff
         run: ruff check llmesh/
