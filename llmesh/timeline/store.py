@@ -184,26 +184,12 @@ class TimelineStore:
         These are tasks the client may retry with a fresh nonce. Each entry is:
           {"task_id": ..., "node_id": ..., "last_event": ..., "last_ts": ..., "idle_sec": ...}
         """
-        # Bind _TERMINAL_EVENTS as parameters (not f-string interpolation) so
-        # the SQL is fully parameterised — no injection surface.
-        placeholders = ",".join("?" for _ in _TERMINAL_EVENTS)
+        # The placeholder count varies with len(_TERMINAL_EVENTS), so the IN-list
+        # is built once at module load with a literal "?,?,?,..." pattern (no
+        # user input). Values are bound as parameters below.
+        sql = _RESUMABLE_TASKS_SQL
         with self._lock:
-            rows = self._conn.execute(
-                f"""
-                SELECT task_id,
-                       node_id,
-                       event_type   AS last_event,
-                       timestamp_utc AS last_ts
-                FROM   timeline_events t1
-                WHERE  event_id = (
-                           SELECT MAX(event_id) FROM timeline_events t2
-                           WHERE t2.task_id = t1.task_id
-                       )
-                AND    event_type NOT IN ({placeholders})
-                ORDER  BY last_ts DESC
-                """,
-                tuple(_TERMINAL_EVENTS),
-            ).fetchall()
+            rows = self._conn.execute(sql, tuple(_TERMINAL_EVENTS)).fetchall()
 
         now = datetime.now(timezone.utc)
         result = []
