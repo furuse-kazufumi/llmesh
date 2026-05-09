@@ -457,11 +457,14 @@ def _cmd_mt_train(args: list[str]) -> int:
     i = 0
     while i < len(args):
         if args[i] == "--input" and i + 1 < len(args):
-            input_path = args[i + 1]; i += 2
+            input_path = args[i + 1]
+            i += 2
         elif args[i] == "--device" and i + 1 < len(args):
-            device_id = args[i + 1]; i += 2
+            device_id = args[i + 1]
+            i += 2
         elif args[i] == "--output" and i + 1 < len(args):
-            output = args[i + 1]; i += 2
+            output = args[i + 1]
+            i += 2
         else:
             i += 1
 
