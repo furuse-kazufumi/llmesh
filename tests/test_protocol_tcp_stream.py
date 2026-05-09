@@ -510,7 +510,10 @@ class TestStopCancelsHandlers:
             UnifiedMessage.request({}, sender, server_addr), server_addr
         )
         assert r is not None
-        await asyncio.sleep(0.05)
+        # Poll for the handler task to appear; CI runners may schedule slowly.
+        deadline = time.monotonic() + 2.0
+        while len(server._handler_tasks) < 1 and time.monotonic() < deadline:
+            await asyncio.sleep(0.05)
         assert len(server._handler_tasks) >= 1
 
         t0 = time.monotonic()
