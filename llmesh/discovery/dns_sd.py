@@ -119,7 +119,7 @@ def _build_service_info(cfg: DnsSdConfig, service_type: str, port: int) -> "Serv
         "node_id": cfg.node_id,
         "did": cfg.did,
         "capability_hash": _capability_hash(cfg.capability_manifest),
-        "data_levels_accepted": ",".join(str(l) for l in cfg.data_levels_accepted),
+        "data_levels_accepted": ",".join(str(level) for level in cfg.data_levels_accepted),
     }
     name = f"{cfg.node_id}.{service_type}"
     return ServiceInfo(
