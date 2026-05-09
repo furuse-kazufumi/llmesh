@@ -463,7 +463,10 @@ class TestTickLoop:
                 UnifiedMessage.request({}, sender, server_addr), server_addr
             )
             assert r is not None
-            await asyncio.sleep(_TICK_INTERVAL * 2.5)
+            # Poll for at least 2 ticks; CI runners are slower than dev machines.
+            deadline = time.monotonic() + _TICK_INTERVAL * 8
+            while tick_count[0] < 2 and time.monotonic() < deadline:
+                await asyncio.sleep(_TICK_INTERVAL * 0.5)
             await server.stop()
 
         assert tick_count[0] >= 2
