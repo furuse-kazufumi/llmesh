@@ -23,6 +23,10 @@ import math
 from dataclasses import dataclass, field
 from pathlib import Path
 from collections.abc import Sequence
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover — annotations only
+    import numpy as np
 
 
 def _require_numpy():
