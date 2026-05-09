@@ -317,8 +317,6 @@ def run_stdio_server(
     else:
         firewall, summarizer, llm, validator = _build_pipeline()
 
-    initialized = False
-
     while True:
         msg = _read_message(_in)
         if msg is None:
@@ -330,13 +328,10 @@ def run_stdio_server(
 
         # Notifications (no id) — acknowledge silently
         if req_id is None:
-            if method == "notifications/initialized":
-                initialized = True
             continue
 
         if method == "initialize":
             _write_message(_out, _ok(req_id, _handle_initialize(params)))
-            initialized = True
 
         elif method == "ping":
             _write_message(_out, _ok(req_id, {}))
