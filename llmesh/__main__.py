@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import sys
+from pathlib import Path
 
 
 def _cmd_audit_verify(args: list[str]) -> int:
