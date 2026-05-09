@@ -3,10 +3,37 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "llmesh"
+name = "llmesh-mcp"
 version = "3.1.0"
-description = "Secure Local LLM Swarm over MCP"
+description = "Secure LLM Mesh over MCP — multi-LLM swarm + industrial IoT + privacy gateway"
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.11"
+authors = [{ name = "Kazufumi Furuse", email = "kazufumi@furuse.work" }]
+keywords = [
+    "llm", "mcp", "model-context-protocol", "ollama", "openai", "anthropic",
+    "industrial-iot", "scada", "modbus", "opc-ua", "mqtt", "dnp3",
+    "rag", "vector-search", "privacy", "pii", "presidio",
+    "multivariate-analysis", "spc", "anomaly-detection",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Manufacturing",
+    "Intended Audience :: System Administrators",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: System :: Distributed Computing",
+    "Topic :: System :: Monitoring",
+    "Topic :: Security",
+    "Typing :: Typed",
+]
 dependencies = [
     "cryptography>=42.0",
     "jsonschema>=4.21",
