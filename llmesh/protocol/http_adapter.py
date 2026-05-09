@@ -134,7 +134,7 @@ class HTTPAdapter(ProtocolAdapter):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # nosec B310 - target URL validated upstream; response capped.
                 raw = resp.read(self._max_bytes + 1)
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode(errors="replace")[:200]

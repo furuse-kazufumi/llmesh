@@ -148,7 +148,7 @@ def _post_osv(query_dicts: list[dict], timeout: int) -> list[dict]:
         read_capped,
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310 - osv.dev URL hardcoded; response capped.
             raw = read_capped(resp, max_bytes=DEFAULT_HTTP_ADAPTER_BYTES)
     except ResponseTooLargeError as exc:
         raise OsvQueryError(f"osv_response_too_large:{exc.cap}") from exc

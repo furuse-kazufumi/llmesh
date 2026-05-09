@@ -149,7 +149,7 @@ class DiscoveryClient:
             read_capped,
         )
         try:
-            with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # nosec B310 - URL constructed internally; response capped via read_capped.
                 raw = read_capped(resp, max_bytes=DEFAULT_DISCOVERY_RESPONSE_BYTES)
         except ResponseTooLargeError as exc:
             raise DiscoveryError(f"response_too_large:{exc.cap}") from exc

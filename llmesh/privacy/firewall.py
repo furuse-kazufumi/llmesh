@@ -95,7 +95,7 @@ _L0_INJECTION_PATTERNS: list[tuple[str, re.Pattern]] = [
     )),
     # Unicode bidirectional / LTR-override / BOM tricks used to hide injected text
     ("pi_unicode_control", re.compile(
-        r"[‮‭﻿]",  # RTL override, LTR override, byte-order mark
+        r"[‮‭﻿]",  # RTL override, LTR override, byte-order mark  # nosec B613 - bidi chars intentionally present to detect them in input.
     )),
 ]
 

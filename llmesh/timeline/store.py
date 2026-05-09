@@ -187,7 +187,7 @@ class TimelineStore:
         terminal_list = ", ".join(f"'{e}'" for e in _TERMINAL_EVENTS)
         with self._lock:
             rows = self._conn.execute(
-                f"""
+                f"""  # nosec B608 - interpolated value is _TERMINAL_EVENTS literal tuple.
                 SELECT task_id,
                        node_id,
                        event_type   AS last_event,

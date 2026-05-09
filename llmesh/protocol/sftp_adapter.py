@@ -442,7 +442,7 @@ class SFTPAdapter(ProtocolAdapter):
             prompt_bytes = prompt_bytes.encode("utf-8")
 
         client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # nosec B507 - peer trust established via Capability Manifest, not host keys.
         try:
             client.connect(
                 target.host,

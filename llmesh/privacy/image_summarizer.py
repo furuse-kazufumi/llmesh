@@ -130,7 +130,7 @@ def _call_ollama(base_url: str, model: str, b64: str, timeout: int) -> str:
         read_capped,
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310  # nosec B310 - VLM endpoint controlled by operator; response capped.
             raw = read_capped(resp, max_bytes=DEFAULT_LLM_RESPONSE_BYTES)
             body = json.loads(raw.decode("utf-8"))
             caption = body.get("response", "").strip()

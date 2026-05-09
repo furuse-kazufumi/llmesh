@@ -177,7 +177,7 @@ class NodeClient:
         )
 
         try:
-            with urllib.request.urlopen(
+            with urllib.request.urlopen(  # nosec B310 - peer URL verified via Capability Manifest; response capped.
                 req, timeout=self._timeout, context=self._ssl_ctx
             ) as resp:
                 raw = resp.read(self._max_response_bytes + 1)

@@ -47,7 +47,7 @@ class OllamaBackend(LLMBackend):
     def health(self) -> bool:
         """Return True if Ollama is reachable at the configured base URL."""
         try:
-            with urllib.request.urlopen(self._tags_url, timeout=5) as resp:
+            with urllib.request.urlopen(self._tags_url, timeout=5) as resp:  # nosec B310 - Ollama URL controlled by operator; response capped.
                 return resp.status == 200
         except Exception:
             return False
@@ -82,7 +82,7 @@ class OllamaBackend(LLMBackend):
         )
 
         try:
-            with urllib.request.urlopen(req, timeout=self._timeout) as resp:
+            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # nosec B310 - Ollama URL controlled by operator; response capped.
                 resp_bytes = read_capped(resp, max_bytes=DEFAULT_LLM_RESPONSE_BYTES)
         except ResponseTooLargeError as exc:
             raise BackendError(f"ollama_response_too_large:{exc.cap}") from exc

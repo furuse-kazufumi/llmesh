@@ -309,7 +309,7 @@ class FTPAdapter(ProtocolAdapter):
         ``message.id``.  Returns the result as a UnifiedMessage, or None on
         fire-and-forget (no result available within timeout).
         """
-        import ftplib  # noqa: PLC0415
+        import ftplib  # noqa: PLC0415  # nosec B402 - FTP support is the documented purpose of this adapter.
 
         task_id = str(message.payload.get("task_id", message.id))
         prompt_file = f"{task_id}.prompt.txt"
@@ -326,7 +326,7 @@ class FTPAdapter(ProtocolAdapter):
         try:
             import io as _io  # noqa: PLC0415
 
-            with ftplib.FTP() as ftp:  # noqa: S321
+            with ftplib.FTP() as ftp:  # noqa: S321  # nosec B321 - FTP support is the documented purpose of this adapter.
                 ftp.connect(target.host, target.port, timeout=10)
                 ftp.login(username, password)
                 ftp.storbinary(f"STOR {prompt_file}", _io.BytesIO(prompt_bytes))

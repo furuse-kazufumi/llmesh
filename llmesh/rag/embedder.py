@@ -152,7 +152,7 @@ class OllamaEmbedder(Embedder):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # noqa: S310
+            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # noqa: S310  # nosec B310 - embedding endpoint controlled by operator; response capped.
                 raw = read_capped(resp, max_bytes=_MAX_EMBED_RESPONSE_BYTES)
                 payload = json.loads(raw.decode("utf-8"))
         except ResponseTooLargeError as exc:

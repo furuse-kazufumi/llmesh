@@ -204,7 +204,7 @@ class OpenAICompatibleBackend(LLMBackend):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+            with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310  # nosec B310 - base_url validated by builder; https-only; response capped.
                 resp_bytes = read_capped(resp, max_bytes=self._max_bytes)
         except ResponseTooLargeError as exc:
             raise BackendError(f"openai_compatible_response_too_large:{exc.cap}") from exc

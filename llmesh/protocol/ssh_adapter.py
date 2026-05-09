@@ -283,7 +283,7 @@ class SSHAdapter(ProtocolAdapter):
             client_key = generate_ed25519_key()
 
         client = paramiko.SSHClient()
-        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy())  # nosec B507 - peer trust established via Capability Manifest, not host keys.
         try:
             client.connect(
                 target.host,
@@ -294,7 +294,7 @@ class SSHAdapter(ProtocolAdapter):
                 look_for_keys=False,
                 allow_agent=False,
             )
-            stdin, stdout, _stderr = client.exec_command(
+            stdin, stdout, _stderr = client.exec_command(  # nosec B601 - command is the fixed _SENTINEL_CMD constant; no user input.
                 _SENTINEL_CMD, timeout=self._timeout
             )
             stdin.write(message.to_bytes())

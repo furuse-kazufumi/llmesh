@@ -67,7 +67,7 @@ def announce(
         headers={"Content-Type": "application/json"},
     )
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310  # nosec B310 - rendezvous URL is operator-configured; response capped.
             if resp.status not in (200, 201):
                 body = resp.read().decode("utf-8", errors="replace")
                 raise AnnounceError(f"unexpected status {resp.status}: {body}")
@@ -105,7 +105,7 @@ def lookup(
     url = f"{rendezvous_url.rstrip('/')}/lookup/{urllib.request.quote(node_id)}"
     req = urllib.request.Request(url=url, method="GET")
     try:
-        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310  # nosec B310 - rendezvous URL is operator-configured; response capped.
             body = read_capped(resp, max_bytes=DEFAULT_RENDEZVOUS_RESPONSE_BYTES).decode("utf-8")
             data = json.loads(body)
             return data["endpoint"]

@@ -100,7 +100,7 @@ class GossipClient:
         url = endpoint.rstrip("/") + "/registry/peers"
         req = urllib.request.Request(url, method="GET")
         try:
-            with urllib.request.urlopen(
+            with urllib.request.urlopen(  # nosec B310 - peer URL is signed/verified upstream; response capped.
                 req, timeout=self._timeout, context=self._ssl_ctx
             ) as resp:
                 body = json.loads(

@@ -149,7 +149,7 @@ class AnthropicBackend(LLMBackend):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310
+            with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310  # nosec B310 - https://api.anthropic.com hardcoded; response size capped.
                 resp_bytes = read_capped(resp, max_bytes=self._max_bytes)
         except ResponseTooLargeError as exc:
             raise BackendError(f"anthropic_response_too_large:{exc.cap}") from exc
