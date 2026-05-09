@@ -324,9 +324,8 @@ def _cmd_configure(args: list[str]) -> int:
     return 0
 
 
-def _write_toml_fallback(path: "Path", d: dict) -> None:  # type: ignore[name-defined]
+def _write_toml_fallback(path: Path, d: dict) -> None:
     """Minimal TOML serialiser for the [industrial] section only (no tomli-w fallback)."""
-    from pathlib import Path as _Path
 
     def _val(v: object) -> str:
         if isinstance(v, bool):
