@@ -221,9 +221,11 @@ def _cmd_configure(args: list[str]) -> int:
     i = 0
     while i < len(args):
         if args[i] == "--file" and i + 1 < len(args):
-            toml_path = Path(args[i + 1]); i += 2
+            toml_path = Path(args[i + 1])
+            i += 2
         elif args[i] == "--show":
-            show_only = True; i += 1
+            show_only = True
+            i += 1
         else:
             i += 1
 
