@@ -161,5 +161,13 @@ addopts = "--tb=short -q"
 asyncio_mode = "auto"
 
 [tool.bandit]
-skips = []
+# Project-policy skips for low-severity rules. See docs/SECURITY.md for rationale.
+#  B101 (assert): used for module-level invariants and internal sanity checks; not a security control.
+#  B104 (hardcoded_bind_all_interfaces): 0.0.0.0 is a documented opt-in binding mode for adapters
+#        (see SETUP_GUIDE.md "Binding to all interfaces"); access is gated by upstream policy.
+#  B107 (hardcoded_password_default): empty-string defaults represent "no credential", not a secret.
+#  B110 (try_except_pass): defensive cleanup in adapter shutdown / optional-driver paths;
+#        failure to close is non-fatal and intentionally swallowed.
+# Medium+ severity issues are not skipped here — they are annotated per-site with `# nosec BXXX`.
+skips = ["B101", "B104", "B107", "B110"]
 exclude_dirs = ["tests"]
