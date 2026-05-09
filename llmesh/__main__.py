@@ -77,13 +77,17 @@ def _cmd_timeline(args: list[str]) -> int:
     positional: list[str] = []
     while i < len(rest):
         if rest[i] == "--db" and i + 1 < len(rest):
-            db_path = rest[i + 1]; i += 2
+            db_path = rest[i + 1]
+            i += 2
         elif rest[i] == "--limit" and i + 1 < len(rest):
-            limit = int(rest[i + 1]); i += 2
+            limit = int(rest[i + 1])
+            i += 2
         elif rest[i] == "--node" and i + 1 < len(rest):
-            node_id = rest[i + 1]; i += 2
+            node_id = rest[i + 1]
+            i += 2
         else:
-            positional.append(rest[i]); i += 1
+            positional.append(rest[i])
+            i += 1
 
     if not db_path:
         print("error: set LLMESH_TIMELINE_DB_PATH or pass --db <path>", file=sys.stderr)
