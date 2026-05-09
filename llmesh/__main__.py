@@ -105,7 +105,6 @@ def _cmd_timeline(args: list[str]) -> int:
         print(f"{'task_id':36}  {'timestamp_utc':29}  {'event_type':20}  {'node_id':12}  details")
         print("-" * 110)
         for ev in reversed(events):
-            tid = ev.task_id[:8] + "..."
             meta = "  ".join(f"{k}={v}" for k, v in ev.metadata.items())
             print(f"{ev.task_id:36}  {ev.timestamp_utc:29}  {ev.event_type:20}  {ev.node_id:12}  {meta}")
         return 0
