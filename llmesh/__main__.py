@@ -347,7 +347,7 @@ def _write_toml_fallback(path: Path, d: dict) -> None:
         else:
             lines.append(f"{section} = {_val(val)}")
 
-    _Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
+    Path(path).write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def _cmd_mt_collect(args: list[str]) -> int:
