@@ -36,7 +36,7 @@ _PRUNE_EVERY_N: int = 500  # prune at most once every N records to amortise cost
 # Pre-built SQL for get_resumable_tasks(). The IN-list placeholders are computed
 # once at module load (depends only on len(_TERMINAL_EVENTS), no user input).
 # Values are bound as parameters at execute time — fully parameterised.
-_RESUMABLE_TASKS_SQL: str = (
+_RESUMABLE_TASKS_SQL: str = (  # nosec B608
     "SELECT task_id, node_id, event_type AS last_event, timestamp_utc AS last_ts "
     "FROM timeline_events t1 "
     "WHERE event_id = ("

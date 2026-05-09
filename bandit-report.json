@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2026-05-09T01:23:33Z",
+  "generated_at": "2026-05-09T01:24:08Z",
   "metrics": {
     "_totals": {
       "CONFIDENCE.HIGH": 0,
@@ -2007,7 +2007,7 @@
   },
   "results": [
     {
-      "code": "39 _RESUMABLE_TASKS_SQL: str = (\n40     \"SELECT task_id, node_id, event_type AS last_event, timestamp_utc AS last_ts \"\n41     \"FROM timeline_events t1 \"\n42     \"WHERE event_id = (\"\n43     \"    SELECT MAX(event_id) FROM timeline_events t2 \"\n44     \"    WHERE t2.task_id = t1.task_id\"\n45     \") \"\n46     \"AND event_type NOT IN (\" + \",\".join(\"?\" for _ in _TERMINAL_EVENTS) + \") \"\n47     \"ORDER BY last_ts DESC\"\n",
+      "code": "39 _RESUMABLE_TASKS_SQL: str = (  # nosec B608\n40     \"SELECT task_id, node_id, event_type AS last_event, timestamp_utc AS last_ts \"\n41     \"FROM timeline_events t1 \"\n42     \"WHERE event_id = (\"\n43     \"    SELECT MAX(event_id) FROM timeline_events t2 \"\n44     \"    WHERE t2.task_id = t1.task_id\"\n45     \") \"\n46     \"AND event_type NOT IN (\" + \",\".join(\"?\" for _ in _TERMINAL_EVENTS) + \") \"\n47     \"ORDER BY last_ts DESC\"\n",
       "col_offset": 4,
       "end_col_offset": 29,
       "filename": "llmesh/timeline\\store.py",
