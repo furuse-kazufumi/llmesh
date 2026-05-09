@@ -1,6 +1,6 @@
 {
   "errors": [],
-  "generated_at": "2026-05-09T01:21:56Z",
+  "generated_at": "2026-05-09T01:22:38Z",
   "metrics": {
     "_totals": {
       "CONFIDENCE.HIGH": 0,
@@ -11,7 +11,7 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 22486,
+      "loc": 22487,
       "nosec": 0,
       "skipped_tests": 21
     },
@@ -2000,14 +2000,14 @@
       "SEVERITY.LOW": 0,
       "SEVERITY.MEDIUM": 1,
       "SEVERITY.UNDEFINED": 0,
-      "loc": 210,
+      "loc": 211,
       "nosec": 0,
       "skipped_tests": 0
     }
   },
   "results": [
     {
-      "code": "190             rows = self._conn.execute(  # nosec B608 - interpolated value is _TERMINAL_EVENTS literal tuple.\n191                 f\"\"\"\n192                 SELECT task_id,\n193                        node_id,\n194                        event_type   AS last_event,\n195                        timestamp_utc AS last_ts\n196                 FROM   timeline_events t1\n197                 WHERE  event_id = (\n198                            SELECT MAX(event_id) FROM timeline_events t2\n199                            WHERE t2.task_id = t1.task_id\n200                        )\n201                 AND    event_type NOT IN ({terminal_list})\n202                 ORDER  BY last_ts DESC\n203                 \"\"\"\n204             ).fetchall()\n",
+      "code": "191             rows = self._conn.execute(\n192                 f\"\"\"\n193                 SELECT task_id,\n194                        node_id,\n195                        event_type   AS last_event,\n196                        timestamp_utc AS last_ts\n197                 FROM   timeline_events t1\n198                 WHERE  event_id = (\n199                            SELECT MAX(event_id) FROM timeline_events t2\n200                            WHERE t2.task_id = t1.task_id\n201                        )\n202                 AND    event_type NOT IN ({placeholders})\n203                 ORDER  BY last_ts DESC\n204                 \"\"\",\n205                 tuple(_TERMINAL_EVENTS),\n",
       "col_offset": 16,
       "end_col_offset": 19,
       "filename": "llmesh/timeline\\store.py",
@@ -2018,9 +2018,8 @@
       },
       "issue_severity": "MEDIUM",
       "issue_text": "Possible SQL injection vector through string-based query construction.",
-      "line_number": 191,
+      "line_number": 192,
       "line_range": [
-        191,
         192,
         193,
         194,
@@ -2032,7 +2031,8 @@
         200,
         201,
         202,
-        203
+        203,
+        204
       ],
       "more_info": "https://bandit.readthedocs.io/en/1.9.4/plugins/b608_hardcoded_sql_expressions.html",
       "test_id": "B608",

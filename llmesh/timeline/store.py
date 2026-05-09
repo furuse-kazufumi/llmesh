@@ -184,8 +184,9 @@ class TimelineStore:
         These are tasks the client may retry with a fresh nonce. Each entry is:
           {"task_id": ..., "node_id": ..., "last_event": ..., "last_ts": ..., "idle_sec": ...}
         """
-        # _TERMINAL_EVENTS is a module-level literal value; not user input.
-        terminal_list = ", ".join(f"'{e}'" for e in _TERMINAL_EVENTS)
+        # Bind _TERMINAL_EVENTS as parameters (not f-string interpolation) so
+        # the SQL is fully parameterised — no injection surface.
+        placeholders = ",".join("?" for _ in _TERMINAL_EVENTS)
         with self._lock:
             rows = self._conn.execute(
                 f"""
@@ -198,9 +199,10 @@ class TimelineStore:
                            SELECT MAX(event_id) FROM timeline_events t2
                            WHERE t2.task_id = t1.task_id
                        )
-                AND    event_type NOT IN ({terminal_list})
+                AND    event_type NOT IN ({placeholders})
                 ORDER  BY last_ts DESC
-                """
+                """,
+                tuple(_TERMINAL_EVENTS),
             ).fetchall()
 
         now = datetime.now(timezone.utc)
