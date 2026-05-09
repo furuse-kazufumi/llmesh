@@ -60,6 +60,13 @@ dependencies = [
     "uvicorn[standard]>=0.29",
 ]
 
+[project.urls]
+Homepage = "https://github.com/furuse-kazufumi/llmesh"
+Repository = "https://github.com/furuse-kazufumi/llmesh"
+Issues = "https://github.com/furuse-kazufumi/llmesh/issues"
+Changelog = "https://github.com/furuse-kazufumi/llmesh/blob/main/docs/CHANGELOG.md"
+Documentation = "https://github.com/furuse-kazufumi/llmesh/tree/main/docs"
+
 [project.scripts]
 llmesh = "llmesh.__main__:main"
 
