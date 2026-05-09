@@ -2,6 +2,24 @@
 requires = ["hatchling"]
 build-backend = "hatchling.build"
 
+# The PyPI distribution name (`llmesh-mcp`) intentionally differs from the
+# importable package name (`llmesh`). Hatchling needs to be told that the
+# wheel/sdist should ship the `llmesh/` directory rather than guessing
+# `llmesh_mcp/`.
+[tool.hatch.build.targets.wheel]
+packages = ["llmesh"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/llmesh",
+    "/tests",
+    "/docs",
+    "/README.md",
+    "/LICENSE",
+    "/CONTRIBUTING.md",
+    "/pyproject.toml",
+]
+
 [project]
 name = "llmesh-mcp"
 version = "3.1.0"
