@@ -10,6 +10,40 @@ tags: 産業IoT,SCADA,Python,LLM,異常検知
 
 ---
 
+## 60 秒で「異常検知 → LLM 説明」を動かす
+
+```bash
+pip install "llmesh-mcp[industrial]"
+```
+
+実機がなくても **シミュレーターで完結** します:
+
+```python
+import asyncio, random
+from llmesh.industrial import SensorEvent, ExplainedCUSUM
+
+# CUSUM だけ試す（LLM 説明は explainer=None でテンプレ fail-safe）
+chart = ExplainedCUSUM(target=70.0, k=0.5, h=5.0, explainer=None)
+
+async def run():
+    for i in range(200):
+        # 100 サンプル目から 5℃ 高い方にドリフトさせる
+        value = 70.0 + (5.0 if i > 100 else 0) + random.gauss(0, 0.5)
+        ev = SensorEvent(ts=i*0.1, sensor_id="bearing_temp_07",
+                         sensor_type="temperature", value=value,
+                         quality="good", meta={})
+        report = chart.update(ev)
+        if report:
+            print(report.to_markdown()); break
+
+asyncio.run(run())
+```
+
+CUSUM が立ち上がった時点で `IncidentReport`（Markdown）が出ます。
+**LLM 説明** を有効にするには `explainer=` に backend を渡すだけです（後述）。
+
+---
+
 ## 何を作ったか（先に結論）
 
 - **20+ の産業プロトコル**（Modbus / Serial / OPC-UA / MQTT / EtherCAT / CAN / BACnet / DNP3 / IEC 61850 GOOSE / WebSocket / SNMP / SSH / Telnet / SFTP / IMAP / POP3 / FTP / SMTP / HTTP / TCP / UDP / ROS1 / ROS2）を **同一 ABC** で扱う
