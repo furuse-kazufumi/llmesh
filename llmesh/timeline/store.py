@@ -33,19 +33,11 @@ _TERMINAL_EVENTS: frozenset[str] = frozenset({"completed", "failed"})
 _DEFAULT_TTL_DAYS: int = 7
 _PRUNE_EVERY_N: int = 500  # prune at most once every N records to amortise cost
 
-# Pre-built SQL for get_resumable_tasks(). The IN-list placeholders are computed
-# once at module load (depends only on len(_TERMINAL_EVENTS), no user input).
-# Values are bound as parameters at execute time — fully parameterised.
-_RESUMABLE_TASKS_SQL: str = (  # nosec B608
-    "SELECT task_id, node_id, event_type AS last_event, timestamp_utc AS last_ts "
-    "FROM timeline_events t1 "
-    "WHERE event_id = ("
-    "    SELECT MAX(event_id) FROM timeline_events t2 "
-    "    WHERE t2.task_id = t1.task_id"
-    ") "
-    "AND event_type NOT IN (" + ",".join("?" for _ in _TERMINAL_EVENTS) + ") "
-    "ORDER BY last_ts DESC"
-)
+# Pre-built SQL for get_resumable_tasks(). The IN-list placeholder count is
+# computed once at module load (depends only on len(_TERMINAL_EVENTS); no user
+# input). Values are bound as parameters at execute time — fully parameterised.
+_RESUMABLE_TASKS_PLACEHOLDERS: str = ",".join("?" for _ in _TERMINAL_EVENTS)
+_RESUMABLE_TASKS_SQL: str = "SELECT task_id, node_id, event_type AS last_event, timestamp_utc AS last_ts FROM timeline_events t1 WHERE event_id = (SELECT MAX(event_id) FROM timeline_events t2 WHERE t2.task_id = t1.task_id) AND event_type NOT IN (" + _RESUMABLE_TASKS_PLACEHOLDERS + ") ORDER BY last_ts DESC"  # nosec B608 - placeholder count derived from module-level _TERMINAL_EVENTS frozenset; values bound as parameters in execute().
 
 
 def _now_utc() -> str:
