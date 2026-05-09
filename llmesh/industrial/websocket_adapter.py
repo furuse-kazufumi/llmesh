@@ -96,6 +96,7 @@ EventCallback = Callable[[SensorEvent], None]
 def _ws_accept_key(client_key: str) -> str:
     # SHA-1 is mandated by RFC 6455 §1.3 for the Sec-WebSocket-Accept handshake;
     # not used as a security primitive.
+    # nosemgrep: python.lang.security.insecure-hash-algorithms.insecure-hash-algorithm-sha1
     sha = hashlib.sha1((client_key + _WS_MAGIC).encode(), usedforsecurity=False).digest()
     return base64.b64encode(sha).decode()
 
