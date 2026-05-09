@@ -18,7 +18,7 @@ import math
 import urllib.error
 import urllib.request
 from abc import ABC, abstractmethod
-from typing import Iterable, Sequence
+from typing import Sequence
 
 
 from llmesh.security.http_limits import (

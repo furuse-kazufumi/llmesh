@@ -17,7 +17,6 @@ Dependencies: aiosmtpd>=1.4  (pip install llmesh[email])
 """
 from __future__ import annotations
 
-import asyncio
 import email as _email_mod
 import email.policy
 import logging

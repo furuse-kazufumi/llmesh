@@ -26,7 +26,6 @@ Output shape
 """
 from __future__ import annotations
 
-import datetime as _dt
 import json
 from dataclasses import asdict, dataclass, field
 from typing import Any, Callable, Iterable

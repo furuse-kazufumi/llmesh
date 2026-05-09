@@ -15,12 +15,10 @@ Security invariants:
 from __future__ import annotations
 
 import threading
-import time
 from datetime import datetime, timezone
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
-from fastapi.responses import JSONResponse
 from pydantic import BaseModel, field_validator
 
 from ..identity.node_id import NodeIdentity

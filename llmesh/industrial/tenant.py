@@ -30,7 +30,7 @@ import dataclasses
 import logging
 import re
 from collections.abc import Callable, Iterable
-from typing import Any, TypeVar
+from typing import TypeVar
 
 from llmesh.industrial.sensor_event import SensorEvent
 

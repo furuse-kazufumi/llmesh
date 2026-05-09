@@ -260,15 +260,123 @@ Rust 拡張は **任意**。CI が **8 ターゲットの multi-platform wheel**
 
 ---
 
-## 試す
+## 実用パターン集（コピペで使える）
+
+### 1. LLM 説明付きで Modbus を回す
+
+```python
+import asyncio
+from llmesh.industrial import ModbusAdapter, ExplainedCUSUM
+from llmesh.llm import OllamaBackend
+from llmesh.industrial.explainer import LLMExplainer
+
+llm       = OllamaBackend(model="llama3.2")
+explainer = LLMExplainer(backend=llm)
+
+async def main():
+    modbus = ModbusAdapter(host="10.0.0.10", unit=1, registers=[(0, "holding")])
+    chart  = ExplainedCUSUM(target=70.0, k=0.5, h=5.0, explainer=explainer)
+
+    async for ev in modbus.stream():
+        report = chart.update(ev)
+        if report:
+            print(report.to_markdown())
+
+asyncio.run(main())
+```
+
+### 2. 異常を Slack に送る（IncidentReport をそのまま流す）
+
+```python
+import urllib.request, json
+
+def post_to_slack(report, webhook_url: str):
+    payload = {"text": f"```{report.to_markdown()}```"}
+    req = urllib.request.Request(webhook_url, data=json.dumps(payload).encode(),
+                                 headers={"Content-Type": "application/json"})
+    urllib.request.urlopen(req, timeout=5)
+```
+
+### 3. 複数プロトコルを 1 つの SPC に流し込む
+
+```python
+from llmesh.industrial import OPCUAAdapter, MQTTAdapter, HotellingT2Chart
+import asyncio
+
+chart = HotellingT2Chart(window=300, alpha=0.001)
+
+async def feeder(adapter, channel):
+    async for ev in adapter.stream():
+        chart.feed(channel, ev.value, ts=ev.ts)
+        if chart.alarm():
+            print("multivariate alarm:", chart.snapshot())
+
+opcua = OPCUAAdapter(url="opc.tcp://10.0.0.20:4840", nodes=["ns=2;i=2"])
+mqtt  = MQTTAdapter(host="10.0.0.30", topics=["plant/+/temp"])
+asyncio.run(asyncio.gather(feeder(opcua, "temp"), feeder(mqtt, "vibration")))
+```
+
+### 4. 自前ドライバを SensorEvent に薄くラップする
+
+ベンダー固有の SDK でも、`SensorEvent` を yield するだけでスタック全体が動きます。
+
+```python
+from llmesh.industrial import SensorEvent
+
+async def my_adapter(driver):
+    async for raw in driver.read_loop():
+        yield SensorEvent(
+            ts=raw.timestamp, sensor_id=raw.tag,
+            sensor_type="pressure", value=float(raw.value),
+            quality="good" if raw.ok else "bad", meta={"driver": "vendor-x"},
+        )
+```
+
+---
+
+## トラブルシューティング
+
+| 症状 | 原因 | 解決 |
+|---|---|---|
+| `ImportError: pydnp3` | DNP3 driver 未インストール | `pip install "llmesh-mcp[industrial,dnp3]"` |
+| OPC-UA 接続失敗 | サーバ証明書の問題 | `OPCUAAdapter(security="None")` で先に疎通確認 |
+| MQTT で TLS が通らない | CA / クライアント証明書 | `MQTTAdapter(tls_ca=..., tls_cert=..., tls_key=...)` |
+| `SensorEvent.ts` が NaN/Inf | `quality="bad"` のままパイプラインに流した | `if ev.quality != "good": continue` を上流に置く |
+| GOOSE で stNum リプレイ警告 | 同一 ref で過去番号 | `GOOSEAdapter(replay_log_size=1024)` を増やす（既定 256） |
+| 文字化け（Windows） | `cp932` がデフォルト | `set PYTHONUTF8=1`（PowerShell は `$env:PYTHONUTF8=1`） |
+
+詰まったら必ず最初に:
 
 ```bash
-pip install "llmesh-mcp[industrial,vision]"
+python -m llmesh.cli.doctor   # driver 有無・ポート・権限を全部出す
+```
+
+---
+
+## 次のステップ
+
+```bash
+# 必要 extras だけ入れる
+pip install "llmesh-mcp[industrial]"               # Modbus / OPC-UA / MQTT / SPC
+pip install "llmesh-mcp[industrial,vision]"        # + VLM / VideoCUSUM
+pip install "llmesh-mcp[industrial,dnp3]"          # + DNP3
+pip install "llmesh-mcp[industrial,bacnet,can]"    # + BACnet / CAN
+
+# まず動かす
 python -m llmesh.cli.doctor
 ```
 
+参考ドキュメント:
+
+- `docs/INDUSTRIAL_GUIDE.md` — 産業 IoT 利用ガイド（Phase A〜v3）
+- `docs/USAGE.md` — 使用例（v2.13/2.14 強化機能セクション含む）
+- `docs/PERFORMANCE.md` — モジュール別計算量とメモリ目安
+
+リンク:
+
 - GitHub: <https://github.com/furuse-kazufumi/llmesh>
 - PyPI: <https://pypi.org/project/llmesh-mcp/>
+- Issue: <https://github.com/furuse-kazufumi/llmesh/issues>
 - License: MIT
 
 ---

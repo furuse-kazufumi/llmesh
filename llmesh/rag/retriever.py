@@ -21,11 +21,11 @@ that case all documents pass through unchanged.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from .embedder import Embedder
-from .store import Document, RetrievedDocument, VectorStore
+from .store import Document, VectorStore
 
 
 @dataclass(frozen=True)

@@ -14,7 +14,6 @@ Unauthenticated paths (bypass list):
 from __future__ import annotations
 
 import hashlib
-import os
 import time
 
 from fastapi import Request

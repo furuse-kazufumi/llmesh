@@ -35,7 +35,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from .adapter import MessageHandler, ProtocolAdapter, TransportError
-from .message import MessageType, NodeAddress, UnifiedMessage
+from .message import NodeAddress, UnifiedMessage
 
 if TYPE_CHECKING:
     pass

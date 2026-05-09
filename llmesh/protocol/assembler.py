@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any
 
 from .message import NodeAddress, UnifiedMessage
 from .watchdog import WatchdogTimer

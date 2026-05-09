@@ -27,7 +27,7 @@ from __future__ import annotations
 import threading
 from typing import Protocol, runtime_checkable
 
-from llmesh.routing.circuit_breaker import CircuitBreaker, CBState, NodeCircuitBreakerMap
+from llmesh.routing.circuit_breaker import CircuitBreaker, CBState
 from llmesh.security.rate_limiter import PerNodeRateLimiter, RateLimitExceeded
 
 

@@ -16,7 +16,7 @@ Long-running operation safety:
 from __future__ import annotations
 
 import threading
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
 from .ledger import ContributionLedger

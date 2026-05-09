@@ -122,7 +122,7 @@ class NodeRegistry:
             self._evict_oldest()
 
         import time as _time
-        from datetime import datetime, timezone
+        from datetime import datetime
         try:
             expires_at = datetime.fromisoformat(manifest.expires_at).timestamp()
         except ValueError as exc:

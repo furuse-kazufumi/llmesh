@@ -10,10 +10,8 @@ stays identical for all callers.
 from __future__ import annotations
 
 import asyncio
-import json
 import urllib.error
 import urllib.request
-from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from .adapter import MessageHandler, ProtocolAdapter, TransportError

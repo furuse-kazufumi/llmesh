@@ -39,7 +39,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
 from .adapter import MessageHandler, ProtocolAdapter, TransportError
-from .message import MessageType, NodeAddress, UnifiedMessage
+from .message import NodeAddress, UnifiedMessage
 
 if TYPE_CHECKING:
     pass
@@ -222,7 +222,6 @@ class LocalFileAdapter(ProtocolAdapter):
     # ------------------------------------------------------------------
 
     def _build_pipeline(self) -> tuple:
-        from ..classifier.data_level import DataLevel
         from ..llm.llamacpp import LlamaCppBackend
         from ..llm.ollama import OllamaBackend
         from ..privacy.firewall import PromptFirewall

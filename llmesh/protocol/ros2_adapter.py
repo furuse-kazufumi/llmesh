@@ -147,7 +147,7 @@ class _LLMeshROS2Node(RclpyNode):  # type: ignore[misc]
         sensor_topic = payload.get("sensor_topic")
         sensor_data  = payload.get("sensor_data")
         if sensor_topic and sensor_data:
-            from ..privacy.sensor_summarizer import SensorBlockedError, SensorSummarizer
+            from ..privacy.sensor_summarizer import SensorSummarizer
             ss = SensorSummarizer()
             result = ss.summarize(topic=sensor_topic, data=sensor_data)
             if result.blocked:

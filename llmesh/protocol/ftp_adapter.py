@@ -30,7 +30,6 @@ import shutil
 import tempfile
 import threading
 import time
-import uuid
 from typing import TYPE_CHECKING
 
 from .adapter import MessageHandler, ProtocolAdapter, TransportError

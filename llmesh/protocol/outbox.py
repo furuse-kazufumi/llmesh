@@ -13,7 +13,6 @@ Async callers should wrap operations with asyncio.to_thread().
 """
 from __future__ import annotations
 
-import json
 import os
 import sqlite3
 import threading

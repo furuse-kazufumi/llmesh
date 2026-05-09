@@ -26,7 +26,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import uuid
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Iterable
 
 from .explainer import AlarmEvent, IncidentReport, LLMExplainer

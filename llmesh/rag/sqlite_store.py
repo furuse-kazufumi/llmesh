@@ -36,7 +36,6 @@ from __future__ import annotations
 
 import array
 import json
-import math
 import sqlite3
 import time
 from pathlib import Path

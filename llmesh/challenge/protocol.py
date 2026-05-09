@@ -20,7 +20,7 @@ import json
 import os
 import secrets
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from .bank import TASK_BANK, TASK_BY_ID, ChallengeTask, Difficulty

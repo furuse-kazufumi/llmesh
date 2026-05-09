@@ -36,8 +36,8 @@ import json
 import logging
 import struct
 import time
-from collections.abc import Callable, Iterator
-from dataclasses import dataclass, field
+from collections.abc import Iterator
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, IO
 
@@ -329,7 +329,7 @@ def describe_event(ev: SensorEvent, *, max_payload_preview: int = 32) -> str:
         f"  priority     : {ev.priority.value}",
         f"  timestamp_ns : {ev.timestamp_ns}",
         f"  payload      : {len(ev.payload)} bytes — {preview_hex}{hint}",
-        f"  metadata     :",
+        "  metadata     :",
     ]
     for k, v in ev.metadata.items():
         lines.append(f"    {k} = {v}")

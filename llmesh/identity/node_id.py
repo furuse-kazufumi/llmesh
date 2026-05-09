@@ -1,7 +1,6 @@
 """Ed25519 Node ID and did:key derivation."""
 from __future__ import annotations
 
-import base64
 
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (
     Ed25519PrivateKey,

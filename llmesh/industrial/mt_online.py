@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING
 from .mt_engine import MTEngine, _require_numpy
 
 if TYPE_CHECKING:
-    import numpy as np
+    pass
 
 
 _DEFAULT_MAX_BATCH_BYTES = 16 * 1024 * 1024  # 16 MiB
