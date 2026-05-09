@@ -45,7 +45,7 @@ if TYPE_CHECKING:
     pass
 
 try:
-    from watchdog.events import FileClosedEvent, FileCreatedEvent, FileSystemEventHandler
+    from watchdog.events import FileSystemEventHandler
     from watchdog.observers import Observer
     _WATCHDOG_AVAILABLE = True
 except ImportError:
