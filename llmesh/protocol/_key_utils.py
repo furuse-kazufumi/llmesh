@@ -2,6 +2,10 @@
 from __future__ import annotations
 
 import io
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:  # pragma: no cover — annotations only
+    import paramiko
 
 
 def generate_ed25519_key() -> "paramiko.Ed25519Key":
