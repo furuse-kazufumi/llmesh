@@ -174,15 +174,7 @@ class HTTPAdapter(ProtocolAdapter):
             except TransportError:
                 pass
 
-    # ------------------------------------------------------------------
-    # Internal FastAPI endpoint
-    # ------------------------------------------------------------------
-
-    async def _handle_http_request(self, request: Any) -> Any:
-        body = await request.json()
-        msg = UnifiedMessage.from_dict(body)
-        if self._handler is not None:
-            response = await self._handler(msg)
-            if response is not None:
-                return self._JSONResponse(content=response.to_dict())
-        return self._JSONResponse(content={})
+    # NOTE: 旧 ``_handle_http_request`` メソッドはここに有ったが、未使用 dead
+    # code (どこからも呼ばれず、テストも無し、参照していた ``self._JSONResponse``
+    # も未定義属性) のため削除済 (2026-05-10)。実際の HTTP 処理は ``start()``
+    # 内のローカル ``_msg_endpoint`` (lines 70-95 付近) で完結している。
