@@ -31,12 +31,11 @@ import asyncio
 import socket
 import struct
 from contextlib import closing
-from unittest.mock import patch
 
 import pytest
 
 from llmesh.protocol import tcp_stream_adapter as tsa
-from llmesh.protocol.message import MessageType, NodeAddress, UnifiedMessage
+from llmesh.protocol.message import NodeAddress, UnifiedMessage
 from llmesh.protocol.outbox import OutboxQueue
 from llmesh.protocol.tcp_stream_adapter import (
     _ConnPool,
@@ -315,8 +314,13 @@ class TestSendErrorPaths:
                 # この接続を閉じてから、新しい有効リクエストで応答を確認
             finally:
                 writer.close()
-                with pytest.raises((OSError, ConnectionResetError, asyncio.IncompleteReadError)):
+                # wait_closed は OSError 等を上げる「ことがある」が、上げ
+                # ない実装もある (asyncio はプラットフォーム依存)。例外を
+                # 抑制して接続を綺麗に閉じる。
+                try:
                     await writer.wait_closed()
+                except (OSError, ConnectionResetError, asyncio.IncompleteReadError):
+                    pass
             # 別接続から有効メッセージ
             client = TCPStreamAdapter(timeout=2.0)
             msg = UnifiedMessage.request({"valid": True}, sender, server_addr)
