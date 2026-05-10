@@ -155,7 +155,7 @@ class TestAnnounceHappyPath:
         ).encode("utf-8")
         sig = bytes.fromhex(payload["signature"])
         # 公開鍵で検証 — 失敗すれば InvalidSignature が上がる
-        identity.verify_with_public_key(message, sig, payload["public_key_hex"])
+        identity.verify_with_public_hex(message, sig, payload["public_key_hex"])
 
 
 # ---------------------------------------------------------------------------
