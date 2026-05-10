@@ -459,7 +459,12 @@ class TestTickLoop:
 
             server.on_message(echo)
             await server.start("127.0.0.1", free_port)
-            r = await TCPStreamAdapter().send(
+            # Keep a reference to the client so its connection pool stays alive;
+            # an ephemeral TCPStreamAdapter() would be GC'd immediately, closing
+            # the TCP socket and causing the server's tick_task to be cancelled
+            # before the first tick fires.
+            client = TCPStreamAdapter()
+            r = await client.send(
                 UnifiedMessage.request({}, sender, server_addr), server_addr
             )
             assert r is not None
