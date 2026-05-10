@@ -184,7 +184,14 @@ def _summarise_sonar(data: dict[str, Any]) -> str:
     return f"Sonar range: {float(dist):.3f}m"
 
 
-def _summarise_diagnostic(data: dict[str, Any]) -> str:
+def _summarise_diagnostic(data: str | dict[str, Any]) -> str:
+    """Summarise a diagnostic payload (raw text or structured dict).
+
+    The caller (`SensorSummarizer._describe`) passes a ``str`` when the raw
+    payload is text-only and a ``dict`` when there is structured telemetry.
+    Type signature now matches both call sites; the runtime body already
+    handled both cases via ``isinstance``.
+    """
     if isinstance(data, str):
         return data[:512]
     msg = data.get("message") or data.get("status") or str(data)
