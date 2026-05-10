@@ -99,3 +99,36 @@ def check_clock_sync(
     raise RuntimeError(
         f"NTP: all servers unreachable {servers}: {last_exc}"
     )
+
+
+def check_drift_ok(
+    *,
+    servers: list[str] | None = None,
+    max_drift_s: float | None = None,
+    timeout_s: float | None = None,
+) -> tuple[bool, float]:
+    """Non-raising wrapper around ``check_clock_sync`` for diagnostic tools.
+
+    Returns ``(ok, drift_seconds)``:
+        - ``ok=True``  + drift within threshold
+        - ``ok=False`` + measured drift exceeds threshold (no exception raised)
+        - ``ok=False`` + drift=NaN-like 0.0 if NTP unreachable / ntplib missing
+
+    Used by ``llmesh doctor`` to report NTP status without aborting the tool.
+    Any production node should still call ``check_clock_sync`` to fail-closed
+    on excess drift.
+    """
+    if max_drift_s is None:
+        max_drift_s = float(
+            os.environ.get("LLMESH_MAX_CLOCK_DRIFT_S", str(_DEFAULT_MAX_DRIFT_S))
+        )
+    try:
+        drift = check_clock_sync(
+            servers=servers, max_drift_s=max_drift_s, timeout_s=timeout_s
+        )
+        return True, drift
+    except ClockDriftError as exc:
+        return False, exc.drift
+    except Exception:
+        # NTP unreachable / ntplib missing / etc.
+        return False, 0.0
