@@ -100,9 +100,12 @@ class TestTightenFalsifier:
     def test_no_delta_returns_input_unchanged(self) -> None:
         assert _tighten_falsifier("anything", None) == "anything"
 
-    def test_empty_falsifier_with_delta_returns_empty(self) -> None:
-        # No falsifier to tighten — observed_delta non-None but text empty
-        assert _tighten_falsifier("", 0.05) == ""
+    def test_empty_falsifier_with_delta_records_observation(self) -> None:
+        # Empty falsifier + observed delta -> annotation appended so the
+        # downstream reviewer at least sees what was measured.
+        out = _tighten_falsifier("", 0.05)
+        assert "0.05" in out
+        assert "observed delta" in out
 
     def test_no_numeric_token_appends_parenthetical(self) -> None:
         out = _tighten_falsifier("agent recovers cleanly", 0.10)
