@@ -109,11 +109,11 @@ class PerceptionResponse:
     frame: PerceptionFrame
 
 
-I = TypeVar("I")
-O = TypeVar("O")
+_I = TypeVar("_I")
+_O = TypeVar("_O")
 
 
-class PerceptionAgent(ABC, Generic[I, O]):
+class PerceptionAgent(ABC, Generic[_I, _O]):
     """ABC for raw-sensors → :class:`PerceptionFrame` interpreters.
 
     Generic over ``I``/``O`` so subclasses can refine the request and
