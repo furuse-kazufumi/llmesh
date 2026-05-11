@@ -368,24 +368,13 @@ def stage_cost_summary(trace: TraceLogger) -> None:
 
 def stage_paper_export() -> None:
     _hr("Stage 9 — Paper bundle export (Phase 7)")
+    from llmesh.research import export_paper_bundle
     PAPER_DIR.mkdir(parents=True, exist_ok=True)
-    md = render_paper_md(
-        title="Activation checkpointing — e2e demo bundle",
-        run_metadata={"trace": str(TRACE_PATH)},
-        sections={
-            "Abstract": (
-                "End-to-end mock pipeline exercising D1-D7 in a single run."
-            ),
-            "Method": (
-                "Mock literature -> hypothesis -> Bayesian select -> "
-                "multi-fidelity (sim fails on purpose) -> failure-driven inversion "
-                "-> embodied replay -> Shapley composition. Cost-aware trace logged "
-                "throughout."
-            ),
-        },
-    )
-    (PAPER_DIR / "paper.md").write_text(md, encoding="utf-8")
-    _ok(f"wrote {PAPER_DIR / 'paper.md'}")
+    bundle = export_paper_bundle(trace_path=TRACE_PATH, out_dir=PAPER_DIR)
+    _ok(f"wrote {bundle.paper_md}")
+    _info(f"runs.csv: {bundle.runs_csv}")
+    _info(f"metrics.csv: {bundle.metrics_csv}")
+    _info(f"timing.svg: {bundle.timing_svg}")
 
 
 # ---------------------------------------------------------------------------
