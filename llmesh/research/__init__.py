@@ -9,6 +9,14 @@ inject an :data:`ExtractFn` that wraps any concrete LLM backend
 
 from __future__ import annotations
 
+from llmesh.research.e2e import E2EResult, run_research_pipeline
+from llmesh.research.executor import (
+    ExperimentExecutor,
+    ExperimentResult,
+    MockExperimentExecutor,
+    StepRun,
+    summarise_result,
+)
 from llmesh.research.hypothesis import (
     Hypothesis,
     HypothesisAgent,
