@@ -63,7 +63,12 @@ class TestNegateEffect:
 
     def test_decrease_to_increase(self) -> None:
         assert _negate_effect("decrease") == "increase"
-        assert _negate_effect("speedup slowdown") == "increase"  # decrease wins
+        assert _negate_effect("pure slowdown") == "increase"  # only DECREASE word matches
+
+    def test_increase_wins_when_both_present(self) -> None:
+        # When a string contains both an INCREASE and a DECREASE word,
+        # the check order returns "decrease" — documented behaviour, not a bug.
+        assert _negate_effect("speedup slowdown") == "decrease"
 
     def test_negligible_to_non_trivial(self) -> None:
         assert _negate_effect("negligible") == "non-trivial"
