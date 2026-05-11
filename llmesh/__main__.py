@@ -566,13 +566,73 @@ def _cmd_mt_infer(args: list[str]) -> int:
     return 0
 
 
+def _llove_module_present() -> bool:
+    """`llove` パッケージが import 可能か (Python レベルで存在チェック).
+
+    subprocess 起動前の早期失敗用. importlib.util.find_spec を使い、本体は
+    import せずに済む (依存が重い textual 等を不要にロードしない).
+    """
+    import importlib.util
+
+    return importlib.util.find_spec("llove") is not None
+
+
+def _cmd_dashboard(args: list[str]) -> int:
+    """`llmesh dashboard [llove-args...]` — TUI ダッシュボード起動.
+
+    本コマンドは llove (姉妹プロジェクト) を **subprocess** で呼ぶだけの
+    薄いシム. llmesh コアは textual / rich / pillow に依存させず、産業
+    ターゲット (組み込み Linux / RTOS) でも素のまま動かせる方針を保つ.
+    llove は I/O・UI 側専任、llmesh は I/O・プロトコル・分析側専任という
+    責務境界を、CLI レベルでも壊さないための入り口.
+
+    Usage:
+        llmesh dashboard                       # llove demo (合成データ)
+        llmesh dashboard demo --scenario X     # llove demo に引数を透過
+        llmesh dashboard view --source ...     # llove view に引数を透過
+        llmesh dashboard --check               # llove が呼べるかだけ確認
+
+    未インストール時は `pip install llmesh-llove` を案内し exit 1.
+    """
+    import subprocess
+
+    if args and args[0] == "--check":
+        if _llove_module_present():
+            print("OK: llove is importable")
+            return 0
+        print("missing: llove not installed — run 'pip install llmesh-llove'", file=sys.stderr)
+        return 1
+
+    if not _llove_module_present():
+        print(
+            "error: llove (TUI dashboard) is not installed.\n"
+            "  install: pip install llmesh-llove\n"
+            "  or:      pip install llmesh-suite   # llmesh + llove 一括",
+            file=sys.stderr,
+        )
+        return 1
+
+    # subprocess 引数は list-based のみ. user 入力は argv 経由のため
+    # shell は介在しない (shell=True 禁止, security).
+    llove_args: list[str] = list(args) if args else ["demo"]
+    cmd = [sys.executable, "-m", "llove", *llove_args]
+    try:
+        completed = subprocess.run(cmd, check=False)  # nosec B603 — list argv
+    except FileNotFoundError as exc:
+        print(f"error: failed to spawn python: {exc}", file=sys.stderr)
+        return 1
+    except KeyboardInterrupt:
+        return 130
+    return completed.returncode
+
+
 def main(argv: list[str] | None = None) -> int:
     args = argv if argv is not None else sys.argv[1:]
 
     if not args:
         print("Usage: llmesh <command> [args]")
         print("Commands: audit verify | timeline show|task|resumable | serve-mcp | configure")
-        print("          mt-collect | mt-train | mt-infer")
+        print("          mt-collect | mt-train | mt-infer | dashboard")
         return 0
 
     if args[0] == "audit" and len(args) > 1 and args[1] == "verify":
@@ -595,6 +655,9 @@ def main(argv: list[str] | None = None) -> int:
 
     if args[0] == "mt-infer":
         return _cmd_mt_infer(args[1:])
+
+    if args[0] == "dashboard":
+        return _cmd_dashboard(args[1:])
 
     print(f"Unknown command: {' '.join(args)}", file=sys.stderr)
     return 2
