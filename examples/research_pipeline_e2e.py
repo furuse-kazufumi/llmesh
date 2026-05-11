@@ -333,14 +333,35 @@ def stage_composition(trace: TraceLogger) -> None:
 
 def stage_cost_summary(trace: TraceLogger) -> None:
     _hr("Stage 8 — Cost-aware trace summary (D1)")
-    # Pull entries back from the JSONL via iter_trace (Phase 7 helper)
-    entries = list(iter_trace(TRACE_PATH))
-    cs = summarize_costs(entries)
+    # Re-read the JSONL directly so the summary works on the on-disk
+    # trace (one of D1's contracts: a JSONL trace is fully replayable
+    # without any in-memory state).
+    from llmesh.core.cost_attribution import cost_from_metrics
+    total_usd = 0.0
+    total_in = 0
+    total_out = 0
+    by_actor: dict[str, float] = {}
+    with TRACE_PATH.open("r", encoding="utf-8") as f:
+        for raw in f:
+            raw = raw.strip()
+            if not raw:
+                continue
+            try:
+                entry = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            metrics = entry.get("metrics") or {}
+            c = cost_from_metrics(metrics)
+            total_usd += c.usd
+            total_in += c.input_tokens
+            total_out += c.output_tokens
+            actor = entry.get("actor", "?")
+            by_actor[actor] = by_actor.get(actor, 0.0) + c.usd
     _ok(
-        f"total USD: ${cs.total_usd:.6f}  "
-        f"(input_tokens={cs.total_input_tokens}, output_tokens={cs.total_output_tokens})"
+        f"total USD: ${total_usd:.6f}  "
+        f"(input_tokens={total_in}, output_tokens={total_out})"
     )
-    for actor, usd in cs.by_actor.items():
+    for actor, usd in by_actor.items():
         if usd > 0:
             _info(f"  actor={actor}: ${usd:.6f}")
 
