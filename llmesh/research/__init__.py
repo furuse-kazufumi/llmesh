@@ -205,6 +205,7 @@ __all__ = [
     "build_literature_prompt",
     "build_planner_prompt",
     "build_reviewer_prompt",
+    "compose",
     "expected_information_gain",
     "export_metrics_csv",
     "export_paper_bundle",
