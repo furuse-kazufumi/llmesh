@@ -132,6 +132,7 @@ __all__ = [
     "HypothesisAgent",
     "HypothesisRequest",
     "HypothesisResponse",
+    "InversionStrategy",
     "LiteratureAgent",
     "LiteratureRequest",
     "LiteratureResponse",
