@@ -219,6 +219,7 @@ __all__ = [
     "render_paper_md",
     "render_timing_svg",
     "run_plan_review_loop",
+    "select_next",
     "run_research_pipeline",
     "summarise_result",
 ]
