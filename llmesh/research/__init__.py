@@ -98,8 +98,12 @@ from llmesh.research.reviewer import (
 
 __all__ = [
     "ContactEvent",
+    "E2EResult",
+    "ExperimentExecutor",
     "ExperimentPlan",
+    "ExperimentResult",
     "ExperimentStep",
+    "ExportBundle",
     "ExtractFn",
     "Hypothesis",
     "HypothesisAgent",
