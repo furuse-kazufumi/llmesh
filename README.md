@@ -95,6 +95,28 @@ pip install -e ".[rag]"          # RAG（ベクトル検索）（v2.13.0+）
 pip install -e ".[email,udp,ssh,ftp,mgmt,can,bacnet]"
 ```
 
+## Screenshots — `llmesh dashboard` (powered by llove)
+
+llmesh のデータは姉妹リポ **[llove](https://github.com/furuse-kazufumi/llove)**
+の TUI から 1 画面で見えます。`pip install llmesh-llove && llmesh dashboard`
+で起動。スクリーンショット原寸は llove リポにあります。
+
+| 画面 | ターゲット |
+|------|------------|
+| ![SCADA](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/scada-tui.svg) | 産業 IoT / SCADA |
+| ![PromptFirewall](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/firewall-tui.svg) | PromptFirewall / プライバシーパイプライン |
+| ![RAG](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/rag-tui.svg) | RAG 検索 |
+| ![AuditTrail](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/audit-tui.svg) | HMAC チェーン Audit |
+| ![Backends](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/backends-tui.svg) | LLM バックエンド切替 |
+| ![Reliability](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/reliability-tui.svg) | Reliability Protocol |
+| ![Multimodal](https://raw.githubusercontent.com/furuse-kazufumi/llove/main/docs/snapshots/ja/multimodal-tui.svg) | 画像 + 音声 + LLM |
+
+llove は単なるダッシュボードに留まらず、shogi (Ed25519 署名つき per-move log) /
+chess / タイピングなどの **対局・学習デモも同じ抽象で起動** できます。詳細は
+[llove README](https://github.com/furuse-kazufumi/llove) を参照。
+
+---
+
 ## Components
 
 ### Core
