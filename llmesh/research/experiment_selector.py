@@ -207,20 +207,23 @@ def expected_information_gain(
     """
     prior = store.get(cand.hypothesis_id)
     p = prior.probability
+    p_t = cand.p_success_if_true
+    p_f = cand.p_success_if_false
     # Predictive probability of success: P(s) = p * p_s|t + (1-p) * p_s|f
-    p_success = p * cand.p_success_if_true + (1.0 - p) * cand.p_success_if_false
+    p_success = p * p_t + (1.0 - p) * p_f
     if p_success <= _EPS or p_success >= 1.0 - _EPS:
         # Outcome essentially deterministic -> no information.
         return 0.0
 
-    # Predicted posteriors via Bayes (use Beta closed form after one update).
-    post_if_succ = prior.updated(success=True)
-    post_if_fail = prior.updated(success=False)
+    # Bayesian posterior over H using the candidate's actual likelihood model.
+    #   P(H | success) = P(success | H) * P(H) / P(success)
+    #   P(H | failure) = P(failure | H) * P(H) / P(failure)
+    p_h_given_success = (p_t * p) / p_success
+    p_h_given_failure = ((1.0 - p_t) * p) / (1.0 - p_success)
 
-    # KL between the predicted posterior mean and the prior mean
-    # (Bernoulli surrogate — sufficient at this orchestration tier).
-    kl_succ = _kl_bernoulli(post_if_succ.probability, p)
-    kl_fail = _kl_bernoulli(post_if_fail.probability, p)
+    # Expected KL(posterior || prior) — Bernoulli surrogate at orchestration tier.
+    kl_succ = _kl_bernoulli(p_h_given_success, p)
+    kl_fail = _kl_bernoulli(p_h_given_failure, p)
     return p_success * kl_succ + (1.0 - p_success) * kl_fail
 
 
