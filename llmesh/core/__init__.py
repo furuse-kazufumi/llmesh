@@ -8,6 +8,21 @@ dataclasses and helpers — no concrete implementations live here so
 """
 
 from llmesh.core.agent import Agent, AgentConfig
+from llmesh.core.cost_attribution import (
+    AttributionLink,
+    AttributionRole,
+    CostBreakdown,
+    CostSummary,
+    RedundancyFlag,
+    attribution_from_extra,
+    attribution_to_extra,
+    build_attribution_chain,
+    cost_from_metrics,
+    cost_to_metrics,
+    count_redundancy,
+    is_redundant,
+    summarize_costs,
+)
 from llmesh.core.task import TaskGraph, TaskKind, TaskNode
 from llmesh.core.tool import Tool, ToolSpec
 from llmesh.core.trace import TraceEntry, TraceKind, make_entry, write_trace_jsonl
@@ -30,6 +45,11 @@ __all__ = [
     "KIND_TOOL_CALL",
     "Agent",
     "AgentConfig",
+    "AttributionLink",
+    "AttributionRole",
+    "CostBreakdown",
+    "CostSummary",
+    "RedundancyFlag",
     "TaskGraph",
     "TaskKind",
     "TaskNode",
@@ -38,6 +58,14 @@ __all__ = [
     "TraceEntry",
     "TraceKind",
     "TraceLogger",
+    "attribution_from_extra",
+    "attribution_to_extra",
+    "build_attribution_chain",
+    "cost_from_metrics",
+    "cost_to_metrics",
+    "count_redundancy",
+    "is_redundant",
     "make_entry",
+    "summarize_costs",
     "write_trace_jsonl",
 ]
