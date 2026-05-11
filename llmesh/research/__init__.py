@@ -149,6 +149,7 @@ __all__ = [
     "CompositionPlan",
     "ContactEvent",
     "DEFAULT_STRATEGIES",
+    "DEFAULT_TIER_ORDER",
     "E2EResult",
     "ExperimentExecutor",
     "ExperimentPlan",
