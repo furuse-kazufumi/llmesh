@@ -412,6 +412,7 @@ tests/
 ├── test_core_abstracts.py       # core.{agent,tool,task,trace} primitives (Phase 0a)
 ├── test_core_trace_logger.py    # core.trace_logger (Phase 0b, threadsafe)
 ├── test_research_literature.py  # research.literature LiteratureAgent (Phase 1 PoC)
+├── test_research_phase2.py      # hypothesis + planner + reviewer + loop (Phase 2)
 ├── test_data_level.py           # DataLevel / ClassifiedPayload
 ├── test_firewall.py             # PromptFirewall Layer1/2
 ├── test_identity.py             # NodeIdentity (Ed25519 + did:llmesh:1:)
