@@ -136,6 +136,7 @@ __all__ = [
     "ReviewerRequest",
     "ReviewerResponse",
     "RoboticsPipelineResult",
+    "StepRun",
     "TaskGoal",
     "TaskPlan",
     "TaskPlanRequest",
