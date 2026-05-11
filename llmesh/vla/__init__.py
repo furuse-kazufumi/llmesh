@@ -120,7 +120,10 @@ __all__ = [
     "joint_limit_checker",
     "load_dataset",
     "parse_scene_text",
+    "replay_batch",
+    "replay_episode",
     "save_dataset",
+    "velocity_cap_checker",
     "train_bc_policy",
     "waypoints_to_trajectory",
 ]
