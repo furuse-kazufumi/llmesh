@@ -48,6 +48,42 @@ def _new_run_id() -> str:
     return uuid.uuid4().hex[:12]
 
 
+def _merge_d1_fields(
+    *,
+    metrics: dict[str, Any] | None,
+    extra: dict[str, Any] | None,
+    cost: CostBreakdown | None,
+    attribution: Iterable[AttributionLink] | None,
+    redundancy: RedundancyFlag | None,
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    """Fold D1 (cost / attribution / redundancy) into metrics + extra.
+
+    Caller-supplied values win over D1 fields on key collision so a
+    deliberate metric override isn't clobbered by an inadvertent
+    helper call. ``None`` inputs come back as ``None`` so the caller
+    sees the same shape they passed in when nothing was added.
+    """
+    out_metrics = dict(metrics) if metrics is not None else None
+    out_extra = dict(extra) if extra is not None else None
+
+    if cost is not None:
+        patch = cost_to_metrics(cost)
+        if out_metrics is None:
+            out_metrics = {}
+        # caller-supplied metrics win
+        for k, v in patch.items():
+            out_metrics.setdefault(k, v)
+
+    if attribution is not None or redundancy is not None:
+        patch = attribution_to_extra(attribution or (), redundancy=redundancy)
+        if out_extra is None:
+            out_extra = {}
+        for k, v in patch.items():
+            out_extra.setdefault(k, v)
+
+    return out_metrics, out_extra
+
+
 class TraceLogger:
     """Append-only JSONL trace logger for a single research run.
 
