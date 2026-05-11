@@ -64,6 +64,13 @@ from llmesh.vla.replay import (
     replay_episode,
     velocity_cap_checker,
 )
+from llmesh.vla.sparse_encoder import (
+    EventToken,
+    SparseEncoder,
+    SparseObservation,
+    dense_to_events,
+    events_to_feature_vector,
+)
 from llmesh.vla.encoders import (
     MockTextSceneEncoder,
     SceneFeatures,
