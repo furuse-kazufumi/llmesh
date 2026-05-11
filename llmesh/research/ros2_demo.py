@@ -208,7 +208,6 @@ def run_ros2_demo_loop(
         )
     )
     if motion_plan.trajectory is None:
-        empty_traj = Trajectory(waypoints=())
         response = ROS2MotionResponse(
             success=False, n_published=0, notes="no trajectory to publish"
         )
