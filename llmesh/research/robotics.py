@@ -116,13 +116,13 @@ _O = TypeVar("_O")
 class PerceptionAgent(ABC, Generic[_I, _O]):
     """ABC for raw-sensors → :class:`PerceptionFrame` interpreters.
 
-    Generic over ``I``/``O`` so subclasses can refine the request and
-    response types if they need richer payloads than the default
+    Generic over request/response types so subclasses can refine them
+    if they need richer payloads than the default
     :class:`PerceptionRequest` / :class:`PerceptionResponse`.
     """
 
     @abstractmethod
-    def perceive(self, request: I) -> O:
+    def perceive(self, request: _I) -> _O:
         ...
 
 
