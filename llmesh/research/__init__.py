@@ -10,6 +10,16 @@ inject an :data:`ExtractFn` that wraps any concrete LLM backend
 from __future__ import annotations
 
 from llmesh.research.e2e import E2EResult, run_research_pipeline
+from llmesh.research.experiment_selector import (
+    Belief,
+    BeliefStore,
+    CandidateExperiment,
+    RankedCandidate,
+    SelectionReport,
+    expected_information_gain,
+    rank_candidates,
+    select_next,
+)
 from llmesh.research.failure_driven import (
     DEFAULT_STRATEGIES,
     FailedExperiment,
