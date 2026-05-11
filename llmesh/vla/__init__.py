@@ -102,6 +102,7 @@ __all__ = [
     "MockVLAAgent",
     "ReplanController",
     "ReplanDecision",
+    "ReplayReport",
     "SceneFeatures",
     "SceneObject",
     "SceneState",
