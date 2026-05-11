@@ -380,6 +380,8 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ```
 tests/
+├── test_core_abstracts.py       # core.{agent,tool,task,trace} primitives (Phase 0a)
+├── test_core_trace_logger.py    # core.trace_logger (Phase 0b, threadsafe)
 ├── test_data_level.py           # DataLevel / ClassifiedPayload
 ├── test_firewall.py             # PromptFirewall Layer1/2
 ├── test_identity.py             # NodeIdentity (Ed25519 + did:llmesh:1:)
