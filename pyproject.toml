@@ -27,7 +27,7 @@ description = "Secure LLM Mesh over MCP — multi-LLM swarm + industrial IoT + p
 readme = "README.md"
 license = "MIT"
 license-files = ["LICENSE"]
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.12"
 authors = [{ name = "Kazufumi Furuse", email = "kazufumi@furuse.work" }]
 keywords = [
     "llm", "mcp", "model-context-protocol", "ollama", "openai", "anthropic",
