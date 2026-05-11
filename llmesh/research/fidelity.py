@@ -161,10 +161,11 @@ def run_pipeline(
         result = runner(experiment_id)
         results.append(result)
         total_cost += result.cost_usd
+        # tier was actually reached — record it before any halt check
+        promoted = result.tier
         if total_cost > cfg.budget_usd:
             halted_reason = "budget"
             break
-        promoted = result.tier
         if not result.success:
             halted_reason = "failure"
             break
