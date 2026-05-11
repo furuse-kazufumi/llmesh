@@ -392,6 +392,17 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 PoC の e2e テストは `tests/fixtures/dummy_paper.md` を fake_extract closure に通して dataclass まで往復させる構成。Phase 1 constraint「mock-first」を満たす。Phase 2 (hypothesis / planner) は `LiteratureResponse` を消費する形で接続する。
 
+### `research.hypothesis` + `research.planner` + `research.reviewer` (Phase 2 skeleton)
+
+| エージェント | 入力 → 出力 | 役割 |
+|---|---|---|
+| `HypothesisAgent` | `LiteratureResponse` → `tuple[Hypothesis, ...]` | digest から testable な仮説候補を最大 N 件生成。各 `Hypothesis` は statement / IV / DV / expected_effect / falsifier の 5 field |
+| `PlannerAgent` | 1 件の `Hypothesis` (+ budget_notes) → `ExperimentPlan` | variables / metrics / success_criteria / steps[ExperimentStep] の JSON-Schema 準拠 plan。step は `order` で安定ソート |
+| `ReviewerAgent` | `ExperimentPlan` → `Verdict` | `kind ∈ {"approve","revise","reject"}` + notes + optional score (0..1, パーセント自動 clamp) |
+| `run_plan_review_loop()` | hypothesis + planner + reviewer | revise を最大 N 回まで recycle (reviewer の notes が次の planner prompt に append される)。approve / reject で即終了、cap で最終 verdict 返却 |
+
+全エージェントは Phase 1 と同じ `ExtractFn` 注入パターン。mock-first 制約は `mock_hypothesis_extract` / `mock_planner_extract` / `mock_reviewer_extract` + 状態を持つ closure で satisfy。Phase 1 → Phase 2 のチェーン (digest → 仮説 → plan → review) は `test_research_phase2.py::TestPhase1ToPhase2Chain` が確認。
+
 ---
 
 ## テスト構成
