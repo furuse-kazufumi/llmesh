@@ -169,6 +169,8 @@ __all__ = [
     "PlannerAgent",
     "PlannerRequest",
     "PlannerResponse",
+    "RankedCandidate",
+    "SelectionReport",
     "PlanningRequest",
     "PlanningResult",
     "Pose6D",
