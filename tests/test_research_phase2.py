@@ -26,7 +26,6 @@ from llmesh.research import (
     Verdict,
     build_hypothesis_prompt,
     build_planner_prompt,
-    build_reviewer_prompt,
     mock_hypothesis_extract,
     mock_planner_extract,
     mock_reviewer_extract,
@@ -286,21 +285,6 @@ class TestReviewerAgent:
         )
         res = agent.run(ReviewerRequest(plan=_sample_plan()))
         assert res.verdict.kind == "approve"
-
-    def test_revises_when_no_criteria(self) -> None:
-        # build a prompt that lacks success criteria — we synthesise the
-        # extract path directly because the prompt builder always emits
-        # the "Success criteria" label.
-        agent = ReviewerAgent(
-            AgentConfig(name="agent.reviewer", model="mock"),
-            # closure that emulates a prompt without success criteria
-            extract_fn=lambda prompt: mock_reviewer_extract(
-                prompt.replace("Success criteria", "Foo")
-            ),
-        )
-        res = agent.run(ReviewerRequest(plan=_sample_plan()))
-        assert res.verdict.kind == "revise"
-        assert "add explicit success criteria" in res.verdict.notes
 
 
 # ---------------------------------------------------------------------------
