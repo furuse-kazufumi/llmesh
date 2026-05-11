@@ -9,6 +9,15 @@ inject an :data:`ExtractFn` that wraps any concrete LLM backend
 
 from __future__ import annotations
 
+from llmesh.research.hypothesis import (
+    Hypothesis,
+    HypothesisAgent,
+    HypothesisRequest,
+    HypothesisResponse,
+    build_hypothesis_prompt,
+    mock_hypothesis_extract,
+    parse_hypothesis_result,
+)
 from llmesh.research.literature import (
     ExtractFn,
     LiteratureAgent,
@@ -20,15 +29,62 @@ from llmesh.research.literature import (
     mock_extract,
     parse_literature_result,
 )
+from llmesh.research.planner import (
+    ExperimentPlan,
+    ExperimentStep,
+    PlannerAgent,
+    PlannerRequest,
+    PlannerResponse,
+    build_planner_prompt,
+    mock_planner_extract,
+    parse_plan_result,
+)
+from llmesh.research.reviewer import (
+    LoopResult,
+    ReviewerAgent,
+    ReviewerRequest,
+    ReviewerResponse,
+    Verdict,
+    VerdictKind,
+    build_reviewer_prompt,
+    mock_reviewer_extract,
+    parse_verdict_result,
+    run_plan_review_loop,
+)
 
 __all__ = [
+    "ExperimentPlan",
+    "ExperimentStep",
     "ExtractFn",
+    "Hypothesis",
+    "HypothesisAgent",
+    "HypothesisRequest",
+    "HypothesisResponse",
     "LiteratureAgent",
     "LiteratureRequest",
     "LiteratureResponse",
+    "LoopResult",
+    "PlannerAgent",
+    "PlannerRequest",
+    "PlannerResponse",
+    "ReviewerAgent",
+    "ReviewerRequest",
+    "ReviewerResponse",
+    "Verdict",
+    "VerdictKind",
+    "build_hypothesis_prompt",
     "build_literature_prompt",
+    "build_planner_prompt",
+    "build_reviewer_prompt",
     "make_anthropic_extract",
     "make_ollama_extract",
     "mock_extract",
+    "mock_hypothesis_extract",
+    "mock_planner_extract",
+    "mock_reviewer_extract",
+    "parse_hypothesis_result",
     "parse_literature_result",
+    "parse_plan_result",
+    "parse_verdict_result",
+    "run_plan_review_loop",
 ]
