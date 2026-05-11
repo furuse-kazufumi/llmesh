@@ -172,9 +172,12 @@ class InMemoryMultimodalStore(MultimodalStoreBackend):
             for m in modalities:
                 if m not in _VALID_MODALITIES:
                     raise ValueError(f"unknown modality: {m!r}")
-            allowed = {self._records[rid] for m in modalities for rid in self._by_modality[m]}
+            allowed_ids: set[str] = {
+                rid for m in modalities for rid in self._by_modality[m]
+            }
+            allowed = [self._records[rid] for rid in allowed_ids]
         else:
-            allowed = set(self._records.values())
+            allowed = list(self._records.values())
         scored: list[MultimodalHit] = []
         for rec in allowed:
             score = _cosine(query_vector, rec.vector)
