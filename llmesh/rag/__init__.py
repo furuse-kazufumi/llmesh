@@ -70,4 +70,19 @@ __all__ = [
     "LSHVectorStore",     # numpy lazy-import — approximate NN for ≥10⁶ rows
     "Retriever",
     "RetrievalResult",
+    # Phase 5: document parsers
+    "ParserKind",
+    "PDFExtractionError",
+    "parse_document",
+    "parse_html",
+    "parse_markdown",
+    "parse_pdf",
+    "parse_text",
+    # Phase 5: multimodal memory
+    "InMemoryMultimodalStore",
+    "Modality",
+    "MultimodalHit",
+    "MultimodalMemory",
+    "MultimodalRecord",
+    "MultimodalStoreBackend",
 ]
