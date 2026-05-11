@@ -403,6 +403,26 @@ PoC の e2e テストは `tests/fixtures/dummy_paper.md` を fake_extract closur
 
 全エージェントは Phase 1 と同じ `ExtractFn` 注入パターン。mock-first 制約は `mock_hypothesis_extract` / `mock_planner_extract` / `mock_reviewer_extract` + 状態を持つ closure で satisfy。Phase 1 → Phase 2 のチェーン (digest → 仮説 → plan → review) は `test_research_phase2.py::TestPhase1ToPhase2Chain` が確認。
 
+### `research.robotics` (Phase 3 interface skeleton)
+
+ロボティクス層は実装ではなく **I/F 確立**を Phase 3 のゴールとする。Phase 8 (ROS 2) / Phase 9 (turtlesim VLA mock) / Phase 10 (Gazebo arm) で具体実装が差し込まれる前提のため、ABC + dataclass コントラクトと deterministic な Mock 実装のみを出荷。
+
+| ABC | I/F | 役割 |
+|---|---|---|
+| `PerceptionAgent[I, O]` | `perceive(request) → response` | センサ束 (RGB/depth/joint/tactile/…) → `PerceptionFrame` (objects[], self_pose, extra) |
+| `TaskPlannerAgent` | `plan_task(req) → TaskPlanResponse` | 自然言語指示 + `PerceptionFrame` → 順序付き `TaskGoal[]` |
+| `MotionPlannerAgent` | `plan_motion(req: PlanningRequest) → PlanningResult` | TaskPlan + frame → `Trajectory(Waypoint[])` + `expected_contacts[]` + `status: ok\|infeasible\|timeout\|blocked` |
+| `ReplanningAgent` | `replan(req: ReplanRequest) → ReplanResponse` | 観測 `ContactEvent[]` + 経過秒 → `decision ∈ {retry, adapt, abort}` + 任意 `new_plan` |
+
+shared dataclasses は全て frozen で JSON-Schema-emittable:
+- `Pose6D = (x, y, z, roll, pitch, yaw)` / `Waypoint(pose, t, gripper)` / `Trajectory(waypoints, frame_id)`
+- `ContactEvent(body_a, body_b, location, normal_force, t, is_expected)` — Saguri-bot 系の接触 event を 1 個 1 dataclass で表現
+- `TaskGoal(action, target, args)` / `TaskPlan(goals)` / `PlanningRequest` / `PlanningResult`
+
+`run_robotics_pipeline()` は `perception → task_plan → motion_plan` を 1 行でつなぐ便宜 API (Phase 8 で `ReplanningAgent` を織り込んだ executor に置き換わる)。
+
+llmesh upstream の **no-pydantic** ポリシーに従い、Phase 3 タスク記述の「Pydantic スキーマ」は **JSON-Schema 互換 dataclass** として実装。`@dataclass(frozen=True)` + primitive/tuple/ネスト dc のみで、 `dataclasses.asdict()` 経由でそのまま JSON シリアライズ可能。
+
 ---
 
 ## テスト構成
