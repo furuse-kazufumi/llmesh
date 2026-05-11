@@ -62,19 +62,22 @@ class MockTextSceneEncoder(VisionEncoder):
         }
         if state.self_object is None:
             return SceneFeatures(state=state, features=features)
+        # Capture into a local so the type narrows correctly inside
+        # the lambda / generator scopes below.
+        me: SceneObject = state.self_object
         # Distance + bearing to each named object (excluding walls)
         non_walls = [
             obj for obj in state.objects if not obj.name.lower().startswith("wall")
         ]
         if non_walls:
-            nearest = min(non_walls, key=lambda o: _distance(state.self_object, o))
+            nearest = min(non_walls, key=lambda o: _distance(me, o))
             features["nearest_target_name"] = nearest.name
-            features["nearest_target_dist"] = _distance(state.self_object, nearest)
-            features["nearest_target_bearing"] = _bearing(state.self_object, nearest)
+            features["nearest_target_dist"] = _distance(me, nearest)
+            features["nearest_target_bearing"] = _bearing(me, nearest)
         # Wall proximity flag
         nearest_wall_dist: float | None = None
         if state.walls:
-            nearest_wall_dist = min(_distance(state.self_object, w) for w in state.walls)
+            nearest_wall_dist = min(_distance(me, w) for w in state.walls)
             features["nearest_wall_dist"] = nearest_wall_dist
             features["wall_close"] = nearest_wall_dist <= self._wall_thresh
         else:
