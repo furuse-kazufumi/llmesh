@@ -195,6 +195,7 @@ __all__ = [
     "TaskPlanRequest",
     "TaskPlanResponse",
     "TaskPlannerAgent",
+    "ValueFn",
     "Trajectory",
     "Verdict",
     "VerdictKind",
