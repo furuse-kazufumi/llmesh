@@ -113,6 +113,7 @@ __all__ = [
     "LiteratureRequest",
     "LiteratureResponse",
     "LoopResult",
+    "MockExperimentExecutor",
     "MockMotionPlannerAgent",
     "MockPerceptionAgent",
     "MockReplanningAgent",
