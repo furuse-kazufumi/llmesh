@@ -16,6 +16,13 @@ sequences when the observation changes.
 
 from __future__ import annotations
 
+from llmesh.vla.bc_trainer import (
+    BCEvalReport,
+    BCPolicy,
+    Featurizer,
+    evaluate_bc_policy,
+    train_bc_policy,
+)
 from llmesh.vla.dataset import (
     TrajectoryEpisode,
     episode_from_jsonl_line,
