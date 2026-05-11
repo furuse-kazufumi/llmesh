@@ -54,6 +54,16 @@ from llmesh.vla.replan import (
     ReplanController,
     ReplanDecision,
 )
+from llmesh.vla.replay import (
+    ConstraintFn,
+    ConstraintViolation,
+    ReplayReport,
+    gripper_monotonic_checker,
+    joint_limit_checker,
+    replay_batch,
+    replay_episode,
+    velocity_cap_checker,
+)
 from llmesh.vla.encoders import (
     MockTextSceneEncoder,
     SceneFeatures,
