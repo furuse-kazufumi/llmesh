@@ -155,23 +155,35 @@ class TraceLogger:
         model_version: str = "",
         metrics: dict[str, Any] | None = None,
         extra: dict[str, Any] | None = None,
+        cost: CostBreakdown | None = None,
+        attribution: Iterable[AttributionLink] | None = None,
+        redundancy: RedundancyFlag | None = None,
     ) -> int:
         """Record one LLM prompt/response pair.
 
         ``model`` is the logical name (e.g. ``"claude-haiku-4-5"``);
         ``model_version`` pins the actual served revision when the
-        backend exposes one. Both are stored in :attr:`TraceEntry.extra`
-        so trace replay can diff across model upgrades.
+        backend exposes one. ``cost`` / ``attribution`` / ``redundancy``
+        (D1) are folded into ``metrics`` and ``extra`` under stable
+        keys so :mod:`llmesh.core.cost_attribution` aggregators can
+        sum and chain them without re-parsing free-form data.
         """
         merged_extra: dict[str, Any] = {"model": model, "model_version": model_version}
         if extra:
             merged_extra.update(extra)
+        merged_metrics, merged_extra = _merge_d1_fields(
+            metrics=metrics,
+            extra=merged_extra,
+            cost=cost,
+            attribution=attribution,
+            redundancy=redundancy,
+        )
         return self.log(
             actor=actor,
             kind=KIND_PROMPT,
             input_payload={"prompt": prompt},
             output_payload={"response": response},
-            metrics=metrics,
+            metrics=merged_metrics,
             extra=merged_extra,
         )
 
