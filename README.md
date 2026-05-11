@@ -2,6 +2,15 @@
 
 **Secure LLM Mesh over MCP** — **v3.1.0**
 
+> **Family / 同系プロジェクト:** バックエンド (本リポ) / TUI ダッシュボード →
+> **[llove](https://github.com/furuse-kazufumi/llove)** / 一括インストール →
+> `pip install llmesh-suite` (準備中)。
+>
+> **不混同 (Disambiguation):** プロトコル横断・産業 IoT・プライバシーパイプライン
+> 主体の本プロジェクトは、GPU を持ち寄り **1 つの LLM を分散推論** する
+> [`mesh-llm`](https://github.com/michaelneale/mesh-llm) とは別物です。
+> 本プロジェクトは「I/O・プロトコル・産業現場」側、`mesh-llm` は「推論並列化」側。
+
 産業 IoT、重要インフラ、先端 AI/量子、RTOS マイコンまでを統一フレームワークで
 カバーする Python 統合プラットフォーム。
 **ローカル LLM**（Ollama / llama.cpp）と**クラウド LLM**（OpenAI / Azure /
