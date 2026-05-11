@@ -376,6 +376,26 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ---
 
+## Domain-specific extensions (Phase 4+)
+
+`llmesh/domains/` は `research/` の縦軸 sibling — `research/` がドメイン中立な literature → hypothesis → planner → reviewer ループを提供する一方、`domains/<vertical>/` は materials / robotics / biology などの縦軸専門 predictor + agent skeleton を提供する。
+
+### `domains.materials` (Phase 4)
+
+| 要素 | 役割 |
+|---|---|
+| `Structure(structure_id, composition, descriptors)` | 構造記述 (元素 → atomic fraction の dict + 自由形 descriptors) |
+| `Property(name, unit)` | 評価対象物性 (band_gap / eV など) |
+| `PropertyPrediction(structure_id, property, value, stddev?, method)` | 予測 1 件 |
+| `PropertyPredictor.predict(structure, property)` ABC | 真の predictor (random forest / GNN / ALIGNN) の差し込み点。`MockPropertyPredictor` は SHA-1 ベースの determinisitic pseudo-regressor で random forest 代替 |
+| `CandidateGeneratorAgent.propose(seed, target_property, n)` ABC | seed 周辺で n 候補生成。`Mock*` は composition の deterministic perturb |
+| `EvaluatorAgent.evaluate(predictions, target_value)` ABC | `EvaluationResult(score, rank, accept)` を返す。`Mock*` は abs 距離 + top-K acceptance |
+| `discover_top_k()` | propose → predict → evaluate → top-K の 1 ジェネレーションを 1 関数化。BO 風の反復は Phase 5+ |
+
+`research.literature` と同じく **no-pydantic** ポリシー (`@dataclass(frozen=True)` + primitive/tuple/dict のみ)。真の ML backend (scikit-learn / PyTorch) を持たない PoC でも閉ループが回る。
+
+---
+
 ## Research agents (Phase 1+)
 
 `llmesh/research/` は `core.Agent` を基盤に研究自動化の役割別エージェントを追加するパッケージ。Phase 1 ではまず **literature agent** を mock-first で導入。
