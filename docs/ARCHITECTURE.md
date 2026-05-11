@@ -341,6 +341,41 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ---
 
+## Research-orchestration core (Phase 0a / 0b)
+
+`llmesh/core/` は research-automation / robotics planning / multimodal knowledge を 1 つの基盤に統合するための最小プリミティブ群。pydantic 依存を持たず標準 `dataclasses` のみで構成され、`llmesh-mcp` の組み込み Linux / RTOS 配布制約に従う。
+
+| モジュール | 役割 |
+|------------|------|
+| `core.agent.Agent[I, O]` | typed I/O ABC。subclass が `@dataclass` で request / response を定義し `run(req) -> res` を実装。`AgentConfig` は frozen で trace に逐語シリアライズ可能 |
+| `core.tool.Tool[I, O]` | side-effect 持ちの外部呼び出し ABC (REST / 関数 / シミュレータ / ロボットドライバ等)。`ToolSpec.description` は planner agent のツール選択に利用 |
+| `core.task.TaskGraph` | `TaskNode` の DAG。`topo_order()` で Kahn 法による実行順序計算、cycle / unknown dependency を早期 `ValueError` |
+| `core.trace.TraceEntry` + `write_trace_jsonl` | 1 entry 単位の append-only JSONL プリミティブ |
+| `core.trace_logger.TraceLogger` | 単一 run を貫く JSONL ロガー。`run.start` / `run.end` で `run_id` + `seed` + `config` を自己記述化、`log_prompt` / `log_tool_call` / `log_agent_run` / `log_evaluation` の typed helper + 任意 kind 用 `log()` を提供。`threading.Lock` で seq インクリメントと書込みを直列化 |
+
+### Trace JSONL の中身 (Phase 0b)
+
+```
+{"run_id": "ab12...", "seq": 0, "kind": "run.start", "extra": {"seed": 42, "config": {...}}, ...}
+{"run_id": "ab12...", "seq": 1, "kind": "llm.prompt", "input_payload": {"prompt": "..."},
+    "output_payload": {"response": "..."}, "extra": {"model": "claude-haiku-4-5", "model_version": "20251001"}, ...}
+{"run_id": "ab12...", "seq": 2, "kind": "tool.call", "actor": "search", ...}
+{"run_id": "ab12...", "seq": 3, "kind": "agent.run", "actor": "agent.planner", ...}
+{"run_id": "ab12...", "seq": 4, "kind": "evaluation", "extra": {"target": "agent.planner#3"}, ...}
+{"run_id": "ab12...", "seq": 5, "kind": "run.end", "extra": {"total_entries": 6}, ...}
+```
+
+- `seq` は run 内で単調増加。replay 時のソート不要。
+- 標準 `kind`: `run.start` / `run.end` / `llm.prompt` / `tool.call` / `agent.run` / `evaluation`。`log()` 経由でカスタム kind も可。
+- `model_version` は backend がサーブしているリビジョン (e.g. snapshot 日付)。モデル更新を跨いだ trace diff に必要。
+- context-manager 内で例外が出た場合は `run.end.extra.error = {"type": ..., "message": ...}` として残る。
+
+### `llmesh.audit.trace` との関係
+
+`audit.trace` は HMAC チェーンで改竄検知する compliance-grade。`core.trace` は研究運用のための operational trace で、HMAC を持たない代わりに append-only JSONL の単純さを優先する。両者は意図的に分離されており、研究イテレーション速度と audit chain rotation を結合させない。
+
+---
+
 ## テスト構成
 
 ```
