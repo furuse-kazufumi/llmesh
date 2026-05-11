@@ -231,14 +231,24 @@ class TraceLogger:
         output_payload: dict[str, Any],
         metrics: dict[str, Any] | None = None,
         extra: dict[str, Any] | None = None,
+        cost: CostBreakdown | None = None,
+        attribution: Iterable[AttributionLink] | None = None,
+        redundancy: RedundancyFlag | None = None,
     ) -> int:
+        merged_metrics, merged_extra = _merge_d1_fields(
+            metrics=metrics,
+            extra=extra,
+            cost=cost,
+            attribution=attribution,
+            redundancy=redundancy,
+        )
         return self.log(
             actor=tool,
             kind=KIND_TOOL_CALL,
             input_payload=input_payload,
             output_payload=output_payload,
-            metrics=metrics,
-            extra=extra,
+            metrics=merged_metrics,
+            extra=merged_extra,
         )
 
     def log_agent_run(
@@ -249,14 +259,59 @@ class TraceLogger:
         output_payload: dict[str, Any],
         metrics: dict[str, Any] | None = None,
         extra: dict[str, Any] | None = None,
+        cost: CostBreakdown | None = None,
+        attribution: Iterable[AttributionLink] | None = None,
+        redundancy: RedundancyFlag | None = None,
     ) -> int:
+        merged_metrics, merged_extra = _merge_d1_fields(
+            metrics=metrics,
+            extra=extra,
+            cost=cost,
+            attribution=attribution,
+            redundancy=redundancy,
+        )
         return self.log(
             actor=agent,
             kind=KIND_AGENT_RUN,
             input_payload=input_payload,
             output_payload=output_payload,
+            metrics=merged_metrics,
+            extra=merged_extra,
+        )
+
+    def log_step(
+        self,
+        actor: str,
+        kind: TraceKind,
+        *,
+        input_payload: dict[str, Any] | None = None,
+        output_payload: dict[str, Any] | None = None,
+        metrics: dict[str, Any] | None = None,
+        extra: dict[str, Any] | None = None,
+        cost: CostBreakdown | None = None,
+        attribution: Iterable[AttributionLink] | None = None,
+        redundancy: RedundancyFlag | None = None,
+    ) -> int:
+        """Generic D1-aware logging entry point.
+
+        Use this for arbitrary trace kinds that don't fit ``log_prompt``
+        / ``log_tool_call`` / ``log_agent_run`` but still need cost
+        accounting, attribution links, or redundancy classification.
+        """
+        merged_metrics, merged_extra = _merge_d1_fields(
             metrics=metrics,
             extra=extra,
+            cost=cost,
+            attribution=attribution,
+            redundancy=redundancy,
+        )
+        return self.log(
+            actor=actor,
+            kind=kind,
+            input_payload=input_payload,
+            output_payload=output_payload,
+            metrics=merged_metrics,
+            extra=merged_extra,
         )
 
     def log_evaluation(
