@@ -215,6 +215,7 @@ __all__ = [
     "parse_literature_result",
     "parse_plan_result",
     "parse_verdict_result",
+    "rank_candidates",
     "render_paper_md",
     "render_timing_svg",
     "run_plan_review_loop",
