@@ -10,6 +10,15 @@ inject an :data:`ExtractFn` that wraps any concrete LLM backend
 from __future__ import annotations
 
 from llmesh.research.e2e import E2EResult, run_research_pipeline
+from llmesh.research.failure_driven import (
+    DEFAULT_STRATEGIES,
+    FailedExperiment,
+    FailureDrivenGenerator,
+    FailureDrivenRequest,
+    InversionStrategy,
+    invert_failures,
+    mock_failure_driven_extract,
+)
 from llmesh.research.paper_exporter import (
     ExportBundle,
     export_metrics_csv,
