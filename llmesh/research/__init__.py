@@ -126,6 +126,9 @@ from llmesh.research.reviewer import (
 )
 
 __all__ = [
+    "Belief",
+    "BeliefStore",
+    "CandidateExperiment",
     "ContactEvent",
     "DEFAULT_STRATEGIES",
     "E2EResult",
