@@ -116,6 +116,8 @@ __all__ = [
     "episode_to_jsonl_line",
     "evaluate_bc_policy",
     "evaluate_trials",
+    "gripper_monotonic_checker",
+    "joint_limit_checker",
     "load_dataset",
     "parse_scene_text",
     "save_dataset",
