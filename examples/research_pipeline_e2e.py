@@ -36,7 +36,16 @@ in the terminal. Adjust the constants at the top to dial up the noise.
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
+
+# Windows consoles default to cp932 which can't render em-dash / check marks;
+# nudge stdout to utf-8 when the runtime supports it. Silently no-op elsewhere.
+if hasattr(sys.stdout, "reconfigure"):
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except (AttributeError, OSError):
+        pass
 
 from llmesh.core import (
     AttributionLink,
