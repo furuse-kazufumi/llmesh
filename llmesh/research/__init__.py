@@ -171,6 +171,8 @@ __all__ = [
     "export_paper_bundle",
     "export_runs_csv",
     "iter_trace",
+    "make_ros2_motion_tool",
+    "run_ros2_demo_loop",
     "make_anthropic_extract",
     "make_ollama_extract",
     "mock_extract",
