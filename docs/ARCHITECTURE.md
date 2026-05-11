@@ -454,6 +454,7 @@ tests/
 ├── test_research_literature.py  # research.literature LiteratureAgent (Phase 1 PoC)
 ├── test_research_phase2.py      # hypothesis + planner + reviewer + loop (Phase 2)
 ├── test_research_robotics.py    # robotics ABCs + Mock* + pipeline (Phase 3 I/F)
+├── test_domains_materials.py    # domains.materials predictor + discover_top_k (Phase 4)
 ├── test_data_level.py           # DataLevel / ClassifiedPayload
 ├── test_firewall.py             # PromptFirewall Layer1/2
 ├── test_identity.py             # NodeIdentity (Ed25519 + did:llmesh:1:)
