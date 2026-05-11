@@ -16,11 +16,36 @@ sequences when the observation changes.
 
 from __future__ import annotations
 
+from llmesh.vla.dataset import (
+    TrajectoryEpisode,
+    episode_from_jsonl_line,
+    episode_to_jsonl_line,
+    load_dataset,
+    save_dataset,
+)
 from llmesh.vla.decoders import (
     ActionDecoder,
     MockTwistDecoder,
     Twist,
     TwistActionStream,
+)
+from llmesh.vla.image_encoder import (
+    ImageEncoder,
+    ImageObservation,
+    MockImageEncoder,
+)
+from llmesh.vla.joint_decoder import (
+    JointTrajectory,
+    JointTrajectoryDecoder,
+    JointWaypoint,
+    MockJointTrajectoryDecoder,
+    waypoints_to_trajectory,
+)
+from llmesh.vla.replan import (
+    ExecutionFault,
+    FailureMode,
+    ReplanController,
+    ReplanDecision,
 )
 from llmesh.vla.encoders import (
     MockTextSceneEncoder,
