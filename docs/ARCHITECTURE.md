@@ -376,6 +376,24 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ---
 
+## Research agents (Phase 1+)
+
+`llmesh/research/` は `core.Agent` を基盤に研究自動化の役割別エージェントを追加するパッケージ。Phase 1 ではまず **literature agent** を mock-first で導入。
+
+### `research.literature.LiteratureAgent` (Phase 1 PoC)
+
+| 要素 | 内容 |
+|------|------|
+| Request | `LiteratureRequest(text: str, title: str = "")` — Markdown / plain text 入力 |
+| Response | `LiteratureResponse(research_question, constraints, metrics, open_problems, raw)` — list は `tuple[str, ...]` に正規化 |
+| Backend 注入 | `ExtractFn = Callable[[str], dict]` — prompt 文字列 → JSON dict を返す純関数。テストは `mock_extract`、本番は `make_ollama_extract` / `make_anthropic_extract` で既存 `LLMBackend.invoke` を tool name `"literature_extract"` の下にラップ |
+| Prompt | `build_literature_prompt(text, title)` — 4 キー (`research_question` / `constraints` / `metrics` / `open_problems`) を strict JSON で返すよう指示。12,000 文字超は truncated |
+| Parser | `parse_literature_result(dict)` — research_question 欠落のみ `ValueError`、list 系欠落は空 tuple、単文字列はサイズ 1 の tuple にコース |
+
+PoC の e2e テストは `tests/fixtures/dummy_paper.md` を fake_extract closure に通して dataclass まで往復させる構成。Phase 1 constraint「mock-first」を満たす。Phase 2 (hypothesis / planner) は `LiteratureResponse` を消費する形で接続する。
+
+---
+
 ## テスト構成
 
 ```
