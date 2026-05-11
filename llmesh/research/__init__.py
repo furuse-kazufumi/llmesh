@@ -135,6 +135,8 @@ __all__ = [
     "Belief",
     "BeliefStore",
     "CandidateExperiment",
+    "ComponentScore",
+    "CompositionPlan",
     "ContactEvent",
     "DEFAULT_STRATEGIES",
     "E2EResult",
