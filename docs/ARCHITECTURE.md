@@ -31,6 +31,12 @@
 
 ```
 llmesh/
+├── core/                       # v3.2+ Research-orchestration primitives (Phase 0a/0b)
+│   ├── agent.py                # Agent ABC + AgentConfig (frozen) — typed I/O contract
+│   ├── tool.py                 # Tool ABC + ToolSpec — semantic call boundary
+│   ├── task.py                 # TaskGraph + TaskNode + topo_order (Kahn)
+│   ├── trace.py                # TraceEntry + write_trace_jsonl (append-only JSONL)
+│   └── trace_logger.py         # TraceLogger — run.start/end + prompt/tool/agent/eval helpers, threadsafe
 ├── classifier/
 │   └── data_level.py          # DataLevel (L0〜L4) + ClassifiedPayload
 ├── privacy/
