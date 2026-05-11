@@ -376,6 +376,28 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ---
 
+## Multimodal memory + document parsers (Phase 5)
+
+`llmesh/rag/` に既存 RAG 層 (Embedder / VectorStore / Retriever) と並んで Phase 5 の 2 機能を追加：
+
+### `rag.parsers` — document parser (PDF / Markdown / HTML / text)
+
+- `parse_text` / `parse_markdown` / `parse_html` は stdlib のみ。Markdown は regex で見出し/強調/コード/リンク/箇条書きを剥がし、HTML は `html.parser` 経由で `<script>` / `<style>` を除外
+- `parse_pdf` は optional `pypdf` 依存。未インストール時は `PDFExtractionError`
+- `parse_document(source, kind="auto")` ディスパッチ: Path なら拡張子で振り分け、bytes は PDF 既定、str は text 既定
+
+### `rag.multimodal` — text / image / table / log を同一 ID 空間
+
+- `Modality = "text" | "image" | "table" | "log"`
+- `MultimodalRecord(record_id, modality, content, vector, metadata)` — frozen。`content` は modality 依存 (text=str / image=URI / table=tuple[tuple[str,...],...] / log=str)
+- `MultimodalStoreBackend` ABC + `InMemoryMultimodalStore` (stdlib のみ、cosine は `math.sqrt`)
+- `MultimodalMemory` ファサード: `add_text` / `add_image` / `add_table` / `add_log` の typed helper + `get` / `remove` / `iter_modality` / `search(query_vector, modalities=None, top_k=5)`
+- 「既存 llmesh.rag に上乗せ」: 既存の `Document` / `VectorStore` とは別軌道で、modality 横断検索が必要な研究データ (literature digest, hypothesis trace, robot perception, materials prediction) を 1 名前空間にまとめる目的特化レイヤー
+
+Phase 1/4 → Phase 5 統合は `test_rag_multimodal.py::TestResearchArtefactsIntoMemory` で確認 (`LiteratureResponse.research_question` を `add_text` で memory に投入)。
+
+---
+
 ## Domain-specific extensions (Phase 4+)
 
 `llmesh/domains/` は `research/` の縦軸 sibling — `research/` がドメイン中立な literature → hypothesis → planner → reviewer ループを提供する一方、`domains/<vertical>/` は materials / robotics / biology などの縦軸専門 predictor + agent skeleton を提供する。
