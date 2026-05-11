@@ -24,6 +24,23 @@ import it directly via ``from llmesh.rag.numpy_store import
 NumpyVectorStore``.
 """
 from .embedder import Embedder, MockEmbedder, OllamaEmbedder, EmbeddingError
+from .multimodal import (
+    InMemoryMultimodalStore,
+    Modality,
+    MultimodalHit,
+    MultimodalMemory,
+    MultimodalRecord,
+    MultimodalStoreBackend,
+)
+from .parsers import (
+    PDFExtractionError,
+    ParserKind,
+    parse_document,
+    parse_html,
+    parse_markdown,
+    parse_pdf,
+    parse_text,
+)
 from .sqlite_store import SqliteVectorStore
 from .store import Document, RetrievedDocument, VectorStore
 from .retriever import Retriever, RetrievalResult
