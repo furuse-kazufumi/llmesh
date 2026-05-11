@@ -11,8 +11,23 @@ from llmesh.core.agent import Agent, AgentConfig
 from llmesh.core.task import TaskGraph, TaskKind, TaskNode
 from llmesh.core.tool import Tool, ToolSpec
 from llmesh.core.trace import TraceEntry, TraceKind, make_entry, write_trace_jsonl
+from llmesh.core.trace_logger import (
+    KIND_AGENT_RUN,
+    KIND_EVALUATION,
+    KIND_PROMPT,
+    KIND_RUN_END,
+    KIND_RUN_START,
+    KIND_TOOL_CALL,
+    TraceLogger,
+)
 
 __all__ = [
+    "KIND_AGENT_RUN",
+    "KIND_EVALUATION",
+    "KIND_PROMPT",
+    "KIND_RUN_END",
+    "KIND_RUN_START",
+    "KIND_TOOL_CALL",
     "Agent",
     "AgentConfig",
     "TaskGraph",
@@ -22,6 +37,7 @@ __all__ = [
     "ToolSpec",
     "TraceEntry",
     "TraceKind",
+    "TraceLogger",
     "make_entry",
     "write_trace_jsonl",
 ]
