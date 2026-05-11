@@ -16,6 +16,16 @@ from llmesh.research.composition import (
     compose,
 )
 from llmesh.research.e2e import E2EResult, run_research_pipeline
+from llmesh.research.fidelity import (
+    DEFAULT_TIER_ORDER,
+    FidelityResult,
+    FidelityRunner,
+    FidelityTier,
+    PipelineConfig,
+    PipelineRun,
+    make_mock_runner,
+    run_pipeline,
+)
 from llmesh.research.experiment_selector import (
     Belief,
     BeliefStore,
