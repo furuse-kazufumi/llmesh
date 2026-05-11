@@ -216,7 +216,12 @@ class MultimodalMemory:
     """
 
     def __init__(self, backend: MultimodalStoreBackend | None = None) -> None:
-        self._backend: MultimodalStoreBackend = backend or InMemoryMultimodalStore()
+        # ``backend or X`` short-circuits when the backend is empty
+        # (``__len__`` returns 0 → falsy), which would silently swap
+        # in a fresh store. ``is None`` keeps the injected backend.
+        self._backend: MultimodalStoreBackend = (
+            backend if backend is not None else InMemoryMultimodalStore()
+        )
 
     # ---- write -------------------------------------------------------
 
