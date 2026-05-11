@@ -89,6 +89,11 @@ __all__ = [
     "VLAAgent",
     "VisionEncoder",
     "VisionLanguageRequest",
+    "episode_from_jsonl_line",
+    "episode_to_jsonl_line",
     "evaluate_trials",
+    "load_dataset",
     "parse_scene_text",
+    "save_dataset",
+    "waypoints_to_trajectory",
 ]
