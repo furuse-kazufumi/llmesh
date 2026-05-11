@@ -23,8 +23,15 @@ import threading
 import uuid
 from pathlib import Path
 from types import TracebackType
-from typing import Any
+from typing import Any, Iterable
 
+from llmesh.core.cost_attribution import (
+    AttributionLink,
+    CostBreakdown,
+    RedundancyFlag,
+    attribution_to_extra,
+    cost_to_metrics,
+)
 from llmesh.core.trace import TraceEntry, TraceKind, make_entry, write_trace_jsonl
 
 # Standard trace kinds emitted by this logger. Custom kinds are accepted
