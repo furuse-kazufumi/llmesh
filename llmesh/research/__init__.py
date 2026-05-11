@@ -10,6 +10,15 @@ inject an :data:`ExtractFn` that wraps any concrete LLM backend
 from __future__ import annotations
 
 from llmesh.research.e2e import E2EResult, run_research_pipeline
+from llmesh.research.paper_exporter import (
+    ExportBundle,
+    export_metrics_csv,
+    export_paper_bundle,
+    export_runs_csv,
+    iter_trace,
+    render_paper_md,
+    render_timing_svg,
+)
 from llmesh.research.executor import (
     ExperimentExecutor,
     ExperimentResult,
