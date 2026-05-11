@@ -1,0 +1,57 @@
+"""Vision-Language-Action (VLA) agents — Phase 9 PoC.
+
+The :class:`VLAAgent` is the top-level contract: given a
+:class:`VisionLanguageRequest` (instruction + observation) it produces
+an :class:`ActionStream` of robot actions. Concrete agents plug a
+:class:`VisionEncoder` (text / image / point-cloud → feature) and an
+:class:`ActionDecoder` (feature + instruction → action sequence).
+
+Phase 9 ships a mock-first turtlesim-style PoC:
+:class:`MockVLAAgent` is rule-based, takes a text observation
+(``turtle at (x,y), target at (x,y), walls at [...]``), and emits
+:class:`Twist` actions. The mock is deterministic and demonstrably
+**scene-conditional** — the same instruction yields different action
+sequences when the observation changes.
+"""
+
+from __future__ import annotations
+
+from llmesh.vla.decoders import (
+    ActionDecoder,
+    MockTwistDecoder,
+    Twist,
+    TwistActionStream,
+)
+from llmesh.vla.encoders import (
+    MockTextSceneEncoder,
+    SceneFeatures,
+    VisionEncoder,
+)
+from llmesh.vla.metrics import EpisodeOutcome, EvaluationReport, evaluate_trials
+from llmesh.vla.mock_agent import MockVLAAgent
+from llmesh.vla.scene import SceneObject, SceneState, parse_scene_text
+from llmesh.vla.vla import (
+    ActionStream,
+    VisionLanguageRequest,
+    VLAAgent,
+)
+
+__all__ = [
+    "ActionDecoder",
+    "ActionStream",
+    "EpisodeOutcome",
+    "EvaluationReport",
+    "MockTextSceneEncoder",
+    "MockTwistDecoder",
+    "MockVLAAgent",
+    "SceneFeatures",
+    "SceneObject",
+    "SceneState",
+    "Twist",
+    "TwistActionStream",
+    "VLAAgent",
+    "VisionEncoder",
+    "VisionLanguageRequest",
+    "evaluate_trials",
+    "parse_scene_text",
+]
