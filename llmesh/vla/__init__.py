@@ -83,6 +83,8 @@ __all__ = [
     "ActionStream",
     "BCEvalReport",
     "BCPolicy",
+    "ConstraintFn",
+    "ConstraintViolation",
     "EpisodeOutcome",
     "EvaluationReport",
     "ExecutionFault",
