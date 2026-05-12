@@ -64,12 +64,25 @@ from llmesh.vla.replay import (
     replay_episode,
     velocity_cap_checker,
 )
+from llmesh.vla.snn import (
+    LIFLayer,
+    LIFParams,
+    LIFState,
+    run_layer,
+    spikes_to_rates,
+    step_lif,
+)
 from llmesh.vla.sparse_encoder import (
     EventToken,
     SparseEncoder,
     SparseObservation,
     dense_to_events,
     events_to_feature_vector,
+)
+from llmesh.vla.sparse_vla import (
+    DiscreteAction,
+    SparseVLAAgent,
+    SparseVLAConfig,
 )
 from llmesh.vla.encoders import (
     MockTextSceneEncoder,
