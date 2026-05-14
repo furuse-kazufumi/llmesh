@@ -208,3 +208,251 @@ class TestTimelineEndpointsEnabled:
         assert resp.status_code == 200
         tasks = resp.json()["tasks"]
         assert any(t["task_id"] == tid for t in tasks)
+
+
+# ---------------------------------------------------------------------------
+# F25 (f): /timeline/ingest endpoint (external producers like llive)
+# ---------------------------------------------------------------------------
+
+
+def _ingest_body(
+    event_type: str = "bwt_summary",
+    *,
+    task_id: str | None = None,
+    node_id: str | None = None,
+    metadata: dict | None = None,
+) -> dict:
+    """Build a minimal valid ingest body, with overrides."""
+    body: dict = {
+        "task_id": task_id or str(uuid.uuid4()),
+        "event_type": event_type,
+        "metadata": metadata if metadata is not None else {"bwt": -0.008, "n_tasks": 5},
+    }
+    if node_id is not None:
+        body["node_id"] = node_id
+    return body
+
+
+class TestTimelineIngestDisabled:
+    """When LLMESH_TIMELINE_DB_PATH is unset, ingest returns 503."""
+
+    def test_ingest_returns_503_when_timeline_not_configured(self):
+        with patch("llmesh.mcp.server._timeline", None):
+            resp = client.post("/timeline/ingest", json=_ingest_body())
+        assert resp.status_code == 503
+        assert resp.json()["detail"] == "timeline_not_configured"
+
+
+class TestTimelineIngestEnabled:
+    def _mock_store(self, tmp_path):
+        return TimelineStore(tmp_path / "tl.db")
+
+    # ----- happy path -----
+
+    def test_ingest_stores_event(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="bwt_summary",
+            metadata={"bwt": -0.008, "n_tasks": 5, "avg_accuracy": 0.78},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+        assert resp.json() == {"stored": True}
+        events = store.get_task_timeline(body["task_id"])
+        assert len(events) == 1
+        assert events[0].event_type == "bwt_summary"
+        assert events[0].metadata["bwt"] == -0.008
+        assert events[0].metadata["n_tasks"] == 5
+
+    def test_ingest_accepts_route_trace_event(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="route_trace",
+            metadata={"subblocks": [], "metrics": {"latency_ms": 1.0}},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
+    def test_ingest_accepts_concept_update_event(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="concept_update",
+            metadata={"concept_id": "memory-consolidation"},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
+    def test_ingest_then_read_round_trip(self, tmp_path):
+        """Ingest → /timeline/recent → 同じ event が読める."""
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="bwt_summary",
+            node_id="llive-instance-1",
+            metadata={"bwt": -0.01},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            ingest_resp = client.post("/timeline/ingest", json=body)
+            recent_resp = client.get(
+                "/timeline/recent?node_id=llive-instance-1"
+            )
+        assert ingest_resp.status_code == 200
+        assert recent_resp.status_code == 200
+        events = recent_resp.json()["events"]
+        assert len(events) == 1
+        assert events[0]["event_type"] == "bwt_summary"
+        assert events[0]["node_id"] == "llive-instance-1"
+
+    def test_ingest_node_id_from_header(self, tmp_path):
+        """node_id を body に書かなくても X-Node-Id ヘッダから取れる."""
+        store = self._mock_store(tmp_path)
+        body = _ingest_body()
+        body.pop("node_id", None)  # 念のため削除
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post(
+                "/timeline/ingest",
+                json=body,
+                headers={"X-Node-Id": "header-supplied"},
+            )
+        assert resp.status_code == 200
+        events = store.get_task_timeline(body["task_id"])
+        assert events[0].node_id == "header-supplied"
+
+    def test_ingest_body_node_id_takes_precedence_over_header(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(node_id="body-wins")
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post(
+                "/timeline/ingest",
+                json=body,
+                headers={"X-Node-Id": "header-loses"},
+            )
+        assert resp.status_code == 200
+        events = store.get_task_timeline(body["task_id"])
+        assert events[0].node_id == "body-wins"
+
+    # ----- task_id validation -----
+
+    def test_ingest_rejects_missing_task_id(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body()
+        body["task_id"] = ""
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+        assert "missing_task_id" in resp.json()["detail"]
+
+    def test_ingest_rejects_non_uuid_task_id(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(task_id="not-a-uuid")
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+        assert "invalid_task_id_uuid4" in resp.json()["detail"]
+
+    def test_ingest_rejects_uuid_v1_task_id(self, tmp_path):
+        """UUID v1 (timestamp ベース) は拒否。v4 のみ受け入れる."""
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(task_id=str(uuid.uuid1()))
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+
+    # ----- event_type validation -----
+
+    def test_ingest_rejects_unknown_event_type(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(event_type="completed")  # 内部 event, ingest 不可
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+        assert "unknown_event_type" in resp.json()["detail"]
+
+    def test_ingest_rejects_empty_event_type(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(event_type="")
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+
+    # ----- metadata validation -----
+
+    def test_ingest_rejects_non_object_metadata(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(metadata=[1, 2, 3])  # type: ignore[arg-type]
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+        assert "metadata_must_be_object" in resp.json()["detail"]
+
+    def test_ingest_rejects_reserved_metadata_key(self, tmp_path):
+        """metadata に予約キー (task_id 等) を入れると 422."""
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(metadata={"task_id": "shadow", "bwt": 0.0})
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 422
+        assert "reserved_metadata_key" in resp.json()["detail"]
+
+    def test_ingest_empty_metadata_ok(self, tmp_path):
+        """metadata = {} は valid (一部 event は metadata 不要)."""
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(metadata={})
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
+    # ----- node_id validation -----
+
+    def test_ingest_rejects_long_x_node_id_header(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body()
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post(
+                "/timeline/ingest",
+                json=body,
+                headers={"X-Node-Id": "x" * 200},
+            )
+        assert resp.status_code == 400
+        assert resp.json()["detail"] == "node_id_too_long"
+
+    def test_ingest_rejects_long_body_node_id(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(node_id="x" * 200)
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 400
+        assert resp.json()["detail"] == "node_id_too_long"
+
+    # ----- body / content-type validation -----
+
+    def test_ingest_rejects_non_json_body(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post(
+                "/timeline/ingest",
+                content=b"not json",
+                headers={"Content-Type": "application/json"},
+            )
+        assert resp.status_code == 400
+        assert resp.json()["detail"] == "json_parse_error"
+
+    def test_ingest_rejects_array_top_level(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=["not", "an", "object"])
+        assert resp.status_code == 400
+        assert resp.json()["detail"] == "request_must_be_object"
+
+    def test_ingest_rejects_non_json_content_type(self, tmp_path):
+        """既存の _json_only middleware が POST には application/json を要求."""
+        store = self._mock_store(tmp_path)
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post(
+                "/timeline/ingest",
+                content=b'{"task_id":"x"}',
+                headers={"Content-Type": "text/plain"},
+            )
+        assert resp.status_code == 415
