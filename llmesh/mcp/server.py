@@ -365,6 +365,130 @@ async def identity() -> JSONResponse:
     })
 
 
+# --- F25 (f): External event ingest from llive / other producers ---
+#
+# Phase 2 OBS-03 spec frozen in llove's docs/llove_llive_bridge.md.
+# Allow-list keeps the surface intentionally narrow — adding a new
+# event_type requires a deliberate edit here (not just a producer change).
+_ALLOWED_INGEST_EVENT_TYPES: frozenset[str] = frozenset({
+    "route_trace",
+    "concept_update",
+    "bwt_summary",
+})
+
+# Body field names that collide with TimelineStore.record positional args.
+# We refuse them in metadata so ingesters can't accidentally shadow the
+# canonical fields (task_id / node_id / event_type / timestamp_utc).
+_RESERVED_METADATA_KEYS: frozenset[str] = frozenset({
+    "task_id",
+    "node_id",
+    "event_type",
+    "timestamp_utc",
+})
+
+
+@app.post("/timeline/ingest")
+async def timeline_ingest(request: Request) -> JSONResponse:
+    """External producers (llive / future MQTT bridge / etc.) push events
+    into TimelineStore. Read-side endpoints (``/timeline/recent`` /
+    ``/timeline/task/{id}``) consume them transparently.
+
+    Body schema (frozen by ``llove/docs/llove_llive_bridge.md`` v1):
+
+    ::
+
+        {
+          "task_id":   "<UUID v4>",
+          "node_id":   "<= 128 chars, optional (defaults to X-Node-Id)>",
+          "event_type": "route_trace | concept_update | bwt_summary",
+          "metadata":  { ... }
+        }
+
+    Response 200: ``{"stored": true}``
+
+    timestamp_utc is assigned server-side at receive time (TimelineStore
+    convention). Clients should not supply it; if they do, it is ignored.
+
+    Errors:
+        400 json_parse_error | request_must_be_object | node_id_too_long
+        413 request_too_large (body > 64 KB, handled by middleware)
+        415 unsupported_media_type (handled by middleware)
+        422 missing_task_id | invalid_task_id_uuid4:<...> |
+            unknown_event_type:<...> | metadata_must_be_object |
+            reserved_metadata_key:<...>
+        429 rate_limit_exceeded
+        503 timeline_not_configured
+    """
+    if _timeline is None:
+        raise HTTPException(status_code=503, detail="timeline_not_configured")
+
+    # --- Rate limiting (per node, before any parsing work) ---
+    node_id_header = request.headers.get("X-Node-Id", "")
+    if len(node_id_header) > _MAX_NODE_ID_LEN:
+        raise HTTPException(status_code=400, detail="node_id_too_long")
+    try:
+        _rate_limiter.check(
+            node_id_header
+            or (request.client.host if request.client else "anonymous")
+        )
+    except RateLimitExceeded:
+        raise HTTPException(status_code=429, detail="rate_limit_exceeded")
+
+    # --- Body parse ---
+    try:
+        body: dict[str, Any] = await request.json()
+    except Exception:
+        raise HTTPException(status_code=400, detail="json_parse_error")
+    if not isinstance(body, dict):
+        raise HTTPException(status_code=400, detail="request_must_be_object")
+
+    # --- task_id (UUID v4) ---
+    task_id = str(body.get("task_id", ""))
+    if not task_id:
+        raise HTTPException(status_code=422, detail="missing_task_id")
+    try:
+        parsed_uuid = uuid.UUID(task_id, version=4)
+        if parsed_uuid.version != 4:
+            raise ValueError("not_v4")
+    except (ValueError, AttributeError):
+        raise HTTPException(
+            status_code=422, detail=f"invalid_task_id_uuid4:{task_id!r}"
+        )
+
+    # --- event_type allow-list ---
+    event_type = str(body.get("event_type", ""))
+    if event_type not in _ALLOWED_INGEST_EVENT_TYPES:
+        raise HTTPException(
+            status_code=422, detail=f"unknown_event_type:{event_type}"
+        )
+
+    # --- metadata structure check + reserved-key guard ---
+    metadata = body.get("metadata", {})
+    if not isinstance(metadata, dict):
+        raise HTTPException(status_code=422, detail="metadata_must_be_object")
+    for k in metadata:
+        if k in _RESERVED_METADATA_KEYS:
+            raise HTTPException(
+                status_code=422, detail=f"reserved_metadata_key:{k}"
+            )
+
+    # --- Resolve node_id: body has priority, fall back to header ---
+    body_node_id = body.get("node_id", "")
+    final_node_id = str(body_node_id) if body_node_id else node_id_header
+    if len(final_node_id) > _MAX_NODE_ID_LEN:
+        raise HTTPException(status_code=400, detail="node_id_too_long")
+
+    # --- Record. TimelineStore.record assigns timestamp_utc server-side. ---
+    _timeline.record(
+        task_id,
+        final_node_id,
+        event_type,
+        **metadata,
+    )
+
+    return JSONResponse(content={"stored": True})
+
+
 @app.get("/timeline/task/{task_id}")
 async def timeline_task(task_id: str) -> JSONResponse:
     """Return the full event timeline for a single task_id."""
