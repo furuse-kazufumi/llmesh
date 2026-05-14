@@ -51,7 +51,7 @@ fn pc_to_bytes<'py>(py: Python<'py>, points: &Bound<'py, PyList>) -> PyResult<Bo
         out[off + 4..off + 8].copy_from_slice(&y.to_le_bytes());
         out[off + 8..off + 12].copy_from_slice(&z.to_le_bytes());
     }
-    Ok(PyBytes::new_bound(py, &out))
+    Ok(PyBytes::new(py, &out))
 }
 
 /// Decode a byte string back into a list of (x, y, z) f32 tuples.
@@ -94,7 +94,7 @@ fn dvs_encode<'py>(py: Python<'py>, events: &Bound<'py, PyList>) -> PyResult<Bou
         out[off + 4..off + 8].copy_from_slice(&t_us.to_le_bytes());
         out[off + 8] = if polarity { 1 } else { 0 };
     }
-    Ok(PyBytes::new_bound(py, &out))
+    Ok(PyBytes::new(py, &out))
 }
 
 /// Decode bytes back into a list of (x, y, t_us, polarity_bool) tuples.
