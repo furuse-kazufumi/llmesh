@@ -1,7 +1,6 @@
 """Tests for BACnetAdapter (v2.4 — K-10.1) — bacpypes3 mocked throughout."""
 from __future__ import annotations
 
-import asyncio
 import struct
 import sys
 from unittest.mock import AsyncMock, MagicMock, patch

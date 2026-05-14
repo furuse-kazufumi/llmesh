@@ -1,7 +1,6 @@
 """Tests for POP3Adapter — POP3 mailbox poller."""
 from __future__ import annotations
 
-import asyncio
 import poplib
 from unittest.mock import AsyncMock, MagicMock, patch
 

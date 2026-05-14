@@ -6,10 +6,9 @@ import json
 import pytest
 
 from llmesh.industrial.tracing import (
-    IndustrialTracer, Span, current_span,
+    IndustrialTracer, current_span,
     SPAN_STATUS_OK, SPAN_STATUS_ERROR,
     _MAX_ATTRIBUTES_PER_SPAN,
-    _MAX_SPANS_RETAINED,
     _coerce_attribute,
     _new_trace_id, _new_span_id,
 )

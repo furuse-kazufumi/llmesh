@@ -1,5 +1,4 @@
 """Tests for FairnessPolicy — penalty levels, enable/disable opt-out, escalation."""
-import pytest
 from llmesh.fairness.ledger import ContributionLedger
 from llmesh.fairness.policy import FairnessPolicy, FairnessPolicyConfig, PenaltyLevel
 

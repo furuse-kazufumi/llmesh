@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import sys
-from unittest.mock import AsyncMock, MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 import pytest
 
 from llmesh.industrial.sensor_event import Priority, SensorEvent
@@ -69,7 +69,6 @@ def fake_asyncua():
     with patch.dict(sys.modules, {"asyncua": fake, "asyncua.common": fake.common,
                                    "asyncua.common.subscription": fake.common.subscription}):
         # Re-import to pick up the mock
-        import importlib
         import llmesh.industrial.opcua_adapter as mod
         mod._ASYNCUA_AVAILABLE = True
         mod._AsyncuaClient = fake.Client

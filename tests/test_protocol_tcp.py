@@ -7,7 +7,7 @@ import pytest
 
 from llmesh.protocol import NodeAddress, TCPAdapter, TransportError, UnifiedMessage
 from llmesh.protocol.message import MessageType
-from llmesh.protocol.tcp_adapter import _HEADER, _pack_frame, _read_frame
+from llmesh.protocol.tcp_adapter import _HEADER, _read_frame
 
 from helpers import _alloc_port
 

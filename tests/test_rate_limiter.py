@@ -76,7 +76,6 @@ class TestPerNodeRateLimiterCheck:
 
     def test_new_bucket_last_refill_not_after_now(self):
         """last_refill must equal now, not later (negative elapsed regression)."""
-        import time as _time
         rl = PerNodeRateLimiter(rate=100.0, burst=1.0)
         # If last_refill > now, elapsed < 0 → tokens = min(1, 1 + negative) < 1 → raises
         rl.check("regression-node")  # must not raise

@@ -1,11 +1,9 @@
 """Tests for SerialAdapter (v1.4.0)."""
 from __future__ import annotations
 
-import io
 import threading
 import time
-from collections.abc import Generator
-from unittest.mock import MagicMock, patch, PropertyMock
+from unittest.mock import MagicMock
 
 import pytest
 

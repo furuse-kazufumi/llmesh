@@ -12,7 +12,7 @@ from llmesh.industrial.debug import (
     _diagnosis_to_dict, _diagnosis_from_dict,
     _coerce_jsonable,
 )
-from llmesh.industrial.sensor_event import SensorEvent, Priority
+from llmesh.industrial.sensor_event import SensorEvent
 from llmesh.industrial.pipeline import (
     IndustrialPipeline, DiagnosisResult, DiagnosisStatus,
 )

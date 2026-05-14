@@ -1,7 +1,6 @@
 """Tests for SFTPAdapter — virtual FS and file-based prompt/result exchange."""
 from __future__ import annotations
 
-import asyncio
 import time
 import uuid
 
@@ -15,7 +14,6 @@ from llmesh.protocol import (
     TransportError,
     UnifiedMessage,
 )
-from llmesh.protocol._key_utils import generate_ed25519_key
 from llmesh.protocol.message import MessageType
 from llmesh.protocol.sftp_adapter import (
     _InMemoryFile,

@@ -20,11 +20,10 @@ from unittest.mock import MagicMock
 import pytest
 
 from llmesh.industrial import (
-    SensorEvent, Priority,
-    IndustrialPipeline, DiagnosisStatus, DiagnosisResult,
+    SensorEvent, IndustrialPipeline, DiagnosisStatus, DiagnosisResult,
     IndustrialMetrics,
     TenantScope, TenantRegistry,
-    IndustrialTracer, current_span, SPAN_STATUS_OK,
+    IndustrialTracer, SPAN_STATUS_OK,
     XbarRChart,
 )
 

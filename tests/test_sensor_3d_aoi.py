@@ -4,7 +4,6 @@ from __future__ import annotations
 import asyncio
 import json
 import pytest
-from pathlib import Path
 
 from llmesh.industrial.sensor_3d.aoi_adapter import AoiAdapter, AoiResult, _default_priority
 from llmesh.industrial.sensor_event import Priority, SensorEvent

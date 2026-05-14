@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 import pytest
 import logging
 from unittest.mock import MagicMock, patch
@@ -12,7 +11,6 @@ from llmesh.protocol.ros1_adapter import (
     ROS1Adapter,
     _check_double_optin,
     _DEPRECATION_MSG,
-    _BLOCKED_LEVELS,
 )
 from llmesh.protocol.message import MessageType, NodeAddress, UnifiedMessage
 

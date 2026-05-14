@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import asyncio
 import base64
-import hashlib
 import json
 import socket
 import struct
@@ -12,7 +11,7 @@ import pytest
 from llmesh.industrial.websocket_adapter import (
     WebSocketAdapter,
     _ws_accept_key, _client_in_allowlist, _safe_compare,
-    _WS_MAGIC, _OP_TEXT, _OP_BIN, _OP_CLOSE, _OP_PING,
+    _OP_TEXT, _OP_BIN,
 )
 from llmesh.industrial.sensor_event import SensorEvent
 

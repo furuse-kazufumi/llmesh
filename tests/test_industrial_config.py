@@ -1,7 +1,6 @@
 """Tests for llmesh.config.industrial_config and LLMeshTomlConfig integration."""
 from __future__ import annotations
 
-import pytest
 
 from llmesh.config.industrial_config import (
     IndustrialConfig,

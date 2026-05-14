@@ -1,13 +1,11 @@
 """Tests for SpatialSummarizer (v1.7.0)."""
 from __future__ import annotations
 
-import struct
-import pytest
 
 from llmesh.industrial.sensor_3d.spatial_summarizer import SpatialSummarizer
 from llmesh.industrial.sensor_3d.point_cloud import PointCloud
 from llmesh.industrial.sensor_3d.event_adapter import DvsEvent, encode_dvs_events
-from llmesh.industrial.sensor_event import SensorEvent, Priority
+from llmesh.industrial.sensor_event import SensorEvent
 
 
 def _make_event(sensor_type: str, payload: bytes = b"", **meta) -> SensorEvent:

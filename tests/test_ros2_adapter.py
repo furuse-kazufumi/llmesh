@@ -3,16 +3,14 @@ from __future__ import annotations
 
 import asyncio
 import json
-import os
 import pytest
-from unittest.mock import MagicMock, patch, AsyncMock
+from unittest.mock import MagicMock, patch
 
 from llmesh.protocol.ros2_adapter import (
     ROS2Adapter,
     _check_optin,
     _nonce_from_stamp,
     _LLMeshROS2Node,
-    _BLOCKED_LEVELS,
 )
 from llmesh.protocol.message import MessageType, NodeAddress, UnifiedMessage
 

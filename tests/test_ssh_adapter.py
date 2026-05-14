@@ -1,9 +1,6 @@
 """Tests for SSHAdapter — public-key auth, request-response over SSH."""
 from __future__ import annotations
 
-import asyncio
-import io
-import time
 
 import paramiko
 import pytest
@@ -86,7 +83,7 @@ class TestSSHAdapterUnit:
         trusted_key = generate_ed25519_key()
         unknown_key = generate_ed25519_key()
         # Put trusted key in hex — we extract the raw 32-byte public key
-        import base64, binascii  # noqa: E401
+        import base64  # noqa: E401
         b64 = trusted_key.get_base64()
         # Ed25519 wire format: 4-byte type len + type + 4-byte key len + 32-byte key
         wire = base64.b64decode(b64)

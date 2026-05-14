@@ -1,11 +1,8 @@
 """Tests for AdapterRegistry.load_entrypoints() (v1.0.0)."""
 from __future__ import annotations
 
-import sys
-import types
 from unittest.mock import MagicMock, patch
 
-import pytest
 
 from llmesh.protocol.adapter import ProtocolAdapter
 from llmesh.protocol.registry import AdapterRegistry

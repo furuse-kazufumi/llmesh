@@ -2,12 +2,11 @@
 from __future__ import annotations
 
 import time
-import uuid
 from typing import Any
 
 import pytest
 
-from llmesh.challenge.bank import TASK_BANK, TASK_BY_ID, ChallengeTask, Difficulty, TaskType
+from llmesh.challenge.bank import TASK_BANK, TASK_BY_ID, Difficulty, TaskType
 from llmesh.challenge.evaluator import ChallengeEvaluator, ChallengeResult
 from llmesh.challenge.protocol import ChallengeProtocol, ChallengeToken, ProtocolError
 

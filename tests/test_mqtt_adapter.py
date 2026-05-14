@@ -3,11 +3,10 @@ from __future__ import annotations
 
 import asyncio
 import sys
-import threading
-from unittest.mock import MagicMock, patch, call
+from unittest.mock import MagicMock, patch
 import pytest
 
-from llmesh.industrial.sensor_event import Priority, SensorEvent
+from llmesh.industrial.sensor_event import SensorEvent
 
 
 # ---------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 """Tests for LocalFileAdapter — drop-folder LLM task processing (v1.0.1)."""
 from __future__ import annotations
 
-import asyncio
 import json
 import time
 import uuid
@@ -13,8 +12,6 @@ import pytest
 from llmesh.mcp.validator import ValidationError
 from llmesh.protocol.local_file_adapter import (
     LocalFileAdapter,
-    _PROMPT_SUFFIX,
-    _RESULT_SUFFIX,
     _derive_tool_name,
     _safe_stem,
 )

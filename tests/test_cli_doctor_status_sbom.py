@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-import pytest
 
 from llmesh.cli.doctor import (
     run_doctor, DoctorReport, DoctorCheck, render_text as doctor_render,

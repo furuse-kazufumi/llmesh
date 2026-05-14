@@ -1,19 +1,15 @@
 """Tests for ProtocolAdapter ABC contract and AdapterRegistry."""
 from __future__ import annotations
 
-import asyncio
 import pytest
 
 from llmesh.protocol import (
     AdapterRegistry,
     HTTPAdapter,
-    MessageType,
-    NodeAddress,
     ProtocolAdapter,
     TCPAdapter,
     TransportError,
     UDPAdapter,
-    UnifiedMessage,
 )
 
 

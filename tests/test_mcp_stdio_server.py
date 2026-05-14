@@ -4,9 +4,8 @@ from __future__ import annotations
 import io
 import json
 import uuid
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
-import pytest
 
 from llmesh.mcp.stdio_server import (
     _handle_initialize,

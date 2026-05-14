@@ -1,11 +1,8 @@
 """Tests for SensorSummarizer — privacy-safe sensor payload condensation."""
 from __future__ import annotations
 
-import pytest
 from llmesh.privacy.sensor_summarizer import (
     SensorSummarizer,
-    SensorBlockedError,
-    SensorSummary,
     _classify_topic,
     _summarise_pointcloud,
     _summarise_imu,

@@ -5,12 +5,10 @@ Tests the full request → nonce check → LLM invoke → validate → response 
 """
 from __future__ import annotations
 
-import json
 import uuid
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-import pytest
 from fastapi.testclient import TestClient
 
 from llmesh.llm.backend import BackendError
@@ -299,7 +297,6 @@ class TestFirewallIntegration:
     def test_backend_error_logs_to_audit(self):
         """BackendError is recorded as ``backend_error`` in the audit log."""
         from llmesh.llm.backend import BackendError
-        from unittest.mock import MagicMock
         tid = _task_id()
         nonce = _nonce()
         body = {"task_id": tid, "caller_nonce": nonce}

@@ -9,10 +9,9 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from llmesh.orchestrator.fanout import FanoutError, FanoutExecutor, FanoutResult, NodeResult
+from llmesh.orchestrator.fanout import FanoutError, FanoutExecutor, FanoutResult
 from llmesh.orchestrator.node_client import NodeCallError, NodeClient
 from llmesh.orchestrator.synthesizer import LocalSynthesizer
-from llmesh.mcp.validator import OutputValidator
 
 
 # ---------------------------------------------------------------------------

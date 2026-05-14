@@ -7,7 +7,6 @@ from typing import Callable
 import pytest
 
 from llmesh.research.composition import (
-    ComponentScore,
     CompositionPlan,
     compose,
 )

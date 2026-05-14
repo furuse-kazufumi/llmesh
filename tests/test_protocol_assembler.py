@@ -1,7 +1,6 @@
 """Tests for MessageAssembler — stream ordering and partial delivery."""
 from __future__ import annotations
 
-import pytest
 
 from llmesh.protocol import MessageAssembler, NodeAddress, UnifiedMessage
 from llmesh.protocol.message import MessageType

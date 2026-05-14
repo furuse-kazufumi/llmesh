@@ -1,7 +1,6 @@
 """Tests for environment-variable-driven LLM backend selection in server.py."""
 from __future__ import annotations
 
-import pytest
 
 from llmesh.llm.llamacpp import LlamaCppBackend
 from llmesh.llm.ollama import OllamaBackend

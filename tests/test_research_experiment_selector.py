@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import math
 
 import pytest
 
@@ -10,7 +9,6 @@ from llmesh.research.experiment_selector import (
     Belief,
     BeliefStore,
     CandidateExperiment,
-    RankedCandidate,
     SelectionReport,
     expected_information_gain,
     rank_candidates,

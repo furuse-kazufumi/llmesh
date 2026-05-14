@@ -2,11 +2,9 @@
 
 from __future__ import annotations
 
-import pytest
 
 from llmesh.vla.joint_decoder import JointTrajectory, JointWaypoint
 from llmesh.vla.replay import (
-    ConstraintViolation,
     ReplayReport,
     gripper_monotonic_checker,
     joint_limit_checker,

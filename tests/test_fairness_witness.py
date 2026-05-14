@@ -3,7 +3,7 @@ import pytest
 from llmesh.identity.node_id import NodeIdentity
 from llmesh.fairness.receipt import ServiceReceipt
 from llmesh.fairness.ledger import ContributionLedger
-from llmesh.fairness.witness import WitnessProtocol, WitnessVerdict
+from llmesh.fairness.witness import WitnessProtocol
 
 HMAC_KEY = b"test-witness-hmac-key-32bytes-pa"
 SERVER_ID = "peer:server"

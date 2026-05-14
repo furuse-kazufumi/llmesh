@@ -1,11 +1,9 @@
 """Tests for LLMeshTomlConfig (v1.0.0 unified TOML configuration)."""
 from __future__ import annotations
 
-import os
 import textwrap
 from pathlib import Path
 
-import pytest
 
 from llmesh.config.toml_config import (
     AdapterConfig,
@@ -208,7 +206,6 @@ class TestLLMeshTomlConfigAccessors:
         assert cfg.is_adapter_enabled("udp") is False
 
     def test_to_dict_round_trip(self, tmp_path):
-        from pathlib import Path
         content = textwrap.dedent("""
             [node]
             id = "round-trip"

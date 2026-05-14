@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import struct
-import pytest
 
 from llmesh.industrial.sensor_3d.point_cloud import PointCloud
 

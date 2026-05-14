@@ -5,10 +5,8 @@ import pytest
 
 from llmesh.identity.node_id import NodeIdentity
 from llmesh.identity.resolver import (
-    DIDDocument,
     DIDResolutionError,
     DIDResolver,
-    VerificationMethod,
     _b58decode,
     _resolve_did_llmesh,
 )

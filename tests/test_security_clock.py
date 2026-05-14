@@ -1,7 +1,6 @@
 """Tests for llmesh.security.clock — NTP clock-sync enforcement."""
 from __future__ import annotations
 
-import os
 from unittest.mock import MagicMock, patch
 
 import pytest

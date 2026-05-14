@@ -4,7 +4,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from unittest.mock import MagicMock
 
-import pytest
 
 from llmesh.routing.node_overrides import NodeOverrides
 from llmesh.routing.selector import SmartNodeSelector

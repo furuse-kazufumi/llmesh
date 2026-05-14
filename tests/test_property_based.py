@@ -22,9 +22,8 @@ from llmesh.industrial.mqtt_adapter import _mqtt_topic_match, TopicSpec
 from llmesh.industrial.ethercat_adapter import (
     SlaveSpec,
     _STRUCT_FMT,
-    _TYPE_SIZE,
 )
-from llmesh.industrial.pipeline import IndustrialPipeline, DiagnosisStatus
+from llmesh.industrial.pipeline import IndustrialPipeline
 from llmesh.industrial.sensor_event import SensorEvent
 
 # Bound test runtime — production use can override to deeper exploration.
@@ -117,7 +116,7 @@ def test_mqtt_topic_exact_match(level):
 )
 def test_mqtt_single_wildcard_arbitrary(a, b):
     """+ matches exactly one level regardless of content."""
-    assert _mqtt_topic_match(f"x/+/y", f"x/{a}/y") is True
+    assert _mqtt_topic_match("x/+/y", f"x/{a}/y") is True
     assert _mqtt_topic_match(f"+/{b}", f"{a}/{b}") is True
 
 

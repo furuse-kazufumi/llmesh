@@ -7,12 +7,8 @@ public API contract — start / stop / on_event — never silently drifts.
 from __future__ import annotations
 
 import inspect
-import sys
-from unittest.mock import MagicMock, patch
-import pytest
 
 from llmesh.industrial.adapter_protocol import IndustrialAdapter
-from llmesh.industrial.sensor_event import SensorEvent
 
 
 # ---------------------------------------------------------------------------

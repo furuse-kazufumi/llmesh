@@ -1,7 +1,6 @@
 """Tests for OnlineMTEngine — v3-N11 streaming Mahalanobis scoring."""
 from __future__ import annotations
 
-import os
 
 import pytest
 

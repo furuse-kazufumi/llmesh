@@ -4,7 +4,6 @@ from __future__ import annotations
 import asyncio
 import struct
 import pytest
-from pathlib import Path
 
 from llmesh.industrial.sensor_3d.depth_adapter import DepthCameraAdapter
 from llmesh.industrial.sensor_3d.point_cloud import PointCloud

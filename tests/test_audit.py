@@ -6,15 +6,12 @@ v0.2.0 additions:
 - Multi-thread concurrent append produces a verifiable chain.
 """
 import json
-import os
-import tempfile
 import threading
 from pathlib import Path
 
 import pytest
 
 from llmesh.audit import AuditTrace
-from llmesh.audit.trace import VerifyResult
 
 HMAC_KEY = b"test-hmac-key-32bytes-padded-here"
 NODE_ID = "peer:testnode"

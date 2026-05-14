@@ -12,12 +12,10 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import pytest
 
 from llmesh.classifier.data_level import DataLevel
 from llmesh.privacy.presidio_detector import (
     PresidioDetector,
-    PresidioResult,
     _DEFAULT_BLOCK_ENTITIES,
     _DEFAULT_SUMMARIZE_ENTITIES,
 )

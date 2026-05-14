@@ -1,5 +1,4 @@
 """Tests for ServiceReceipt — creation, signing, verification, serialisation."""
-import pytest
 from llmesh.identity.node_id import NodeIdentity
 from llmesh.fairness.receipt import ServiceReceipt, _canonical_payload
 

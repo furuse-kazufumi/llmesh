@@ -1,5 +1,4 @@
 """Tests for NodeIdentity and CapabilityManifest."""
-import time
 import pytest
 from llmesh.identity import NodeIdentity, CapabilityManifest, ManifestVerificationError
 

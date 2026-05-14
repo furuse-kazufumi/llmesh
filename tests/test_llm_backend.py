@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import json
 import uuid
-from io import BytesIO
 from typing import Any
 from unittest.mock import MagicMock, patch
 

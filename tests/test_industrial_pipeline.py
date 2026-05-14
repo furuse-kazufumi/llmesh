@@ -10,7 +10,7 @@ from llmesh.industrial.pipeline import (
     DiagnosisResult,
     DiagnosisStatus,
 )
-from llmesh.industrial.sensor_event import SensorEvent, Priority
+from llmesh.industrial.sensor_event import SensorEvent
 
 
 def _ev(sensor_id="s1", device_id="d1", payload=b"", **meta) -> SensorEvent:

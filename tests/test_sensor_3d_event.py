@@ -2,9 +2,7 @@
 from __future__ import annotations
 
 import asyncio
-import struct
 import pytest
-from pathlib import Path
 
 from llmesh.industrial.sensor_3d.event_adapter import (
     EventCameraAdapter,
@@ -12,7 +10,6 @@ from llmesh.industrial.sensor_3d.event_adapter import (
     encode_dvs_events,
     decode_dvs_events,
     _batch_stats,
-    _EVENT_BYTES,
 )
 from llmesh.industrial.sensor_event import SensorEvent
 

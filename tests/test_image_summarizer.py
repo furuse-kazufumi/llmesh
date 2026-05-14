@@ -11,7 +11,6 @@ import pytest
 
 from llmesh.privacy.image_summarizer import (
     ImageSummarizer,
-    ImageSummary,
     ImageSummarizationError,
     _parse_captioner,
     _call_ollama,

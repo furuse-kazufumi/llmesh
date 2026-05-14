@@ -3,7 +3,6 @@
 v0.2.0: Layer2 L3 triggers now return action="SUMMARIZE", not "BLOCK".
         Layer2 L4 (oversized) still returns "BLOCK".
 """
-import pytest
 from unittest.mock import patch
 from llmesh.privacy import PromptFirewall
 from llmesh.classifier import DataLevel

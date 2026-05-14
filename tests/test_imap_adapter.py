@@ -1,7 +1,6 @@
 """Tests for IMAPAdapter — IMAP mailbox poller."""
 from __future__ import annotations
 
-import asyncio
 import email as _email_mod
 import email.policy
 import imaplib
@@ -340,7 +339,6 @@ class TestIMAPAdapterLifecycle:
             assert result is None
 
     async def test_send_smtp_failure_raises_transport_error(self):
-        import smtplib
         adapter = IMAPAdapter(relay_host="127.0.0.1", relay_port=_alloc_port(), use_ssl=False)
         msg = UnifiedMessage(
             type=MessageType.REQUEST,

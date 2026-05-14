@@ -10,10 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import json
-import tempfile
 import uuid
-from pathlib import Path
-from unittest.mock import patch
 
 import pytest
 

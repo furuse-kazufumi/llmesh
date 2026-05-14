@@ -5,7 +5,7 @@ import asyncio
 import socket
 import pytest
 
-from llmesh.industrial.metrics import IndustrialMetrics, _MAX_SERIES
+from llmesh.industrial.metrics import IndustrialMetrics
 
 
 class TestCounter:

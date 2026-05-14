@@ -1,7 +1,6 @@
 """Tests for llmesh.protocol.device_profile — DeviceProfile / NANO profile."""
 from __future__ import annotations
 
-import os
 
 import pytest
 

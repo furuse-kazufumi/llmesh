@@ -1,8 +1,6 @@
 """Tests for llmesh.discovery — NodeRegistry, DiscoveryClient, registry router."""
 from __future__ import annotations
 
-import time
-import uuid
 from typing import Any
 from unittest.mock import MagicMock, patch
 
@@ -11,9 +9,9 @@ from fastapi.testclient import TestClient
 
 from llmesh.identity.manifest import CapabilityManifest
 from llmesh.identity.node_id import NodeIdentity
-from llmesh.discovery.registry import NodeEntry, NodeRegistry, RegistryError
+from llmesh.discovery.registry import NodeRegistry, RegistryError
 from llmesh.discovery.client import DiscoveryClient, DiscoveryError
-from llmesh.discovery.router import registry_router, set_registry
+from llmesh.discovery.router import set_registry
 from llmesh.mcp.server import app
 
 client = TestClient(app, raise_server_exceptions=False)

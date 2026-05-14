@@ -2,8 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
-import os
 import pytest
 
 from llmesh.protocol.telnet_adapter import (

@@ -7,8 +7,8 @@ import sys
 from unittest.mock import MagicMock, patch
 import pytest
 
-from llmesh.industrial.sensor_event import Priority, SensorEvent
-from llmesh.industrial.ethercat_adapter import SlaveSpec, _STRUCT_FMT, _TYPE_SIZE
+from llmesh.industrial.sensor_event import SensorEvent
+from llmesh.industrial.ethercat_adapter import SlaveSpec, _STRUCT_FMT
 
 
 # ---------------------------------------------------------------------------

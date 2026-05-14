@@ -10,11 +10,9 @@ from __future__ import annotations
 
 import time
 
-import pytest
 
 from llmesh.protocol import (
     ChunkSender,
-    CompletedStream,
     MessageAssembler,
     MessageType,
     NodeAddress,

@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import socket
 import time
 
 import pytest
@@ -19,7 +18,6 @@ from llmesh.protocol.reliable_stream import ReliableStream
 from llmesh.protocol.tcp_stream_adapter import (
     _TICK_INTERVAL,
     _ConnAdapter,
-    _ConnPool,
     _DEFAULT_POOL_SIZE,
     _tick_loop,
 )

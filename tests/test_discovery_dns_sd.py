@@ -1,7 +1,6 @@
 """Tests for DnsSdAnnouncer — DNS-SD v2 mDNS service announcement."""
 from __future__ import annotations
 
-import asyncio
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest

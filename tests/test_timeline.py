@@ -4,7 +4,7 @@ from __future__ import annotations
 import time
 import uuid
 import pytest
-from llmesh.timeline.store import TimelineStore, TimelineEvent
+from llmesh.timeline.store import TimelineStore
 
 
 # ---------------------------------------------------------------------------
@@ -139,7 +139,7 @@ class TestEventCount:
 # Server timeline endpoint tests
 # ---------------------------------------------------------------------------
 
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from fastapi.testclient import TestClient
 from llmesh.mcp.server import app
 

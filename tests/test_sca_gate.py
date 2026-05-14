@@ -8,7 +8,6 @@ import pytest
 
 from llmesh.mcp import OutputValidator, ValidationError
 from llmesh.mcp.sca_gate import (
-    CveHit,
     OsvQueryError,
     _parse_dep,
     _severity_from_vuln,

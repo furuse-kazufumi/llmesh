@@ -7,7 +7,6 @@ the regular suite.
 """
 from __future__ import annotations
 
-import pytest
 
 from llmesh.industrial.dnp3_adapter import DNP3Adapter, DNP3Point
 from llmesh.industrial.explained_cusum import ExplainedCUSUM

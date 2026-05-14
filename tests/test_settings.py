@@ -1,6 +1,5 @@
 """Tests for LLMeshSettings — load, save, set_value, as_table."""
 import json
-from pathlib import Path
 
 import pytest
 

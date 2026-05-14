@@ -1,12 +1,8 @@
 """Tests for llmesh.rendezvous — server (via TestClient) and client helpers."""
 from __future__ import annotations
 
-import json
-import time
 from datetime import datetime, timedelta, timezone
-from unittest.mock import patch
 
-import pytest
 from fastapi.testclient import TestClient
 
 from llmesh.identity.node_id import NodeIdentity

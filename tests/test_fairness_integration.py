@@ -1,7 +1,6 @@
 """Integration tests — fairness system wired into SmartNodeSelector and FanoutExecutor."""
-import pytest
 from llmesh.fairness.ledger import ContributionLedger
-from llmesh.fairness.policy import FairnessPolicy, PenaltyLevel
+from llmesh.fairness.policy import FairnessPolicy
 from llmesh.routing.selector import SmartNodeSelector
 from llmesh.orchestrator.fanout import FanoutExecutor
 

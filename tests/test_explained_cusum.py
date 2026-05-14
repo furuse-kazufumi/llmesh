@@ -6,7 +6,7 @@ import itertools
 
 import pytest
 
-from llmesh.industrial.explained_cusum import ExplainedCUSUM, ExplainedSPCResult
+from llmesh.industrial.explained_cusum import ExplainedCUSUM
 from llmesh.industrial.explainer import LLMExplainer
 from llmesh.industrial.spc_engine import CUSUMChart
 

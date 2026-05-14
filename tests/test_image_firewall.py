@@ -1,10 +1,8 @@
 """Tests for ImageFirewall — image classification before LLM ingestion (v1.2.0)."""
 from __future__ import annotations
 
-import io
-import struct
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -221,7 +219,6 @@ class TestImageFirewallWithPillow:
 
     def test_exif_face_data_blocked(self):
         """Simulate EXIF with face tag using mock."""
-        from PIL import ExifTags
         # Find numeric tag ID for a fake face tag
         fw = ImageFirewall()
 

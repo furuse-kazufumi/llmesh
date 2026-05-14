@@ -9,7 +9,6 @@ from llmesh.industrial.dnp3_adapter import (
     DNP3Adapter,
     DNP3Point,
     point_to_event,
-    _GROUP_MAP,
     _encode_value,
     _validate_address,
 )

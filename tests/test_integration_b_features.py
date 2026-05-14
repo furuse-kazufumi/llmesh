@@ -14,11 +14,11 @@ import time
 
 import pytest
 
-from llmesh.protocol.codec import JSON, MSGPACK, encode, decode, is_msgpack_available
+from llmesh.protocol.codec import JSON, MSGPACK, is_msgpack_available
 from llmesh.protocol.device_profile import DeviceProfile, PayloadTooLargeError
 from llmesh.protocol.message import MessageType, NodeAddress, UnifiedMessage
 from llmesh.protocol.outbox import OutboxQueue
-from llmesh.protocol.qos import DeadlineExpiredError, check_deadline, is_expired
+from llmesh.protocol.qos import is_expired
 from llmesh.routing.router import LoopDetectedError, RoutingGuard, TTLExpiredError
 
 

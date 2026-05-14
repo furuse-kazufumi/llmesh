@@ -7,7 +7,6 @@ import pytest
 
 from llmesh.industrial.explainer import (
     AlarmEvent,
-    IncidentReport,
     LLMExplainer,
 )
 
