@@ -442,15 +442,20 @@ async def timeline_ingest(request: Request) -> JSONResponse:
     if not isinstance(body, dict):
         raise HTTPException(status_code=400, detail="request_must_be_object")
 
-    # --- task_id (UUID v4) ---
+    # --- task_id (UUID v4 strict) ---
+    # NOTE: uuid.UUID(task_id, version=4) **sets** the version bits, so it
+    # accepts v1/v3/v5 strings silently. We parse without overriding then
+    # check ``parsed.version == 4`` to truly enforce v4.
     task_id = str(body.get("task_id", ""))
     if not task_id:
         raise HTTPException(status_code=422, detail="missing_task_id")
     try:
-        parsed_uuid = uuid.UUID(task_id, version=4)
-        if parsed_uuid.version != 4:
-            raise ValueError("not_v4")
+        parsed_uuid = uuid.UUID(task_id)
     except (ValueError, AttributeError):
+        raise HTTPException(
+            status_code=422, detail=f"invalid_task_id_uuid4:{task_id!r}"
+        )
+    if parsed_uuid.version != 4:
         raise HTTPException(
             status_code=422, detail=f"invalid_task_id_uuid4:{task_id!r}"
         )
