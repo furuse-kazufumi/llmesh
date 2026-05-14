@@ -58,7 +58,7 @@ fn pc_to_bytes<'py>(py: Python<'py>, points: &Bound<'py, PyList>) -> PyResult<Bo
 #[pyfunction]
 fn pc_from_bytes<'py>(py: Python<'py>, data: &[u8]) -> PyResult<Bound<'py, PyList>> {
     let n = data.len() / POINT_BYTES;
-    let list = PyList::empty_bound(py);
+    let list = PyList::empty(py);
     for i in 0..n {
         let off = i * POINT_BYTES;
         let x = f32::from_le_bytes(data[off..off + 4].try_into().unwrap());
@@ -104,7 +104,7 @@ fn dvs_decode<'py>(py: Python<'py>, data: &[u8]) -> PyResult<Bound<'py, PyList>>
     if n > MAX_EVENTS_PER_BATCH {
         n = MAX_EVENTS_PER_BATCH;
     }
-    let list = PyList::empty_bound(py);
+    let list = PyList::empty(py);
     for i in 0..n {
         let off = i * EVENT_BYTES;
         let x = u16::from_le_bytes(data[off..off + 2].try_into().unwrap());
