@@ -1,5 +1,64 @@
 # LLMesh Changelog
 
+## [Unreleased]
+
+### Added — `/timeline/ingest` endpoint (F25 f, llive bridge)
+
+外部プロデューサ (主に llive、将来は MQTT bridge 等) が TimelineStore
+に event を push できる HTTP endpoint を追加。読み出し側 (`GET
+/timeline/recent` / `/timeline/task/{id}`) は既存のまま、ingest した
+event を透過的に取り扱う。
+
+llove リポジトリの `docs/llove_llive_bridge.md` v1 仕様 (2026-05-14
+凍結) に準拠。Phase 2 OBS-03 の 3 種データを受け付ける。
+
+#### 新規 endpoint
+
+- `POST /timeline/ingest` — body schema:
+  ```json
+  {
+    "task_id":   "<UUID v4>",
+    "node_id":   "<= 128 chars, optional (defaults to X-Node-Id header)>",
+    "event_type": "route_trace | concept_update | bwt_summary",
+    "metadata":  { ... }
+  }
+  ```
+  Response 200: `{"stored": true}`
+
+#### バリデーション
+
+- **task_id**: UUID v4 厳密検証。`uuid.UUID(s)` で parse 後 `version == 4`
+  チェック (`uuid.UUID(s, version=4)` は version bit を上書きしてしまう
+  ため、より厳しい validation を実装)
+- **event_type**: `_ALLOWED_INGEST_EVENT_TYPES` allow-list で許可された
+  3 種のみ受理。内部 event 名 (`completed` 等) は ingest 不可
+- **metadata**: object のみ。`_RESERVED_METADATA_KEYS`
+  (`task_id` / `node_id` / `event_type` / `timestamp_utc`) を含むと 422
+  (TimelineStore の positional 引数と衝突を防ぐ)
+- **node_id**: body の `node_id` を優先、無ければ `X-Node-Id` ヘッダ。
+  128 文字上限 (header / body 双方)
+
+#### セキュリティ
+
+- 既存の `_security_headers` / `_body_size_limit` (64 KB) /
+  `_json_only` middleware を継承
+- 既存 `_rate_limiter` (per-node, 10 req/s burst 20) を継承
+- Trusted Peers / mTLS 認証も既存 middleware 経由でそのまま適用
+
+#### バグ修正 (派生)
+
+- UUID v4 検証ロジックの不備を ingest endpoint で明示的に修正。
+  既存 `/tools/{tool_name}` の同種ロジックは互換性のため変更なし。
+
+#### テスト
+
+`tests/test_timeline.py::TestTimelineIngest{Disabled,Enabled}` で 20 件
+追加 (timeline 503 / happy path 3 種 event / round-trip / node_id
+header/body 優先 / task_id 4 種 validation / event_type 2 種 / metadata
+3 種 / node_id 2 種 / body 3 種)。フルスイート 42 件 PASS。
+
+---
+
 ## [3.1.0] — 2026-05-09
 
 ### Added — クラウド / ホステッド LLM バックエンド（F-6 — Volume F 拡張）
