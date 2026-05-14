@@ -135,7 +135,7 @@ fn dvs_batch_stats<'py>(py: Python<'py>, data: &[u8], n: usize) -> PyResult<Boun
     if n == 0 {
         t_min = 0;
     }
-    let dict = PyDict::new_bound(py);
+    let dict = PyDict::new(py);
     dict.set_item("event_count", n)?;
     dict.set_item("positive_events", pos as usize)?;
     dict.set_item("negative_events", (n as u64 - pos) as usize)?;
