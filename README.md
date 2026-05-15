@@ -1,5 +1,7 @@
 # LLMesh
 
+> **Part of the FullSense ™ family** — **llmesh** (本リポ・secure LLM hub) ・ `llive` (self-evolving memory) ・ `llove` (TUI dashboard) の 3 製品を束ねる FullSense ブランドの中で、MCP 経由のセキュアな LLM ハブを担当します。FullSense Spec v1.1 は `llive` リポジトリの `docs/fullsense_spec_eternal.md` 参照。
+
 **Secure LLM Mesh over MCP** — **v3.1.0**
 
 > **Family / 同系プロジェクト:** バックエンド (本リポ) / TUI ダッシュボード →
