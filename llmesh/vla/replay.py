@@ -22,7 +22,7 @@ from dataclasses import dataclass, field
 from typing import Callable, Iterable
 
 from llmesh.core.cost_attribution import AttributionLink
-from llmesh.vla.joint_decoder import JointTrajectory, JointWaypoint
+from llmesh.vla.joint_decoder import JointTrajectory
 
 
 # ---------------------------------------------------------------------------

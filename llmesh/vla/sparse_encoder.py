@@ -22,7 +22,6 @@ rate-coded scheme for tactile / proprioceptive channels.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Iterable
 
 
 @dataclass(frozen=True)

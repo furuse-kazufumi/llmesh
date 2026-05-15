@@ -29,7 +29,7 @@ hitting an under-explored branch of the hypothesis tree are more useful.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Iterable
 
 

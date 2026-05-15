@@ -174,7 +174,7 @@ def _invert_one(
             dependent_variable=orig.independent_variable,
             expected_effect="non-trivial",
             falsifier=(
-                f"Correlation between swapped axes < 0.1 across replicates"
+                "Correlation between swapped axes < 0.1 across replicates"
             ),
         )
     if strategy == "promote_failure_mode":
@@ -206,7 +206,7 @@ def _invert_one(
             dependent_variable=f"recovery_under_{failure.failure_mode}",
             expected_effect="negligible",
             falsifier=(
-                f"Recovery rate > 50% with no intervention on the failure mode"
+                "Recovery rate > 50% with no intervention on the failure mode"
             ),
         )
     return None
