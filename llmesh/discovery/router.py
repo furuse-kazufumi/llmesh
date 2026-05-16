@@ -161,10 +161,14 @@ async def query_matching_peers(request: Request) -> JSONResponse:
     except (TypeError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=f"invalid_query:{exc}") from exc
 
-    try:
-        k = int(body.get("k") or 3)
-    except (TypeError, ValueError) as exc:
-        raise HTTPException(status_code=400, detail=f"invalid_k:{exc}") from exc
+    raw_k = body.get("k")
+    if raw_k is None:
+        k = 3
+    else:
+        try:
+            k = int(raw_k)
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=f"invalid_k:{exc}") from exc
     if k < 1 or k > 100:
         raise HTTPException(status_code=400, detail=f"k_out_of_range:{k}")
 
