@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Added — Approval gate (`policy=`) on SkillSyncClient (Phase 3.5)
+
+`SkillSyncClient` に `policy: PullPolicyCheck | None = None` を追加。
+`sync_with` の各 chunk pull 直前に `policy(peer_url, skill_id)` を呼び、
+返値が `"approved"` でなければ pull を skip して `SyncResult.denied` に
+記録する。
+
+- `PullPolicyCheck = Callable[[str, str], "approved" | "denied"]` —
+  llive `@govern` / `ApprovalBus` を **caller 側で wrap** すれば自動 gate
+  になる Callable インタフェース (llmesh は llive に依存しない)
+- policy callable が例外を投げた場合は **deny として扱う** —
+  buggy gate が trust boundary を弱めない設計
+- `SyncResult.denied: tuple[str, ...]` 追加 (failed と区別)
+- 3 new tests (allow + deny + exception)、48 skill 関連 tests PASS
+
 ### Added — Skill chunk Pull / Push / Gossip protocol (Phase 3.4)
 
 Phase 3.3 で立てた `/skills/*` HTTP router の **クライアント側** を実装。
