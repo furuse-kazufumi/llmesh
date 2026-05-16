@@ -41,9 +41,9 @@ for stream in (sys.stdout, sys.stderr):
     if callable(reconfigure):
         reconfigure(encoding="utf-8", errors="replace")
 
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey  # noqa: E402
 
-from llmesh.skills import SkillChunk, SkillReplica, SkillSyncClient, SkillSyncError
+from llmesh.skills import SkillChunk, SkillReplica, SkillSyncClient, SkillSyncError  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
