@@ -4,7 +4,10 @@ from __future__ import annotations
 import json
 
 import pytest
-from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
+from cryptography.hazmat.primitives.asymmetric.ed25519 import (
+    Ed25519PrivateKey,
+    Ed25519PublicKey,
+)
 
 from llmesh.skills import (
     SCHEMA_VERSION,
@@ -17,7 +20,7 @@ from llmesh.skills import (
 
 
 @pytest.fixture
-def keypair() -> tuple[Ed25519PrivateKey, "Ed25519PublicKey"]:
+def keypair() -> tuple[Ed25519PrivateKey, Ed25519PublicKey]:
     sk = Ed25519PrivateKey.generate()
     return sk, sk.public_key()
 
