@@ -398,8 +398,10 @@ class GossipScheduler:
 
 
 __all__ = [
+    "DEFAULT_ALLOWED_LICENSES",
     "GossipScheduler",
     "HTTPTransport",
+    "LicenseFilter",
     "PeerProvider",
     "PolicyDecision",
     "PullPolicyCheck",
@@ -407,4 +409,5 @@ __all__ = [
     "SkillSyncError",
     "SyncResult",
     "UrllibTransport",
+    "allow_licenses",
 ]
