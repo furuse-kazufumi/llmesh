@@ -200,6 +200,7 @@ async def notify(request: Request) -> JSONResponse:
     The server records the notification but does NOT pull the chunk
     automatically (that step is gated by `@govern` in Phase 3.5).
     """
+    _rate_check(request)
     try:
         body = await request.json()
     except Exception as exc:
@@ -217,10 +218,17 @@ async def report_corrupt(skill_id: str, request: Request) -> JSONResponse:
     Body (optional)::
 
         {
-          "by":      "<reporting peer id>",
+          "against":   "<reported peer id>",     # required to feed reputation
+          "by":        "<reporting peer id>",
           "rationale": "<short text>"
         }
+
+    When a ``PeerReputation`` is wired via ``set_reputation``, ``against``
+    is forwarded to ``record_corruption``. Without ``against`` the report
+    is still recorded in the in-memory queue (backward compatible) but
+    cannot be attributed to a specific peer.
     """
+    _rate_check(request)
     body: dict[str, Any] = {}
     try:
         if request.headers.get("content-length", "0") not in ("", "0"):
@@ -229,20 +237,34 @@ async def report_corrupt(skill_id: str, request: Request) -> JSONResponse:
                 body = {}
     except Exception:
         body = {}
+    against = str(body.get("against", "")).strip()
+    by = str(body.get("by", ""))
     report = {
         "skill_id": skill_id,
-        "by": str(body.get("by", "")),
+        "against": against,
+        "by": by,
         "rationale": str(body.get("rationale", "")),
     }
     _corrupt_reports.append(report)
-    return JSONResponse(content={"recorded": True, "total_reports": len(_corrupt_reports)})
+    if _reputation is not None and against:
+        _reputation.record_corruption(against, reporter=by, skill_id=skill_id)
+    return JSONResponse(
+        content={
+            "recorded": True,
+            "total_reports": len(_corrupt_reports),
+            "reputation_updated": bool(_reputation is not None and against),
+        }
+    )
 
 
 __all__ = [
+    "RateLimiter",
     "get_corrupt_reports",
     "get_notifications",
     "get_replica",
     "reset_state",
+    "set_rate_limiter",
     "set_replica",
+    "set_reputation",
     "skills_router",
 ]
