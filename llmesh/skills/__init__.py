@@ -19,13 +19,29 @@ from llmesh.skills.chunk import (
 )
 from llmesh.skills.merkle import compute_merkle_root, merkle_proof, verify_merkle_proof
 from llmesh.skills.replica import EvictionResult, SkillReplica
+from llmesh.skills.sync import (
+    GossipScheduler,
+    HTTPTransport,
+    PeerProvider,
+    SkillSyncClient,
+    SkillSyncError,
+    SyncResult,
+    UrllibTransport,
+)
 
 __all__ = [
     "SCHEMA_VERSION",
     "EvictionResult",
+    "GossipScheduler",
+    "HTTPTransport",
+    "PeerProvider",
     "SkillChunk",
     "SkillChunkError",
     "SkillReplica",
+    "SkillSyncClient",
+    "SkillSyncError",
+    "SyncResult",
+    "UrllibTransport",
     "compute_merkle_root",
     "merkle_proof",
     "verify_merkle_proof",
