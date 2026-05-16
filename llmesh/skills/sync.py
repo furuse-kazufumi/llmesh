@@ -96,6 +96,35 @@ when the bus permits the pull. Kept as a plain Callable (not a Protocol)
 so llmesh stays free of any llive dependency."""
 
 
+LicenseFilter = Callable[["SkillChunk"], bool]
+"""License gate signature: ``(chunk) -> True (accept) | False (reject)``.
+
+Runs **after** the chunk is pulled but **before** it is persisted to the
+replica. Lets the caller reject chunks whose ``license`` field is not in
+an approved set (e.g. proprietary, unknown). See ``allow_licenses`` for
+the common case of a static allow-list."""
+
+
+DEFAULT_ALLOWED_LICENSES: frozenset[str] = frozenset(
+    {"Apache-2.0", "MIT", "BSD-3-Clause", "BSD-2-Clause", "CC0-1.0", "CC-BY-4.0"}
+)
+"""Default permissive licenses recommended by RFC Phase 3 §License filter."""
+
+
+def allow_licenses(allowed: Iterable[str] = DEFAULT_ALLOWED_LICENSES) -> LicenseFilter:
+    """Build a ``LicenseFilter`` that accepts only the given license identifiers.
+
+    Empty / missing licenses are rejected. Comparison is case-sensitive
+    (SPDX identifiers are canonical).
+    """
+    allowed_set = frozenset(allowed)
+
+    def _filter(chunk: SkillChunk) -> bool:
+        return bool(chunk.license) and chunk.license in allowed_set
+
+    return _filter
+
+
 @dataclass(frozen=True)
 class SyncResult:
     """Outcome of one ``SkillSyncClient.sync_with`` round."""
@@ -104,6 +133,7 @@ class SyncResult:
     pulled: tuple[str, ...] = ()
     skipped_existing: tuple[str, ...] = ()
     denied: tuple[str, ...] = ()
+    denied_license: tuple[str, ...] = ()
     failed: tuple[tuple[str, str], ...] = ()  # (skill_id, reason)
     duration_s: float = 0.0
 
