@@ -239,6 +239,66 @@ def test_sync_with_records_index_failure() -> None:
 # ---------------------------------------------------------------------------
 
 
+# ---------------------------------------------------------------------------
+# Phase 3.5: policy gate
+# ---------------------------------------------------------------------------
+
+
+def test_policy_denies_pull_records_skill_id(
+    remote_replica: SkillReplica, local_replica: SkillReplica
+) -> None:
+    remote_replica.put(_make_chunk("trusted/ok"))
+    remote_replica.put(_make_chunk("untrusted/blocked"))
+
+    def gate(peer_url: str, skill_id: str) -> PolicyDecision:
+        return "approved" if skill_id.startswith("trusted/") else "denied"
+
+    http = TestClient(app, raise_server_exceptions=False)
+    client = SkillSyncClient(transport=_TestClientTransport(http), policy=gate)
+
+    result = client.sync_with(PEER_URL, local_replica)
+
+    assert sorted(result.pulled) == ["trusted/ok"]
+    assert sorted(result.denied) == ["untrusted/blocked"]
+    assert local_replica.get("trusted/ok") is not None
+    assert local_replica.get("untrusted/blocked") is None
+
+
+def test_policy_exception_is_treated_as_deny(
+    remote_replica: SkillReplica, local_replica: SkillReplica
+) -> None:
+    remote_replica.put(_make_chunk("alpha"))
+
+    def broken(peer_url: str, skill_id: str) -> PolicyDecision:
+        raise RuntimeError("policy backend down")
+
+    http = TestClient(app, raise_server_exceptions=False)
+    client = SkillSyncClient(transport=_TestClientTransport(http), policy=broken)
+
+    result = client.sync_with(PEER_URL, local_replica)
+
+    assert result.pulled == ()
+    assert result.denied == ("alpha",)
+    assert result.failed == ()
+    assert local_replica.get("alpha") is None
+
+
+def test_no_policy_means_no_gate(
+    client: SkillSyncClient,
+    remote_replica: SkillReplica,
+    local_replica: SkillReplica,
+) -> None:
+    remote_replica.put(_make_chunk("any"))
+    result = client.sync_with(PEER_URL, local_replica)
+    assert result.denied == ()
+    assert result.pulled == ("any",)
+
+
+# ---------------------------------------------------------------------------
+# GossipScheduler
+# ---------------------------------------------------------------------------
+
+
 def test_gossip_scheduler_tick_pulls_from_each_peer(
     client: SkillSyncClient,
     remote_replica: SkillReplica,
