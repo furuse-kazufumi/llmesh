@@ -13,11 +13,62 @@ nav_order: 1
 
 ## FullSense Family
 
+```mermaid
+flowchart TD
+    F["<b>FullSense ™</b><br/>umbrella brand &amp; spec"]
+    LM["<b>llmesh</b><br/>secure LLM hub<br/>(on-prem MCP)"]
+    LI["<b>llive</b><br/>self-evolving memory"]
+    LO["<b>llove</b><br/>TUI dashboard"]
+    F --> LM
+    F --> LI
+    F --> LO
+    LM <-.->|MCP| LI
+    LM <-.->|hub| LO
+    style F fill:#fef3c7,stroke:#f59e0b,stroke-width:2px
+    style LM fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+```
+
 | Product   | Role                                       | Site                                                |
 |-----------|--------------------------------------------|-----------------------------------------------------|
 | **llmesh** | secure LLM hub / on-prem MCP server        | this site                                          |
 | **llive**  | self-evolving modular memory LLM framework | <https://furuse-kazufumi.github.io/llive/>          |
 | **llove**  | TUI dashboard / HITL workbench             | <https://furuse-kazufumi.github.io/llove/>          |
+
+## Architecture — Secure LLM Hub (MCP) Topology
+
+llmesh は **on-prem MCP server** として複数の LLM client (Claude Desktop / LM Studio / Open WebUI / Cursor) を 1 つの hub に集約し、プライバシーフィルタ + 監査チェーンを挟む。
+
+```mermaid
+flowchart LR
+    CD["Claude Desktop"]
+    LMS["LM Studio"]
+    OWUI["Open WebUI"]
+    CUR["Cursor"]
+
+    subgraph HUB["llmesh hub<br/>(on-prem)"]
+        MCP["MCP server"]
+        PRIV["Privacy<br/>Filter"]
+        AUD["Audit<br/>Chain<br/>(SHA-256)"]
+    end
+
+    BE1["LLM backend<br/>(Ollama)"]
+    BE2["LLM backend<br/>(OpenAI API)"]
+    BE3["LLM backend<br/>(Anthropic API)"]
+
+    CD --> MCP
+    LMS --> MCP
+    OWUI --> MCP
+    CUR --> MCP
+    MCP --> PRIV
+    PRIV --> AUD
+    AUD --> BE1
+    AUD --> BE2
+    AUD --> BE3
+
+    style HUB fill:#dbeafe,stroke:#3b82f6,stroke-width:2px
+    style PRIV fill:#fee2e2,stroke:#ef4444
+    style AUD fill:#e0e7ff,stroke:#6366f1
+```
 
 ## Quick Start
 
