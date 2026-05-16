@@ -180,6 +180,29 @@ class NodeRegistry:
         self._evict_expired()
         return len(self._nodes)
 
+    def find_matching(
+        self,
+        query: "CapabilityQuery",
+        *,
+        k: int = 3,
+    ) -> list[tuple[float, NodeEntry]]:
+        """Return up to k live nodes that match the capability query, ranked
+        by matching score (descending).
+
+        Each node's CapabilityProfile is built from its stored manifest_dict.
+        Peers with score 0.0 (hard-filter rejected) are excluded.
+        """
+        # Local import to avoid pulling clustering at module top (keeps
+        # registry.py importable without clustering needing zero deps).
+        from llmesh.discovery.clustering import CapabilityProfile, pick_top_peers
+
+        self._evict_expired()
+        pairs: list[tuple[CapabilityProfile, NodeEntry]] = [
+            (CapabilityProfile.from_manifest(entry.manifest_dict), entry)
+            for entry in self._nodes.values()
+        ]
+        return pick_top_peers(pairs, query, k=k)
+
     # ------------------------------------------------------------------
     # Eviction
     # ------------------------------------------------------------------
