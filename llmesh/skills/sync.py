@@ -160,10 +160,20 @@ class SkillSyncClient:
         *,
         policy: PullPolicyCheck | None = None,
         license_filter: LicenseFilter | None = None,
+        reputation: PeerReputation | None = None,
     ) -> None:
         self._http: HTTPTransport = transport or UrllibTransport()
         self._policy = policy
         self._license_filter = license_filter
+        self._reputation = reputation
+
+    def _record_transfer(self, peer_url: str) -> None:
+        if self._reputation is None:
+            return
+        try:
+            self._reputation.record_transfer(peer_url)
+        except Exception as exc:  # reputation must never break sync
+            logger.warning("record_transfer failed for %s: %s", peer_url, exc)
 
     def _is_approved(self, peer_url: str, skill_id: str) -> bool:
         if self._policy is None:
