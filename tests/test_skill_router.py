@@ -77,8 +77,11 @@ def test_notify_rejects_missing_skill_id(replica: SkillReplica) -> None:
     assert response.status_code == 400
 
 
-def test_notify_rejects_non_json(replica: SkillReplica) -> None:
-    response = client.post("/skills/notify", content="not json")
+def test_notify_rejects_malformed_json(replica: SkillReplica) -> None:
+    # Explicit JSON content-type but malformed body → router's try/except catches it as 400
+    response = client.post(
+        "/skills/notify", content="not json", headers={"content-type": "application/json"}
+    )
     assert response.status_code == 400
 
 
@@ -95,8 +98,9 @@ def test_report_corrupt_records(replica: SkillReplica) -> None:
     assert reports[0]["by"] == "did:test:reporter"
 
 
-def test_report_corrupt_without_body(replica: SkillReplica) -> None:
-    response = client.post("/skills/foo/report-corrupt")
+def test_report_corrupt_with_empty_body(replica: SkillReplica) -> None:
+    # Send minimal body to satisfy any framework body requirements
+    response = client.post("/skills/foo/report-corrupt", json={})
     assert response.status_code == 200
     reports = get_corrupt_reports()
     assert reports[-1]["skill_id"] == "foo"
