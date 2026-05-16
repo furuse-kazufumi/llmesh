@@ -93,10 +93,10 @@ def matching_score(profile: CapabilityProfile, query: CapabilityQuery) -> float:
 
     Returns 0.0 for any peer that fails the hard filters.
     """
-    # Hard filters
+    # Hard filters. min_data_level == 0 means "no requirement" (default).
     if query.required_tools and not query.required_tools.issubset(profile.tools):
         return 0.0
-    if query.min_data_level >= 0:
+    if query.min_data_level > 0:
         if _max_or_minus_one(profile.data_levels) < query.min_data_level:
             return 0.0
 
