@@ -351,6 +351,8 @@ __all__ = [
     "GossipScheduler",
     "HTTPTransport",
     "PeerProvider",
+    "PolicyDecision",
+    "PullPolicyCheck",
     "SkillSyncClient",
     "SkillSyncError",
     "SyncResult",
