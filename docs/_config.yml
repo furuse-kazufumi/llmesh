@@ -1,0 +1,44 @@
+# GitHub Pages (Jekyll) configuration
+# Activate via: GitHub repo Settings → Pages → Build & deploy → Source: main branch / docs folder
+
+title: "FullSense ™ — llmesh"
+description: "Secure LLM Mesh over MCP — on-prem LLM hub with privacy filtering and audit chain"
+remote_theme: just-the-docs/just-the-docs
+markdown: kramdown
+highlighter: rouge
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+plugins:
+  - jekyll-relative-links
+  - jekyll-seo-tag
+  - jekyll-remote-theme
+relative_links:
+  enabled: true
+  collections: true
+
+color_scheme: light
+search_enabled: true
+heading_anchors: true
+aux_links:
+  "GitHub":
+    - "https://github.com/furuse-kazufumi/llmesh"
+aux_links_new_tab: true
+footer_content: 'Copyright &copy; 2026 Kazufumi Furuse. FullSense ™ / llmesh ™ are trademarks. Code under <a href="https://github.com/furuse-kazufumi/llmesh/blob/main/LICENSE">Apache-2.0</a>.'
+nav_external_links:
+  - title: GitHub repository
+    url: https://github.com/furuse-kazufumi/llmesh
+    hide_icon: false
+back_to_top: true
+back_to_top_text: "Back to top"
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+author: Kazufumi Furuse
+github:
+  repository_nwo: furuse-kazufumi/llmesh
+url: https://furuse-kazufumi.github.io/llmesh
+baseurl: ""
