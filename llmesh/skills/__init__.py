@@ -54,6 +54,7 @@ __all__ = [
     "SkillSyncError",
     "SyncResult",
     "UrllibTransport",
+    "Verdict",
     "allow_licenses",
     "compute_merkle_root",
     "merkle_proof",
