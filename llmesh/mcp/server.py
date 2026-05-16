@@ -39,6 +39,7 @@ from ..privacy.summarizer import PrivacySummarizer
 from ..discovery.router import registry_router
 from ..fairness import ContributionLedger, FairnessPolicy
 from ..security.rate_limiter import PerNodeRateLimiter, RateLimitExceeded
+from ..skills.router import skills_router
 from ..timeline.store import TimelineStore
 from .nonce_store import NonceStore, SqliteNonceStore
 from .schemas import TOOL_SCHEMAS
@@ -46,6 +47,7 @@ from .validator import OutputValidator, ValidationError
 
 app = FastAPI(title="LLMesh MCP Node", version="0.2.0")
 app.include_router(registry_router)
+app.include_router(skills_router)
 
 # --- Auth middleware ---
 _trusted_peers_path = os.environ.get("LLMESH_TRUSTED_PEERS_PATH", "")
