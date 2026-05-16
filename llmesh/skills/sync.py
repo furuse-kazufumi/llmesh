@@ -158,9 +158,11 @@ class SkillSyncClient:
         transport: HTTPTransport | None = None,
         *,
         policy: PullPolicyCheck | None = None,
+        license_filter: LicenseFilter | None = None,
     ) -> None:
         self._http: HTTPTransport = transport or UrllibTransport()
         self._policy = policy
+        self._license_filter = license_filter
 
     def _is_approved(self, peer_url: str, skill_id: str) -> bool:
         if self._policy is None:
@@ -172,6 +174,19 @@ class SkillSyncClient:
                 "policy check raised for %s @ %s; treating as denied: %s",
                 skill_id,
                 peer_url,
+                exc,
+            )
+            return False
+
+    def _license_allowed(self, chunk: SkillChunk) -> bool:
+        if self._license_filter is None:
+            return True
+        try:
+            return bool(self._license_filter(chunk))
+        except Exception as exc:
+            logger.warning(
+                "license_filter raised for %s; treating as rejected: %s",
+                chunk.skill_id,
                 exc,
             )
             return False
