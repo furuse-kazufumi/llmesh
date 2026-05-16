@@ -86,6 +86,16 @@ class UrllibTransport:
             raise SkillSyncError(f"POST {url}: malformed JSON ({exc})") from exc
 
 
+PolicyDecision = Literal["approved", "denied"]
+PullPolicyCheck = Callable[[str, str], PolicyDecision]
+"""Approval gate signature: ``(peer_url, skill_id) -> "approved" | "denied"``.
+
+Designed to compose with llive's ``@govern`` / ``ApprovalBus``: the caller
+wraps an ApprovalBus request inside this callable, returning ``"approved"``
+when the bus permits the pull. Kept as a plain Callable (not a Protocol)
+so llmesh stays free of any llive dependency."""
+
+
 @dataclass(frozen=True)
 class SyncResult:
     """Outcome of one ``SkillSyncClient.sync_with`` round."""
@@ -93,6 +103,7 @@ class SyncResult:
     peer_url: str
     pulled: tuple[str, ...] = ()
     skipped_existing: tuple[str, ...] = ()
+    denied: tuple[str, ...] = ()
     failed: tuple[tuple[str, str], ...] = ()  # (skill_id, reason)
     duration_s: float = 0.0
 
@@ -104,10 +115,36 @@ class SkillSyncClient:
     signature verification should fetch the chunk and call
     ``chunk.verify(public_key)`` before trusting it for execution; the
     replica path is intentionally lazy to keep the gossip loop fast.
+
+    ``policy`` (Phase 3.5 approval gate): callable invoked before each
+    pull during ``sync_with``. Returning ``"denied"`` skips the pull and
+    records the skill_id in ``SyncResult.denied``. ``None`` (default) means
+    no gate. Exceptions raised by the policy callable are treated as denials
+    so a buggy gate never weakens the trust boundary.
     """
 
-    def __init__(self, transport: HTTPTransport | None = None) -> None:
+    def __init__(
+        self,
+        transport: HTTPTransport | None = None,
+        *,
+        policy: PullPolicyCheck | None = None,
+    ) -> None:
         self._http: HTTPTransport = transport or UrllibTransport()
+        self._policy = policy
+
+    def _is_approved(self, peer_url: str, skill_id: str) -> bool:
+        if self._policy is None:
+            return True
+        try:
+            return self._policy(peer_url, skill_id) == "approved"
+        except Exception as exc:
+            logger.warning(
+                "policy check raised for %s @ %s; treating as denied: %s",
+                skill_id,
+                peer_url,
+                exc,
+            )
+            return False
 
     # ------------------------------------------------------------------
     # Low-level operations
