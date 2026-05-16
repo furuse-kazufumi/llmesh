@@ -231,6 +231,7 @@ class SkillSyncClient:
         }
         pulled: list[str] = []
         skipped: list[str] = []
+        denied: list[str] = []
         failed: list[tuple[str, str]] = []
 
         for row in remote:
@@ -243,6 +244,9 @@ class SkillSyncClient:
                 continue
             if max_pulls is not None and len(pulled) >= max_pulls:
                 break
+            if not self._is_approved(peer_url, sid):
+                denied.append(sid)
+                continue
             try:
                 chunk = self.pull_chunk(peer_url, sid)
             except SkillSyncError as exc:
@@ -258,6 +262,7 @@ class SkillSyncClient:
             peer_url=peer_url,
             pulled=tuple(pulled),
             skipped_existing=tuple(skipped),
+            denied=tuple(denied),
             failed=tuple(failed),
             duration_s=time.monotonic() - t0,
         )
