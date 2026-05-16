@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### Added — 10-peer skill chunk replication demo + KPI 測定 (Phase 3.7)
+
+`scripts/demo_skill_sync.py` で N virtual peer × M chunk の sync を
+in-process で回し、RFC §評価指標 を自動判定。
+
+- `--peers 10 --chunks 20 --chunk-size 51200 --rounds 5` defaults
+- `InMemoryTransport` で `HTTPTransport` Protocol を満たし、socket 不要
+- 各 round で全 peer pair 間 `sync_with` を実行、wall-clock 計測
+- Coverage / 平均 storage / convergence round / total replication time
+- 閾値判定 (PASS / FAIL):
+  - replication round time (10 peer) < 60 s
+  - final coverage > 0.9
+  - max storage / peer < 2 GB
+- `--json` で機械可読出力
+- **Measured (10 peer × 20 chunk × 50 KB × 5 round)**: 1 round で
+  coverage 1.000、total 843 ms、avg storage 1000 KB / peer、Overall PASS
+- **Measured (12 peer × 30 chunk × 50 KB × 4 round)**: 1 round で
+  coverage 1.000、total 1.5 s、avg storage 1500 KB / peer、Overall PASS
+
 ### Added — Router glue + rate limit + sync hook (Phase 3.6c)
 
 `router.py` の write endpoints (`/skills/notify`, `/skills/<id>/report-corrupt`)
