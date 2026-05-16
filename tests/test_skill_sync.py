@@ -299,6 +299,67 @@ def test_no_policy_means_no_gate(
 
 
 # ---------------------------------------------------------------------------
+# Phase 3.6a: license filter
+# ---------------------------------------------------------------------------
+
+
+def test_allow_licenses_accepts_listed(
+    remote_replica: SkillReplica, local_replica: SkillReplica
+) -> None:
+    remote_replica.put(_make_chunk("ok/apache", license="Apache-2.0"))
+    remote_replica.put(_make_chunk("ok/mit", license="MIT"))
+
+    http = TestClient(app, raise_server_exceptions=False)
+    client = SkillSyncClient(
+        transport=_TestClientTransport(http),
+        license_filter=allow_licenses({"Apache-2.0", "MIT"}),
+    )
+
+    result = client.sync_with(PEER_URL, local_replica)
+    assert sorted(result.pulled) == ["ok/apache", "ok/mit"]
+    assert result.denied_license == ()
+
+
+def test_allow_licenses_rejects_unlisted(
+    remote_replica: SkillReplica, local_replica: SkillReplica
+) -> None:
+    remote_replica.put(_make_chunk("ok/apache", license="Apache-2.0"))
+    remote_replica.put(_make_chunk("bad/proprietary", license="Proprietary"))
+
+    http = TestClient(app, raise_server_exceptions=False)
+    client = SkillSyncClient(
+        transport=_TestClientTransport(http),
+        license_filter=allow_licenses({"Apache-2.0"}),
+    )
+
+    result = client.sync_with(PEER_URL, local_replica)
+    assert result.pulled == ("ok/apache",)
+    assert result.denied_license == ("bad/proprietary",)
+    assert local_replica.get("bad/proprietary") is None
+
+
+def test_default_allowed_licenses_contains_recommended_set() -> None:
+    for spdx in ("Apache-2.0", "MIT", "CC0-1.0", "CC-BY-4.0"):
+        assert spdx in DEFAULT_ALLOWED_LICENSES
+
+
+def test_license_filter_exception_is_treated_as_reject(
+    remote_replica: SkillReplica, local_replica: SkillReplica
+) -> None:
+    remote_replica.put(_make_chunk("any"))
+
+    def broken(chunk: SkillChunk) -> bool:
+        raise RuntimeError("filter backend down")
+
+    http = TestClient(app, raise_server_exceptions=False)
+    client = SkillSyncClient(transport=_TestClientTransport(http), license_filter=broken)
+
+    result = client.sync_with(PEER_URL, local_replica)
+    assert result.pulled == ()
+    assert result.denied_license == ("any",)
+
+
+# ---------------------------------------------------------------------------
 # GossipScheduler
 # ---------------------------------------------------------------------------
 
