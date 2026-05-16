@@ -28,6 +28,7 @@ from typing import Any, Literal, Protocol
 
 from llmesh.skills.chunk import SkillChunk
 from llmesh.skills.replica import SkillReplica
+from llmesh.skills.reputation import PeerReputation
 
 logger = logging.getLogger(__name__)
 
