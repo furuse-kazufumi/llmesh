@@ -317,6 +317,7 @@ class SkillSyncClient:
                 continue
             replica.put(chunk)
             pulled.append(sid)
+            self._record_transfer(peer_url)
 
         return SyncResult(
             peer_url=peer_url,
