@@ -19,6 +19,7 @@ from llmesh.skills.chunk import (
 )
 from llmesh.skills.merkle import compute_merkle_root, merkle_proof, verify_merkle_proof
 from llmesh.skills.replica import EvictionResult, SkillReplica
+from llmesh.skills.reputation import PeerReputation, PeerStats, Verdict
 from llmesh.skills.sync import (
     DEFAULT_ALLOWED_LICENSES,
     GossipScheduler,
