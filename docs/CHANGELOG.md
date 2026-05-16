@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added — Router glue + rate limit + sync hook (Phase 3.6c)
+
+`router.py` の write endpoints (`/skills/notify`, `/skills/<id>/report-corrupt`)
+に PeerReputation 連携と per-peer RateLimiter を追加。`SkillSyncClient`
+は pull 成功時に `reputation.record_transfer` を自動呼出。
+
+- `router.set_reputation(rep)` — singleton 注入。report-corrupt body の
+  `against` を `record_corruption(against, reporter=by, skill_id=…)` に転送
+- `router.RateLimiter` — sliding-window (`max_events` / `window_s`)、stdlib
+  `deque` + `threading.RLock` + 注入可能 `clock`。超過で `HTTP 429
+  rate_limited`。peer 識別は `X-Peer-Id` → `X-Forwarded-For` → `client.host`
+  の優先順 (fairness control、security boundary ではない)
+- `SkillSyncClient(reputation=...)` — sync_with の pull 成功毎に
+  `record_transfer(peer_url)`。skip / deny / fail はカウントしない
+- backward-compat: `against` が無い場合は in-memory queue にだけ記録
+  (既存 contract 維持)、`reputation_updated: false` を返す
+- 8 new tests、47/47 関連 tests PASS、ruff clean
+
 ### Added — PeerReputation (Phase 3.6b)
 
 SQLite-backed rolling-window reputation tracker for skill chunk peers.
