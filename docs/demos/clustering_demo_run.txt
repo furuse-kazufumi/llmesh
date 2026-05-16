@@ -1,0 +1,51 @@
+==============================================================================
+ llmesh — Capability Clustering Demo (RFC Phase 2a)
+==============================================================================
+
+Registered peers:
+  - ja-code-7B           (ja         | code         | 7B   | tools=chat+embed)
+  - en-code-7B           (en         | code         | 7B   | tools=chat)
+  - en-math-13B          (en         | math         | 13B  | tools=chat+math)
+  - multi-lang-7B        (ja+en+zh   | code+math    | 7B   | tools=chat+embed+math)
+  - private-only-7B      (ja         | legal        | 7B   | tools=chat)
+
+------------------------------------------------------------------------------
+Query: Japanese coding assistance
+  body: {"preferred_domains": ["code"], "preferred_languages": ["ja"], "k": 3}
+  Top 3:
+    1.00  ja-code-7B
+    1.00  multi-lang-7B
+    0.50  en-code-7B
+
+------------------------------------------------------------------------------
+Query: Math computation, English
+  body: {"required_tools": ["math"], "preferred_languages": ["en"], "k": 3}
+  Top 2:
+    1.00  en-math-13B
+    1.00  multi-lang-7B
+
+------------------------------------------------------------------------------
+Query: High data sensitivity (level >= 2 only)
+  body: {"min_data_level": 2, "preferred_domains": ["code", "math"], "k": 5}
+  Top 3:
+    1.00  multi-lang-7B
+    0.50  en-code-7B
+    0.50  en-math-13B
+
+------------------------------------------------------------------------------
+Query: Embedding tool required, any language
+  body: {"required_tools": ["embed"], "k": 5}
+  Top 2:
+    1.00  ja-code-7B
+    1.00  multi-lang-7B
+
+------------------------------------------------------------------------------
+Query: Anything goes (no preferences)
+  body: {"k": 5}
+  Top 5:
+    1.00  ja-code-7B
+    1.00  en-code-7B
+    1.00  en-math-13B
+    1.00  multi-lang-7B
+    1.00  private-only-7B
+
