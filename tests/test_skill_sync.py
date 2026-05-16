@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 
 from llmesh.mcp.server import app
 from llmesh.skills import (
+    DEFAULT_ALLOWED_LICENSES,
     GossipScheduler,
     PolicyDecision,
     SkillChunk,
@@ -19,6 +20,7 @@ from llmesh.skills import (
     SkillSyncClient,
     SkillSyncError,
     SyncResult,
+    allow_licenses,
 )
 from llmesh.skills.router import reset_state, set_replica
 
