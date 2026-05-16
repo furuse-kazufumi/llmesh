@@ -20,8 +20,10 @@ from llmesh.skills.chunk import (
 from llmesh.skills.merkle import compute_merkle_root, merkle_proof, verify_merkle_proof
 from llmesh.skills.replica import EvictionResult, SkillReplica
 from llmesh.skills.sync import (
+    DEFAULT_ALLOWED_LICENSES,
     GossipScheduler,
     HTTPTransport,
+    LicenseFilter,
     PeerProvider,
     PolicyDecision,
     PullPolicyCheck,
@@ -29,13 +31,16 @@ from llmesh.skills.sync import (
     SkillSyncError,
     SyncResult,
     UrllibTransport,
+    allow_licenses,
 )
 
 __all__ = [
+    "DEFAULT_ALLOWED_LICENSES",
     "SCHEMA_VERSION",
     "EvictionResult",
     "GossipScheduler",
     "HTTPTransport",
+    "LicenseFilter",
     "PeerProvider",
     "PolicyDecision",
     "PullPolicyCheck",
@@ -46,6 +51,7 @@ __all__ = [
     "SkillSyncError",
     "SyncResult",
     "UrllibTransport",
+    "allow_licenses",
     "compute_merkle_root",
     "merkle_proof",
     "verify_merkle_proof",
