@@ -43,6 +43,8 @@ __all__ = [
     "HTTPTransport",
     "LicenseFilter",
     "PeerProvider",
+    "PeerReputation",
+    "PeerStats",
     "PolicyDecision",
     "PullPolicyCheck",
     "SkillChunk",
