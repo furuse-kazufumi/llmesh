@@ -9,9 +9,12 @@ from __future__ import annotations
 
 import time
 from dataclasses import dataclass, field
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from ..identity.manifest import CapabilityManifest, ManifestVerificationError
+
+if TYPE_CHECKING:
+    from llmesh.discovery.clustering import CapabilityQuery
 
 
 class RegistryError(Exception):
