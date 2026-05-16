@@ -70,6 +70,7 @@ done > survey_anomaly_3domains.txt
 
 ### 2-3. **論文執筆の Related Work 自動生成**
 
+{% raw %}
 ```bash
 # 該当分野の上位 50 論文を BibTeX 風に出力
 python -c "
@@ -89,6 +90,7 @@ for f in Path('docs/papers/llm_corpus').glob('*.jsonl'):
                 break
 " > llm_related_work.bib
 ```
+{% endraw %}
 
 ### 2-4. **LLM 連携**（RAG 投入で対話的調査）
 
