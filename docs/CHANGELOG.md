@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+### Added — License filter on SkillSyncClient (Phase 3.6a)
+
+`SkillSyncClient(license_filter=...)` を追加。pull 後 / `replica.put` 前
+に `chunk.license` を gate。RFC §License filter 準拠の AllowList ヘルパ
+`allow_licenses(...)` + `DEFAULT_ALLOWED_LICENSES`
+(`Apache-2.0`, `MIT`, `BSD-3-Clause`, `BSD-2-Clause`, `CC0-1.0`, `CC-BY-4.0`)
+を提供。
+
+- `LicenseFilter = Callable[[SkillChunk], bool]`
+- 空 license / 未登録 license は reject
+- filter 例外も reject 扱い (trust boundary を弱めない)
+- `SyncResult.denied_license: tuple[str, ...]` 追加 (Phase 3.5 `denied`
+  と区別)
+- 4 new tests (allow / reject / default-set / exception-as-reject)
+- 53/53 skill 関連 tests PASS、ruff clean
+
 ### Added — Approval gate (`policy=`) on SkillSyncClient (Phase 3.5)
 
 `SkillSyncClient` に `policy: PullPolicyCheck | None = None` を追加。
