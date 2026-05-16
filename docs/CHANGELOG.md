@@ -2,6 +2,25 @@
 
 ## [Unreleased]
 
+### Added — Skill chunk Pull / Push / Gossip protocol (Phase 3.4)
+
+Phase 3.3 で立てた `/skills/*` HTTP router の **クライアント側** を実装。
+peer 間で skill chunk を pull / push / gossip するプロトコル。
+
+- `llmesh.skills.SkillSyncClient` — stdlib `urllib` ベースの HTTP client
+  - `pull_chunk(peer_url, skill_id)` — `/skills/<id>` から取得
+  - `pull_index(peer_url)` — `/skills/index` 一覧
+  - `notify(peer_url, skill_id, ...)` — `/skills/notify` push
+  - `sync_with(peer_url, replica, max_pulls=8)` — index diff → 欠損 chunk pull
+- `llmesh.skills.GossipScheduler` — `threading.Thread` daemon で `tick()` を
+  周期実行 (default 30 s)。`peer_provider: Callable[[], Iterable[str]]` で
+  TrustedPeers / NodeRegistry と疎結合
+- `HTTPTransport` Protocol で `urllib` を差し替え可能 → fastapi
+  TestClient adapter で in-process テスト
+- 12 new tests, 46/46 skill 関連 tests PASS, ruff clean
+
+approval gate (Phase 3.5) は外側に置く方針 (本 client は policy-agnostic)。
+
 ### Added — `/timeline/ingest` endpoint (F25 f, llive bridge)
 
 外部プロデューサ (主に llive、将来は MQTT bridge 等) が TimelineStore
