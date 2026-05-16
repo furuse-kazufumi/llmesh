@@ -13,6 +13,7 @@ from fastapi.testclient import TestClient
 from llmesh.mcp.server import app
 from llmesh.skills import (
     GossipScheduler,
+    PolicyDecision,
     SkillChunk,
     SkillReplica,
     SkillSyncClient,
