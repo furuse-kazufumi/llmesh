@@ -2,6 +2,22 @@
 
 ## [Unreleased]
 
+### Added — PeerReputation (Phase 3.6b)
+
+SQLite-backed rolling-window reputation tracker for skill chunk peers.
+RFC §Security 「Malicious peer 検出」準拠。
+
+- `PeerReputation(db_path, *, window_s=30d, warn_threshold=0.7, block_threshold=0.5)`
+- `record_transfer(peer_id)` / `record_corruption(peer_id, reporter, skill_id)`
+- `score(peer_id) -> float` (1.0 が完璧、0.0 が最悪)
+  - score = `1 - corruption_count / max(1, transfer_count)` clamped to [0,1]
+- `verdict(peer_id) -> "trusted" | "warn" | "blocked"`
+- `reputation_filtered(peers)` — blocked のみ除外、warn は保持して log
+- `prune()` で window 外 row を削除
+- Thread-safe (`RLock`)、テスト用 `clock=` 注入で時間進行を直接制御
+- Unknown peer はデフォルト trusted (block-on-no-data だと mesh 参加不可)
+- 10 new tests、ruff clean
+
 ### Added — License filter on SkillSyncClient (Phase 3.6a)
 
 `SkillSyncClient(license_filter=...)` を追加。pull 後 / `replica.put` 前
