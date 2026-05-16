@@ -69,10 +69,12 @@ class _TestClientTransport:
 PEER_URL = "http://peer.test"
 
 
-def _make_chunk(skill_id: str, body: bytes = b"hello") -> SkillChunk:
+def _make_chunk(
+    skill_id: str, body: bytes = b"hello", license: str = "Apache-2.0"  # noqa: A002
+) -> SkillChunk:
     sk = Ed25519PrivateKey.generate()
     return SkillChunk.create_unsigned(
-        skill_id=skill_id, version="v1", body=body, license="Apache-2.0"
+        skill_id=skill_id, version="v1", body=body, license=license
     ).sign(sk)
 
 
