@@ -277,6 +277,7 @@ class SkillSyncClient:
         pulled: list[str] = []
         skipped: list[str] = []
         denied: list[str] = []
+        denied_license: list[str] = []
         failed: list[tuple[str, str]] = []
 
         for row in remote:
@@ -300,6 +301,9 @@ class SkillSyncClient:
             if chunk is None:
                 failed.append((sid, "remote_missing_or_unreachable"))
                 continue
+            if not self._license_allowed(chunk):
+                denied_license.append(sid)
+                continue
             replica.put(chunk)
             pulled.append(sid)
 
@@ -308,6 +312,7 @@ class SkillSyncClient:
             pulled=tuple(pulled),
             skipped_existing=tuple(skipped),
             denied=tuple(denied),
+            denied_license=tuple(denied_license),
             failed=tuple(failed),
             duration_s=time.monotonic() - t0,
         )
