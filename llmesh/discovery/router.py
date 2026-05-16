@@ -117,3 +117,68 @@ async def list_peers() -> JSONResponse:
     """
     nodes = _registry.list_nodes()
     return JSONResponse(content={"peers": [n.to_peer_dict() for n in nodes]})
+
+
+@registry_router.post("/query")
+async def query_matching_peers(request: Request) -> JSONResponse:
+    """Capability-aware peer matching (RFC Phase 2a).
+
+    Request body::
+
+        {
+          "required_tools":      ["chat"],            // optional
+          "preferred_domains":   ["code", "math"],    // optional
+          "preferred_languages": ["ja", "en"],        // optional
+          "min_data_level":      0,                    // optional, default 0
+          "k":                   3                     // optional, default 3
+        }
+
+    Response::
+
+        {
+          "matches": [
+            {"score": 1.0, "node_id": "...", "endpoint": "...", "did": "..."},
+            ...
+          ]
+        }
+    """
+    from llmesh.discovery.clustering import CapabilityQuery
+
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    if not isinstance(body, dict):
+        raise HTTPException(status_code=400, detail="body_must_be_object")
+
+    try:
+        query = CapabilityQuery(
+            required_tools=frozenset(body.get("required_tools") or []),
+            preferred_domains=frozenset(body.get("preferred_domains") or []),
+            preferred_languages=frozenset(body.get("preferred_languages") or []),
+            min_data_level=int(body.get("min_data_level") or 0),
+        )
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=f"invalid_query:{exc}") from exc
+
+    try:
+        k = int(body.get("k") or 3)
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=f"invalid_k:{exc}") from exc
+    if k < 1 or k > 100:
+        raise HTTPException(status_code=400, detail=f"k_out_of_range:{k}")
+
+    matches = _registry.find_matching(query, k=k)
+    return JSONResponse(
+        content={
+            "matches": [
+                {
+                    "score": score,
+                    "node_id": entry.node_id,
+                    "endpoint": entry.endpoint,
+                    "did": entry.did,
+                }
+                for score, entry in matches
+            ]
+        }
+    )
