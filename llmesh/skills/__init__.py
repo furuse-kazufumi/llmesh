@@ -5,8 +5,11 @@ replicated between FullSense peers. See
 `docs/llmesh_p2p_phase3_skill_chunk_rfc.md` (in the llive repo) for the
 design contract.
 
-This module currently provides the **core data model** (Phase 3.1).
-Storage (Phase 3.2) and HTTP transport (Phase 3.3) are TBD.
+Provides:
+  * Phase 3.1 — core data model (SkillChunk + Merkle helpers + Ed25519)
+  * Phase 3.2 — SkillReplica (LRU + popularity, SQLite-backed)
+
+HTTP transport (Phase 3.3+) is TBD.
 """
 
 from llmesh.skills.chunk import (
@@ -15,11 +18,14 @@ from llmesh.skills.chunk import (
     SkillChunkError,
 )
 from llmesh.skills.merkle import compute_merkle_root, merkle_proof, verify_merkle_proof
+from llmesh.skills.replica import EvictionResult, SkillReplica
 
 __all__ = [
     "SCHEMA_VERSION",
+    "EvictionResult",
     "SkillChunk",
     "SkillChunkError",
+    "SkillReplica",
     "compute_merkle_root",
     "merkle_proof",
     "verify_merkle_proof",
