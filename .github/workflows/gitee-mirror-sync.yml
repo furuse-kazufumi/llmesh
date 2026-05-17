@@ -1,0 +1,55 @@
+name: Sync to gitee mirror
+
+# v3.2 EAR-clean strategy: L1 市場 (規制対応大手企業、東アジア中心) は
+# GitHub アクセスが社内ポリシーで制限されているケースが多い. gitee
+# (中国国内 git host) に自動 mirror することで、これらの企業からの
+# 採用障壁を除去する.
+#
+# Setup (1 回のみ):
+# 1. gitee.com で furuse-kazufumi/llmesh ミラーリポジトリを作成
+# 2. SSH 鍵を生成し公開鍵を gitee に登録
+# 3. 秘密鍵を GitHub Actions secret `GITEE_SSH_KEY` に保存
+# 4. gitee SSH host (gitee.com) を `GITEE_KNOWN_HOSTS` secret に保存
+#    (ssh-keyscan gitee.com)
+# 5. 本 workflow が自動的に push を mirror
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly safety-net resync (UTC Sunday 18:00 ≈ Asia/Shanghai Monday 02:00)
+    - cron: '0 18 * * 0'
+  workflow_dispatch:
+
+jobs:
+  mirror:
+    name: Push to gitee
+    runs-on: ubuntu-latest
+    # Skip if secrets not configured (fork-friendly)
+    if: ${{ vars.GITEE_MIRROR_ENABLED == 'true' || github.repository_owner == 'furuse-kazufumi' }}
+    steps:
+      - name: Checkout (mirror clone)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Mirror requires all refs / tags
+          persist-credentials: false
+
+      - name: Configure SSH for gitee
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GITEE_SSH_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          echo "${{ secrets.GITEE_KNOWN_HOSTS }}" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Push to gitee (mirror)
+        run: |
+          git remote add gitee git@gitee.com:furuse-kazufumi/llmesh.git
+          git push --mirror gitee
+        env:
+          GIT_SSH_COMMAND: ssh -o StrictHostKeyChecking=yes
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/id_ed25519
