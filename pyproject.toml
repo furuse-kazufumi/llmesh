@@ -151,9 +151,45 @@ dnp3 = [
 vlm = [
     "Pillow>=10.0",
 ]
+# v3.2 EAR-clean strategy — first-class 中国 LLM provider integration.
+# Activates llmesh's normalized adapter layer for Qwen / DeepSeek / GLM /
+# Kimi / Baichuan via their OpenAI-compatible endpoints (HTTP only — no
+# US-origin SDKs required). Strategy ref: STRATEGY_PART2 §5.2, market
+# layers L1-L3.
+#
+# Why httpx-only: keeping this extra US-dependency-free is the whole
+# point. Each provider's official SDK (qwen-agent / dashscope / zhipuai /
+# anthropic-compatible shims) is bundled into the corresponding
+# `cn-llm-<vendor>` extra below for users who want richer non-OpenAI
+# features at the cost of US-dependency surface.
+cn-llm = [
+    "httpx>=0.27",  # transport-only; OpenAI-compatible REST
+]
+cn-llm-qwen     = ["httpx>=0.27", "qwen-agent>=0.0.10"]
+cn-llm-deepseek = ["httpx>=0.27"]                  # OpenAI-compat only
+cn-llm-glm      = ["httpx>=0.27", "zhipuai>=2.0"]
+cn-llm-kimi     = ["httpx>=0.27"]                  # OpenAI-compat only
+cn-llm-baichuan = ["httpx>=0.27"]                  # OpenAI-compat only
+# v3.2 国産 silicon (Ascend / Cambricon / 昆侖芯) runtime support.
+# Stub for the cn-silicon extras family — full activation lands in v3.4
+# once we have access to real silicon for verification. Listed here so
+# the marker exists in v3.2 and integrators can plan around it.
+cn-silicon = []  # populated in v3.4
+# v3.2 compliance bundle — PII redaction + audit log + regulatory docs.
+# Combines presidio with extra knobs for regulated industries.
+compliance = [
+    "presidio-analyzer>=2.2",
+    "spacy>=3.7",
+]
+# v3.2 supply-chain / EAR-clean verification helpers (deps audit CLI).
+# Stdlib-only — tomllib + importlib.metadata + argparse. No extra deps.
+# Listed for discoverability; `llmesh.cli.deps_audit` works without it.
+supply-chain = []
 all   = ["zeroconf>=0.131", "paramiko>=3.4", "aiosmtpd>=1.4",
          "pyftpdlib>=2.0", "pysnmp>=6.1", "ntplib>=0.4",
-         "watchdog>=3.0", "Pillow>=10.0"]
+         "watchdog>=3.0", "Pillow>=10.0",
+         "httpx>=0.27", "qwen-agent>=0.0.10", "zhipuai>=2.0",
+         "presidio-analyzer>=2.2", "spacy>=3.7"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
