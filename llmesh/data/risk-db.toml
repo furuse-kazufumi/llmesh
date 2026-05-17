@@ -1,0 +1,17 @@
+# llmesh/data/risk-db.toml — known supply chain incident database.
+#
+# Bundled with llmesh. Used by `python -m llmesh.cli.deps_audit` to flag
+# packages with known historical incidents above their static origin
+# classification. Pull requests welcome.
+#
+# Schema (per incident, keyed by package name):
+#   severity            = "HIGH" | "MEDIUM" | "LOW"
+#   incident_date       = "YYYY-MM-DD"
+#   summary             = one-line description
+#   affected_versions   = version range or comma-separated list
+
+[litellm]
+severity = "MEDIUM"
+incident_date = "2026-03"
+summary = "PyPI supply-chain attack: malicious v1.82.7/1.82.8 stole SSH keys, cloud credentials, Kubernetes secrets"
+affected_versions = "1.82.7,1.82.8"

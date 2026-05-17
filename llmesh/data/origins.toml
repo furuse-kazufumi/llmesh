@@ -1,0 +1,183 @@
+# llmesh/data/origins.toml — bundled package origin database.
+#
+# Verified manually by the llmesh maintainers. Pull requests welcome
+# at https://github.com/furuse-kazufumi/llmesh (or gitee mirror once
+# established).
+#
+# Schema (per package):
+#   origin           = "US" | "EU" | "CN" | "JP" | "RU" | "UN" (unknown)
+#   maintainer       = free-form attribution
+#   verified         = "YYYY-MM-DD" of manual verification
+#   notes            = free-form
+#   supply_risk      = "low" | "medium" | "high" | "unknown"  (default low)
+#   supply_risk_notes = free-form
+
+# ───────────────────────── llmesh direct deps ──────────────────────────
+
+[cryptography]
+origin = "US"
+maintainer = "Python Cryptographic Authority (PyCA)"
+verified = "2026-05-18"
+notes = "US foundation but multi-national contributors"
+
+[jsonschema]
+origin = "US"
+maintainer = "Julian Berman"
+verified = "2026-05-18"
+
+[base58]
+origin = "UN"
+maintainer = "Wladimir J. van der Laan (NL) + community"
+verified = "2026-05-18"
+notes = "Effectively EU-leaning but maintainership is distributed"
+
+[fastapi]
+origin = "US"
+maintainer = "Sebastián Ramírez (Colombian, US-based corp FastAPI BV/Encode)"
+verified = "2026-05-18"
+
+[uvicorn]
+origin = "EU"
+maintainer = "Encode OSS Ltd (UK)"
+verified = "2026-05-18"
+
+[starlette]
+origin = "EU"
+maintainer = "Encode OSS Ltd (UK)"
+verified = "2026-05-18"
+
+[pydantic]
+origin = "US"
+maintainer = "Pydantic Inc. (UK/US)"
+verified = "2026-05-18"
+notes = "Originally UK; commercial entity registered in US"
+
+# ───────────────────────── common dev / runtime ───────────────────────
+
+[httpx]
+origin = "EU"
+maintainer = "Encode OSS Ltd"
+verified = "2026-05-18"
+
+[requests]
+origin = "US"
+maintainer = "Python Software Foundation maintained"
+verified = "2026-05-18"
+
+[anyio]
+origin = "EU"
+maintainer = "Alex Grönholm (FI)"
+verified = "2026-05-18"
+
+[click]
+origin = "EU"
+maintainer = "Pallets (DE-led, multi-national)"
+verified = "2026-05-18"
+
+[typer]
+origin = "US"
+maintainer = "Sebastián Ramírez"
+verified = "2026-05-18"
+
+[rich]
+origin = "EU"
+maintainer = "Will McGugan (UK)"
+verified = "2026-05-18"
+
+[textual]
+origin = "EU"
+maintainer = "Will McGugan (UK)"
+verified = "2026-05-18"
+
+[pytest]
+origin = "EU"
+maintainer = "pytest-dev (multi-national, EU-leaning)"
+verified = "2026-05-18"
+
+[ruff]
+origin = "US"
+maintainer = "Astral Software Inc."
+verified = "2026-05-18"
+
+[mypy]
+origin = "US"
+maintainer = "Python Software Foundation"
+verified = "2026-05-18"
+
+# ───────────────────────── LLM provider SDKs ──────────────────────────
+
+[anthropic]
+origin = "US"
+maintainer = "Anthropic PBC"
+verified = "2026-05-18"
+
+[openai]
+origin = "US"
+maintainer = "OpenAI"
+verified = "2026-05-18"
+
+[litellm]
+origin = "US"
+maintainer = "BerriAI Inc."
+verified = "2026-05-18"
+supply_risk = "medium"
+supply_risk_notes = "2026-03 supply chain attack on v1.82.7/1.82.8 — pin to >= 1.83.x or use builtin proxy"
+
+[mcp]
+origin = "US"
+maintainer = "Anthropic PBC (Model Context Protocol)"
+verified = "2026-05-18"
+
+[ollama]
+origin = "US"
+maintainer = "Ollama Inc."
+verified = "2026-05-18"
+
+# ───────────────────────── 中国 LLM ecosystem ────────────────────────
+
+[mindspore]
+origin = "CN"
+maintainer = "MindSpore Community (open governance, originally Huawei-led)"
+verified = "2026-05-18"
+notes = "Apache-2.0; full-stack OSS framework"
+
+[paddlepaddle]
+origin = "CN"
+maintainer = "PaddlePaddle Community (originally Baidu-led)"
+verified = "2026-05-18"
+
+[qwen-agent]
+origin = "CN"
+maintainer = "Alibaba (Qwen team)"
+verified = "2026-05-18"
+
+# ───────────────────────── observability / Phoenix etc. ──────────────
+
+[arize-phoenix]
+origin = "US"
+maintainer = "Arize AI Inc."
+verified = "2026-05-18"
+
+[langfuse]
+origin = "EU"
+maintainer = "Langfuse GmbH (Berlin, DE)"
+verified = "2026-05-18"
+notes = "EU-headquartered, GDPR-native"
+
+# ───────────────────────── numerics / data ───────────────────────────
+
+[numpy]
+origin = "UN"
+maintainer = "NumPy team (distributed, NumFOCUS-backed)"
+verified = "2026-05-18"
+notes = "NumFOCUS is US 501(c)(3) but contributor base is global"
+
+[scipy]
+origin = "UN"
+maintainer = "SciPy community (NumFOCUS)"
+verified = "2026-05-18"
+
+[pandas]
+origin = "UN"
+maintainer = "pandas-dev (NumFOCUS)"
+verified = "2026-05-18"
