@@ -129,7 +129,16 @@ def _to_json(entries: list[OriginEntry]) -> str:
     return json.dumps(payload, indent=2, ensure_ascii=False)
 
 
+def _ensure_utf8_stdout() -> None:
+    """Force stdout to UTF-8 so Windows cp932 doesn't choke on em-dashes etc."""
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except (AttributeError, ValueError):  # pragma: no cover - older Python / pipes
+        pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    _ensure_utf8_stdout()
     parser = argparse.ArgumentParser(
         prog="llmesh deps audit",
         description="Audit Python dependency origin + supply-chain risk (EAR-clean check).",
