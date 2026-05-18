@@ -273,3 +273,13 @@ python -m llmesh.cli.sbom     # CycloneDX SBOM 自動生成
 - `docs/USAGE.md` — 使用例
 - `docs/PEERING.md` / `docs/PLATFORMS.md` — ピアリング / プラットフォーム
 - `docs/papers/` — RAD（21 分野コーパス）+ 論文素材
+
+## FullSense Portal hubs (drift 防止)
+
+家族プロダクト横断の install snippet / 推奨モデル / ベンチ運用ルール /
+Spec の **真実ソース** は FullSense portal 配下の hub ページ:
+
+- [Spec hub](https://furuse-kazufumi.github.io/fullsense/spec/) — FullSense Eternal Spec v1.1 + 要件定義 8 本
+- [Benchmark Policy](https://furuse-kazufumi.github.io/fullsense/benchmarks/policy/) — 系列 A/B/C/D + progressive curve + honest disclosure
+- [Recommended models](https://furuse-kazufumi.github.io/fullsense/recommended-models/) — 用途別推奨 on-prem モデル
+- [Comparison](https://furuse-kazufumi.github.io/fullsense/comparison) — vs Claude Code / Perplexity / Codex / Gemini
