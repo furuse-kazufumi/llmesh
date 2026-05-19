@@ -81,7 +81,11 @@ def test_audit_chain_verify_succeeds_after_clean_appends(
     entry_count=st.integers(min_value=2, max_value=5),
     key=st.binary(min_size=16, max_size=64),
 )
-@settings(max_examples=20, suppress_health_check=[HealthCheck.too_slow])
+@settings(
+    max_examples=20,
+    deadline=None,  # Windows での初回ファイル IO で 200ms 超えるケースあり (flaky 防止)
+    suppress_health_check=[HealthCheck.too_slow],
+)
 def test_audit_chain_verify_fails_after_tamper(entry_count, key) -> None:
     """1 文字でも改竄すれば verify_chain は False (HMAC 整合性)."""
     import tempfile
