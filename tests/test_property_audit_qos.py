@@ -49,7 +49,11 @@ _safe_text = st.text(
     ),
     key=st.binary(min_size=16, max_size=64),
 )
-@settings(max_examples=30, suppress_health_check=[HealthCheck.too_slow, HealthCheck.function_scoped_fixture])
+@settings(
+    max_examples=30,
+    deadline=None,  # Windows での初回ファイル IO で 490ms 超えるケースあり (flaky 防止)
+    suppress_health_check=[HealthCheck.too_slow, HealthCheck.function_scoped_fixture],
+)
 def test_audit_chain_verify_succeeds_after_clean_appends(
     entries, key
 ) -> None:
