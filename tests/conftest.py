@@ -6,11 +6,19 @@ import sys
 from pathlib import Path
 
 import pytest
+from hypothesis import settings
 
 from llmesh.protocol.message import NodeAddress
 
 sys.path.insert(0, str(Path(__file__).parent))
 from helpers import _alloc_port  # noqa: F401 — re-exported for tests that need it
+
+
+# Windows での初回 file IO / import / hypothesis warmup で 200ms deadline を
+# 超えるケースが頻発するため, llmesh の全 property test で deadline を
+# 無効化する. 個別 test で `@settings(deadline=...)` を上書きすれば優先.
+settings.register_profile("local-flaky-safe", deadline=None)
+settings.load_profile("local-flaky-safe")
 
 
 @pytest.fixture
