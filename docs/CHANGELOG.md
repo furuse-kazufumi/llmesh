@@ -105,6 +105,25 @@ peer 間で skill chunk を pull / push / gossip するプロトコル。
 
 approval gate (Phase 3.5) は外側に置く方針 (本 client は policy-agnostic)。
 
+### Added — `/timeline/ingest` Cognitive Mesh event_type 4 種拡張 (M8.1, 2026-05-19)
+
+`_ALLOWED_INGEST_EVENT_TYPES` allow-list に下記 4 種を追加.
+llive cognitive_mesh の emit を Timeline server で受け、llove TUI
+panel に流す M8.1 配線 (両側 skeleton 配備済) のサーバ側受け口.
+
+- `cog_proactive_utterance` (ProactiveLoop 発話)
+- `cog_risk_alert` (TonicRiskMonitor アラート)
+- `cog_quarantine_pending` (QuarantinedMemory entry)
+- `cog_brief_result` (BriefRunner 完了通知)
+
+Schema lock 元:
+- llive: `cognitive_mesh/timeline_emitter.py` + 10 件 unit + 10 件 contract test
+- llove: `views/llive/cognitive_mesh_panel.py` + 15 件 unit test
+
+ingest test を 4 件追加 (`test_ingest_accepts_cog_*`), 42 → 46 PASS.
+
+実 production wire (auth header / retry / batch) は Phase 6 で別 PR.
+
 ### Added — `/timeline/ingest` endpoint (F25 f, llive bridge)
 
 外部プロデューサ (主に llive、将来は MQTT bridge 等) が TimelineStore
