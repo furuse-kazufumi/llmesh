@@ -285,6 +285,50 @@ class TestTimelineIngestEnabled:
             resp = client.post("/timeline/ingest", json=body)
         assert resp.status_code == 200
 
+    def test_ingest_accepts_cog_proactive_utterance(self, tmp_path):
+        """M8.1 — Cognitive Mesh skeleton (2026-05-19)."""
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="cog_proactive_utterance",
+            metadata={"content": "build done", "mode": "timer", "gift_value": 0.72},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
+    def test_ingest_accepts_cog_risk_alert(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="cog_risk_alert",
+            metadata={"model_name": "critical_logs", "score": 0.85},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
+    def test_ingest_accepts_cog_quarantine_pending(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="cog_quarantine_pending",
+            metadata={"signer_id": "trusted-rss", "verified": True, "summary": "ok"},
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
+    def test_ingest_accepts_cog_brief_result(self, tmp_path):
+        store = self._mock_store(tmp_path)
+        body = _ingest_body(
+            event_type="cog_brief_result",
+            metadata={
+                "brief_id": "b-001", "status": "completed",
+                "rationale": "done", "confidence": 0.8, "ledger_entries": 5,
+            },
+        )
+        with patch("llmesh.mcp.server._timeline", store):
+            resp = client.post("/timeline/ingest", json=body)
+        assert resp.status_code == 200
+
     def test_ingest_then_read_round_trip(self, tmp_path):
         """Ingest → /timeline/recent → 同じ event が読める."""
         store = self._mock_store(tmp_path)
