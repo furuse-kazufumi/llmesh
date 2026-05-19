@@ -376,6 +376,14 @@ _ALLOWED_INGEST_EVENT_TYPES: frozenset[str] = frozenset({
     "route_trace",
     "concept_update",
     "bwt_summary",
+    # M8.1 (2026-05-19) — Cognitive Mesh skeleton. llive 側 emit を受ける.
+    # Schema は llive `cognitive_mesh.timeline_emitter` と
+    # llove `views.llive.cognitive_mesh_panel.CogEntry.from_event` で
+    # 両側 lock 済 (cross-repo contract test).
+    "cog_proactive_utterance",
+    "cog_risk_alert",
+    "cog_quarantine_pending",
+    "cog_brief_result",
 })
 
 # Body field names that collide with TimelineStore.record positional args.
