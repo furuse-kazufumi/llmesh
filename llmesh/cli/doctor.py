@@ -210,7 +210,21 @@ def render_text(report: DoctorReport) -> str:
     return "\n".join(lines)
 
 
+def _ensure_utf8_stdout() -> None:
+    """Force stdout to UTF-8 so Windows cp932 doesn't choke on em-dashes etc.
+
+    Mirrors the helper in ``llmesh.cli.sbom`` / ``llmesh.cli.deps_audit``.
+    Without this, ``render_text`` containing ``\\u2014`` (em-dash) crashes
+    with UnicodeEncodeError when launched from the Windows default console.
+    """
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except (AttributeError, ValueError):  # pragma: no cover — older Python / pipes
+        pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    _ensure_utf8_stdout()
     p = argparse.ArgumentParser(description="LLMesh environment doctor")
     p.add_argument("--json", action="store_true", help="output JSON")
     p.add_argument("--check-ntp", action="store_true", help="probe NTP drift")
