@@ -123,7 +123,16 @@ def write_sbom(path: Path, sbom: dict[str, Any]) -> None:
     path.write_text(json.dumps(sbom, indent=2, ensure_ascii=False, sort_keys=True))
 
 
+def _ensure_utf8_stdout() -> None:
+    """Force stdout to UTF-8 so Windows cp932 doesn't mojibake the `→`."""
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except (AttributeError, ValueError):  # pragma: no cover
+        pass
+
+
 def main(argv: list[str] | None = None) -> int:
+    _ensure_utf8_stdout()
     p = argparse.ArgumentParser(description="LLMesh SBOM (CycloneDX) generator")
     p.add_argument("-o", "--output", type=Path,
                    default=Path("sbom.cdx.json"),
