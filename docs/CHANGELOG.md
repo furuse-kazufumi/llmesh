@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Added — llrepr: typed Representation IR ("LLVM-for-expression", 旧 RepIR)
+
+`llmesh/llrepr/` — LLM 出力を型付きノード木に一度だけ落とし複数 writer がレンダリングする
+表現汎用層。producer を変えずレンダラ追加可。
+- L1 閉集合ノード (text/heading/list/table/code_block/figure/panel/container) + Style +
+  Document envelope (versioned repSchema, glTF 流 extensionsUsed/Required, fail-closed validate)
+- writer_base (capability negotiation) / markdown (degrade floor) / svg / tui writer
+- schema (versioned JSON Schema, `$id` バンドル + MCP `outputSchema`) / mcp_result
+  (`structuredContent.llrepr` + text(Markdown) 併置, 512KB 超は side-channel へ honest degrade)
+- 24 tests green。**stdio_server への配線は未了** (protocolVersion 2024-11-05→2025-06-18 +
+  outputSchema 宣言 + 実ツール出力配線)。
+- 旧称 RepIR から改名 (github.com/repir/repir 衝突回避)。PyPI 名予約 `llmesh-llrepr` 0.0.1。
+
 ### Added — 10-peer skill chunk replication demo + KPI 測定 (Phase 3.7)
 
 `scripts/demo_skill_sync.py` で N virtual peer × M chunk の sync を
