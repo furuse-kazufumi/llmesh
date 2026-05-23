@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Changed — MCP stdio_server を 2025-06-18 へ近代化 (structuredContent + outputSchema)
+
+`llmesh/mcp/stdio_server.py` — protocolVersion 2024-11-05→2025-06-18 / tools/list に
+`outputSchema`(既存 `TOOL_SCHEMAS` 流用) / tools/call で `structuredContent`(validated) +
+text(JSON) 併置。llrepr が structuredContent で MCP を渡る前提を整備。後方互換維持
+(text block 据置、非構造化クライアントは壊れない)。
+
 ### Added — predictive_push: 予測符号化 push (SPC warning-zone speculative explanation)
 
 `llmesh/predictive_push/` — SPC が warning-zone に入った時点で説明を**投機生成**し、アラーム確定時は
