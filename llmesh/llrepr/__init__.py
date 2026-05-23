@@ -92,4 +92,8 @@ __all__ = [
     "llrepr_output_schema",
     "build_mcp_result",
     "build_error_result",
+    # diff (prediction-error primitive)
+    "diff_documents",
+    "apply_patch",
+    "prediction_error",
 ]
