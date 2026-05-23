@@ -80,7 +80,7 @@ def main() -> None:
 
     sink_b = InMemorySink()
     _run("Episode B — warning recedes to nominal (speculation discarded)",
-         [2.0, 3.5, 3.5, 1.0, 1.0, 1.0, 1.0], sink_b)
+         [2.0, 3.5, 3.5, 3.5, 1.0, 1.0], sink_b)
 
     sink_c = InMemorySink()
     _run("Episode C — cold alarm, no warning (full push)",
