@@ -275,7 +275,11 @@ def _handle_tools_call(
             "isError": True,
         }
 
+    # 2025-06-18 structured output: the validated dict rides in structuredContent
+    # (matches the tool's outputSchema); the serialized JSON stays in a text block
+    # so pre-2025-06-18 / non-structured clients still receive the full result.
     return {
+        "structuredContent": validated,
         "content": [{"type": "text", "text": json.dumps(validated, ensure_ascii=False)}],
         "isError": False,
     }
