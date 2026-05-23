@@ -134,8 +134,11 @@ def _err(req_id: Any, code: int, message: str) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 def _handle_initialize(params: dict[str, Any]) -> dict[str, Any]:
+    # 2025-06-18 is the first MCP revision with structured tool output
+    # (structuredContent + outputSchema), which the llrepr representation layer
+    # rides on. Tool results still co-locate a text block for backwards compat.
     return {
-        "protocolVersion": "2024-11-05",
+        "protocolVersion": "2025-06-18",
         "capabilities": {"tools": {}},
         "serverInfo": {"name": _SERVER_NAME, "version": _SERVER_VERSION},
     }
