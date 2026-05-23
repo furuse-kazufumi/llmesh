@@ -89,17 +89,20 @@ def main() -> None:
     # The payoff: in Episode A the confirmed alarm travelled as a small diff
     # because the explanation was already generated at warning time.
     print("\n=== Episode A pushed frame (the prediction error on the wire) ===")
+    diff_frame = next((f for f in sink_a.frames if f.is_diff), None)
     for f in sink_a.frames:
         print(f"  kind={f.kind}  incident={f.incident_id}  prediction_error={f.prediction_error}")
         if f.is_diff:
             print("  diff ops:")
             print("    " + json.dumps(f.ops, ensure_ascii=False, indent=2).replace("\n", "\n    "))
 
-    # Payload-size proxy: a diff push vs. a full push for the same alarm.
-    cold_full = next((f for f in sink_c.frames if not f.is_diff), None)
-    if sink_a.frames and cold_full is not None:
-        print(f"\n  payload bytes — Episode A (diff): {sink_a.bytes_estimate}  "
-              f"vs cold full push: {sink_c.bytes_estimate}")
+    print("\n=== Takeaway ===")
+    print("  Primary win = NEGATIVE LATENCY: the explanation was generated at WARNING time,")
+    print("  so when the alarm confirmed, only the prediction error (the diff) had to be computed —")
+    print(f"  here {diff_frame.prediction_error if diff_frame else 0} op(s), not a fresh generation.")
+    print("  Honest payload note: for a tiny document a 1-op diff (JSON pointer + value) is NOT")
+    print("  smaller than the full doc. The payload saving scales with representation size —")
+    print("  the diff stays ~constant (the error) while a full re-send grows with the document.")
 
 
 if __name__ == "__main__":
