@@ -151,6 +151,10 @@ def _handle_tools_list(_params: dict[str, Any]) -> dict[str, Any]:
             "name": name,
             "description": _TOOL_DESCRIPTIONS.get(name, name),
             "inputSchema": _MCP_INPUT_SCHEMA,
+            # outputSchema (2025-06-18) lets callers validate structuredContent.
+            # Reuses the existing per-tool output schema (also enforced server-side
+            # by OutputValidator), so the wire contract and the gate never drift.
+            "outputSchema": TOOL_SCHEMAS[name],
         })
     return {"tools": tools}
 
