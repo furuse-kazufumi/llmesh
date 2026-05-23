@@ -207,6 +207,16 @@ class TestHandleToolsCall:
         assert result["isError"] is False
         assert result["content"][0]["type"] == "text"
 
+    def test_successful_call_returns_structured_content(self):
+        fw, sm, llm, val = self._make_pipeline()
+        result = _handle_tools_call(
+            {"name": "generate_code", "arguments": {"prompt": "hi"}},
+            fw, sm, llm, val,
+        )
+        # 2025-06-18: structuredContent mirrors the validated dict and the text block.
+        assert result["structuredContent"] == {"result": "ok"}
+        assert json.loads(result["content"][0]["text"]) == result["structuredContent"]
+
     def test_summarization_applied_for_l3(self):
         fw, sm, llm, val = self._make_pipeline(requires_summary=True)
         _handle_tools_call(
