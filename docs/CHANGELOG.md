@@ -2,6 +2,24 @@
 
 ## [Unreleased]
 
+### Added — predictive_push: 予測符号化 push (SPC warning-zone speculative explanation)
+
+`llmesh/predictive_push/` — SPC が warning-zone に入った時点で説明を**投機生成**し、アラーム確定時は
+予測 vs 実際の **typed diff(予測誤差, `llmesh.llrepr.diff`)だけ push**。神経科学の予測符号化を産業
+アラーム説明へ適用。既存 `CUSUMChart` + `LLMExplainer` を合成(置換せず)。
+- zones (Shewhart 2σ-3σ / CUSUM warn_frac×h) / report_repr (IncidentReport→安定形 llrepr) /
+  transport (PushSink + InMemorySink + PushFrame[diff|full]) / coordinator (PredictivePush 状態機械:
+  warning→投機 / alarm→diff push(incident_id 再利用) / nominal→破棄 / cold→full) + demo
+- `PredictiveMetrics`(made/used/wasted/diff_pushes/full_pushes/total_pred_err)、
+  `py -3.11 -m llmesh.predictive_push.demo`。7 tests。
+- **honest**: 小 doc では diff は full より小さくない(主利点=負レイテンシ)。実 LLM explainer /
+  MQTT・SSE transport 配線は未了。
+
+### Added — llrepr typed diff/patch primitive (予測誤差)
+
+`llmesh/llrepr/diff.py` — 2 つの llrepr Document 間の JSON-Patch 風 typed diff(add/remove/replace)
++ patch 適用(round-trip 保証)。predictive_push の核プリミティブ。8 tests。
+
 ### Added — llrepr: typed Representation IR ("LLVM-for-expression", 旧 RepIR)
 
 `llmesh/llrepr/` — LLM 出力を型付きノード木に一度だけ落とし複数 writer がレンダリングする
