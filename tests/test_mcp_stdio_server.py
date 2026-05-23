@@ -108,6 +108,9 @@ class TestHandleInitialize:
         result = _handle_initialize({})
         assert "protocolVersion" in result
 
+    def test_protocol_version_is_2025_06_18(self):
+        assert _handle_initialize({})["protocolVersion"] == "2025-06-18"
+
     def test_returns_server_info(self):
         result = _handle_initialize({})
         assert result["serverInfo"]["name"] == "llmesh"
