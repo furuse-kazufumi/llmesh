@@ -1,9 +1,9 @@
-"""JSON Schema for the RepIR document — the contract carried over MCP.
+"""JSON Schema for the llrepr document — the contract carried over MCP.
 
 This schema is what a tool declares as its MCP ``outputSchema`` (wrapped under
-``structuredContent.repIR`` per the compat-doc recommendation), letting a
-RepIR-aware consumer validate before typed rendering.  It mirrors
-:mod:`llmesh.repir.model`; the model's own ``validate`` is the runtime guard,
+``structuredContent.llrepr`` per the compat-doc recommendation), letting a
+llrepr-aware consumer validate before typed rendering.  It mirrors
+:mod:`llmesh.llrepr.model`; the model's own ``validate`` is the runtime guard,
 this is the wire contract.
 
 Built programmatically from the node catalog so the two stay in lockstep.
@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .model import CONTAINER_TAGS, NODE_TYPES, REP_SCHEMA_VERSION
+from .model import CONTAINER_TAGS, NODE_TYPES, LLREPR_SCHEMA_VERSION
 
 _NODE_REF = {"$ref": "#/$defs/node"}
 
@@ -115,16 +115,16 @@ _NODE_VARIANTS: dict[str, dict[str, Any]] = {
 # Sanity: every core node type has a schema variant.
 assert set(_NODE_VARIANTS) == set(NODE_TYPES), "schema/model node catalog drift"
 
-REPIR_DOCUMENT_SCHEMA: dict[str, Any] = {
+LLREPR_DOCUMENT_SCHEMA: dict[str, Any] = {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     # An $id makes this a self-contained schema resource: its internal
     # "#/$defs/node" refs resolve against this base even when the whole schema is
-    # embedded inside a larger one (e.g. under `repIR` in repir_output_schema()).
-    "$id": "https://fullsense.dev/schemas/repir/document.json",
-    "title": "RepIR Document",
+    # embedded inside a larger one (e.g. under `llrepr` in llrepr_output_schema()).
+    "$id": "https://fullsense.dev/schemas/llrepr/document.json",
+    "title": "llrepr Document",
     "type": "object",
     "properties": {
-        "repSchema": {"type": "string", "pattern": "^repir/"},
+        "repSchema": {"type": "string", "pattern": "^llrepr/"},
         "extensionsUsed": {"type": "array", "items": {"type": "string"}},
         "extensionsRequired": {"type": "array", "items": {"type": "string"}},
         "root": _NODE_REF,
@@ -135,18 +135,18 @@ REPIR_DOCUMENT_SCHEMA: dict[str, Any] = {
 }
 
 
-def repir_output_schema() -> dict[str, Any]:
-    """The MCP ``outputSchema`` for a tool returning RepIR.
+def llrepr_output_schema() -> dict[str, Any]:
+    """The MCP ``outputSchema`` for a tool returning llrepr.
 
-    Wraps the document schema under ``repIR`` to match the ``structuredContent``
-    shape produced by :func:`llmesh.repir.mcp_result.build_mcp_result`.
+    Wraps the document schema under ``llrepr`` to match the ``structuredContent``
+    shape produced by :func:`llmesh.llrepr.mcp_result.build_mcp_result`.
     """
     return {
         "type": "object",
-        "properties": {"repIR": REPIR_DOCUMENT_SCHEMA},
-        "required": ["repIR"],
+        "properties": {"llrepr": LLREPR_DOCUMENT_SCHEMA},
+        "required": ["llrepr"],
         "additionalProperties": True,
     }
 
 
-__all__ = ["REPIR_DOCUMENT_SCHEMA", "REP_SCHEMA_VERSION", "repir_output_schema"]
+__all__ = ["LLREPR_DOCUMENT_SCHEMA", "LLREPR_SCHEMA_VERSION", "llrepr_output_schema"]

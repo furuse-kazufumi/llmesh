@@ -1,10 +1,10 @@
-"""RepIR — a typed Representation Intermediate Representation ("LLVM-for-expression").
+"""llrepr — a typed Representation Intermediate Representation ("LLVM-for-expression").
 
-RepIR is the *expression contract* at the heart of FullSense: LLM output is
+llrepr is the *expression contract* at the heart of FullSense: LLM output is
 emitted as a typed node tree once, then any number of consumers (Markdown for
 articles, SVG for the web, TUI for ``llove``, manga panels for ``manga-md``)
 render it.  The tree travels over MCP as ordinary JSON ``structuredContent``,
-with a Markdown degrade always co-located in a ``text`` block so non-RepIR-aware
+with a Markdown degrade always co-located in a ``text`` block so non-llrepr-aware
 clients never break (see ``mcp_result.build_mcp_result``).
 
 Design lineage:
@@ -28,7 +28,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any, ClassVar
 
-REP_SCHEMA_VERSION = "repir/0.1"
+LLREPR_SCHEMA_VERSION = "llrepr/0.1"
 """Versioned schema identifier carried by every :class:`Document`.
 
 Bump the minor for additive changes, the major for breaking ones.  A consumer
@@ -61,15 +61,15 @@ CONTAINER_TAGS: frozenset[str] = frozenset(
 # Exceptions (fail-closed)
 # ---------------------------------------------------------------------------
 
-class RepIRError(Exception):
-    """Base class for all RepIR errors."""
+class LlreprError(Exception):
+    """Base class for all llrepr errors."""
 
 
-class RepIRValidationError(RepIRError):
-    """A node tree or document violates the RepIR structural contract."""
+class LlreprValidationError(LlreprError):
+    """A node tree or document violates the llrepr structural contract."""
 
 
-class RepIRCapabilityError(RepIRError):
+class LlreprCapabilityError(LlreprError):
     """A renderer cannot satisfy a *required* extension or node type.
 
     Raised by writers (not by the model) so the producer learns the consumer
@@ -109,10 +109,10 @@ class Style:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Style":
         if not isinstance(data, dict):
-            raise RepIRValidationError(f"style must be an object, got {type(data).__name__}")
+            raise LlreprValidationError(f"style must be an object, got {type(data).__name__}")
         align = data.get("align")
         if align is not None and align not in _ALIGN_VALUES:
-            raise RepIRValidationError(f"style.align invalid: {align!r}")
+            raise LlreprValidationError(f"style.align invalid: {align!r}")
         return cls(
             bold=data.get("bold"),
             italic=data.get("italic"),
@@ -131,7 +131,7 @@ class Style:
 
 @dataclass
 class Node:
-    """Base for all RepIR nodes.
+    """Base for all llrepr nodes.
 
     Common, optional fields:
     - ``style`` — a :class:`Style` value object.
@@ -158,7 +158,7 @@ class Node:
         raise NotImplementedError
 
     def validate(self) -> None:
-        """Raise :class:`RepIRValidationError` if this node is malformed."""
+        """Raise :class:`LlreprValidationError` if this node is malformed."""
 
     # -- helpers for subclasses --------------------------------------------
 
@@ -170,7 +170,7 @@ class Node:
         ext = data.get("extensions")
         if ext:
             if not isinstance(ext, dict):
-                raise RepIRValidationError("node.extensions must be an object")
+                raise LlreprValidationError("node.extensions must be an object")
             kw["extensions"] = ext
         return kw
 
@@ -193,7 +193,7 @@ class Text(Node):
 
     def validate(self) -> None:
         if not isinstance(self.text, str):
-            raise RepIRValidationError("text.text must be a string")
+            raise LlreprValidationError("text.text must be a string")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Text":
@@ -216,7 +216,7 @@ class Heading(Node):
 
     def validate(self) -> None:
         if not isinstance(self.level, int) or not 1 <= self.level <= 6:
-            raise RepIRValidationError(f"heading.level must be 1–6, got {self.level!r}")
+            raise LlreprValidationError(f"heading.level must be 1–6, got {self.level!r}")
         for child in self.children:
             child.validate()
 
@@ -245,9 +245,9 @@ class CodeBlock(Node):
 
     def validate(self) -> None:
         if not isinstance(self.code, str):
-            raise RepIRValidationError("code_block.code must be a string")
+            raise LlreprValidationError("code_block.code must be a string")
         if not isinstance(self.language, str):
-            raise RepIRValidationError("code_block.language must be a string")
+            raise LlreprValidationError("code_block.language must be a string")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "CodeBlock":
@@ -283,7 +283,7 @@ class Figure(Node):
 
     def validate(self) -> None:
         if not isinstance(self.src, str) or not self.src:
-            raise RepIRValidationError("figure.src must be a non-empty URI string")
+            raise LlreprValidationError("figure.src must be a non-empty URI string")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Figure":
@@ -315,10 +315,10 @@ class ListNode(Node):
 
     def validate(self) -> None:
         if not isinstance(self.ordered, bool):
-            raise RepIRValidationError("list.ordered must be a boolean")
+            raise LlreprValidationError("list.ordered must be a boolean")
         for item in self.items:
             if not isinstance(item, list):
-                raise RepIRValidationError("list.items entries must be arrays of nodes")
+                raise LlreprValidationError("list.items entries must be arrays of nodes")
             for node in item:
                 node.validate()
 
@@ -326,7 +326,7 @@ class ListNode(Node):
     def from_dict(cls, data: dict[str, Any]) -> "ListNode":
         raw_items = data.get("items", [])
         if not isinstance(raw_items, list):
-            raise RepIRValidationError("list.items must be an array")
+            raise LlreprValidationError("list.items must be an array")
         items = [[node_from_dict(n) for n in item] for item in raw_items]
         return cls(ordered=bool(data.get("ordered", False)), items=items, **cls._common_kwargs(data))
 
@@ -347,17 +347,17 @@ class Table(Node):
 
     def validate(self) -> None:
         if not all(isinstance(h, str) for h in self.headers):
-            raise RepIRValidationError("table.headers must be strings")
+            raise LlreprValidationError("table.headers must be strings")
         width = len(self.headers)
         for r_idx, row in enumerate(self.rows):
             if not isinstance(row, list):
-                raise RepIRValidationError(f"table.rows[{r_idx}] must be an array")
+                raise LlreprValidationError(f"table.rows[{r_idx}] must be an array")
             if width and len(row) != width:
-                raise RepIRValidationError(
+                raise LlreprValidationError(
                     f"table.rows[{r_idx}] has {len(row)} cells, expected {width}"
                 )
             if not all(isinstance(c, str) for c in row):
-                raise RepIRValidationError(f"table.rows[{r_idx}] cells must be strings")
+                raise LlreprValidationError(f"table.rows[{r_idx}] cells must be strings")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Table":
@@ -392,16 +392,16 @@ class Panel(Node):
     def validate(self) -> None:
         for d in self.dialogue:
             if not isinstance(d, dict) or "text" not in d:
-                raise RepIRValidationError("panel.dialogue entries need a 'text' field")
+                raise LlreprValidationError("panel.dialogue entries need a 'text' field")
         if not all(isinstance(c, str) for c in self.characters):
-            raise RepIRValidationError("panel.characters must be strings")
+            raise LlreprValidationError("panel.characters must be strings")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Panel":
         dialogue = []
         for d in data.get("dialogue", []):
             if not isinstance(d, dict):
-                raise RepIRValidationError("panel.dialogue entries must be objects")
+                raise LlreprValidationError("panel.dialogue entries must be objects")
             dialogue.append({"speaker": str(d.get("speaker", "")), "text": str(d.get("text", ""))})
         return cls(
             caption=str(data.get("caption", "")),
@@ -432,7 +432,7 @@ class Container(Node):
 
     def validate(self) -> None:
         if self.tag not in CONTAINER_TAGS:
-            raise RepIRValidationError(
+            raise LlreprValidationError(
                 f"container.tag {self.tag!r} not in {sorted(CONTAINER_TAGS)}"
             )
         for child in self.children:
@@ -466,10 +466,10 @@ _NODE_REGISTRY: dict[str, type[Node]] = {
 def node_from_dict(data: dict[str, Any]) -> Node:
     """Deserialise a single node, dispatching on its ``type`` (fail-closed)."""
     if not isinstance(data, dict):
-        raise RepIRValidationError(f"node must be an object, got {type(data).__name__}")
+        raise LlreprValidationError(f"node must be an object, got {type(data).__name__}")
     node_type = data.get("type")
     if node_type not in _NODE_REGISTRY:
-        raise RepIRValidationError(
+        raise LlreprValidationError(
             f"unknown node type {node_type!r}; core catalog is {sorted(NODE_TYPES)}"
         )
     return _NODE_REGISTRY[node_type].from_dict(data)  # type: ignore[attr-defined]
@@ -481,16 +481,16 @@ def node_from_dict(data: dict[str, Any]) -> Node:
 
 @dataclass
 class Document:
-    """The RepIR envelope: a versioned schema id, extension declarations, and a root node.
+    """The llrepr envelope: a versioned schema id, extension declarations, and a root node.
 
     ``extensions_required`` lists extensions a consumer **must** understand to
     render faithfully; a writer that cannot raises
-    :class:`RepIRCapabilityError`.  ``extensions_used`` is the superset
+    :class:`LlreprCapabilityError`.  ``extensions_used`` is the superset
     (required ∪ optional).
     """
 
     root: Node
-    rep_schema: str = REP_SCHEMA_VERSION
+    rep_schema: str = LLREPR_SCHEMA_VERSION
     extensions_used: list[str] = field(default_factory=list)
     extensions_required: list[str] = field(default_factory=list)
 
@@ -504,14 +504,14 @@ class Document:
 
     def validate(self) -> None:
         """Fail-closed structural validation of the whole document."""
-        if not isinstance(self.rep_schema, str) or not self.rep_schema.startswith("repir/"):
-            raise RepIRValidationError(f"repSchema must be 'repir/<version>', got {self.rep_schema!r}")
+        if not isinstance(self.rep_schema, str) or not self.rep_schema.startswith("llrepr/"):
+            raise LlreprValidationError(f"repSchema must be 'llrepr/<version>', got {self.rep_schema!r}")
         if not isinstance(self.root, Node):
-            raise RepIRValidationError("document root must be a Node")
+            raise LlreprValidationError("document root must be a Node")
         # required must be a subset of used (glTF invariant)
         missing = set(self.extensions_required) - set(self.extensions_used)
         if missing:
-            raise RepIRValidationError(
+            raise LlreprValidationError(
                 f"extensionsRequired not in extensionsUsed: {sorted(missing)}"
             )
         self.root.validate()
@@ -519,12 +519,12 @@ class Document:
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "Document":
         if not isinstance(data, dict):
-            raise RepIRValidationError("document must be an object")
+            raise LlreprValidationError("document must be an object")
         if "root" not in data:
-            raise RepIRValidationError("document missing 'root'")
+            raise LlreprValidationError("document missing 'root'")
         doc = cls(
             root=node_from_dict(data["root"]),
-            rep_schema=str(data.get("repSchema", REP_SCHEMA_VERSION)),
+            rep_schema=str(data.get("repSchema", LLREPR_SCHEMA_VERSION)),
             extensions_used=list(data.get("extensionsUsed", [])),
             extensions_required=list(data.get("extensionsRequired", [])),
         )

@@ -1,13 +1,13 @@
-"""Shared base for RepIR writers — capability negotiation with graceful degrade.
+"""Shared base for llrepr writers — capability negotiation with graceful degrade.
 
-A *writer* turns a :class:`~llmesh.repir.model.Document` into one concrete
+A *writer* turns a :class:`~llmesh.llrepr.model.Document` into one concrete
 representation (Markdown, SVG, TUI, …).  All writers share one rule, modelled on
 glTF / General-MIDI capability negotiation:
 
 - A writer declares the extension names it understands in ``supported_extensions``.
 - Before rendering, it checks the document's ``extensions_required``.  If the
   document *requires* an extension the writer cannot honour, the writer **refuses**
-  (raises :class:`~llmesh.repir.model.RepIRCapabilityError`) — fail-closed, never a
+  (raises :class:`~llmesh.llrepr.model.LlreprCapabilityError`) — fail-closed, never a
   silent wrong render.
 - *Non-required* extensions a writer does not understand are simply ignored
   (graceful degrade).
@@ -20,11 +20,11 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from .model import Document, Node, RepIRCapabilityError
+from .model import Document, Node, LlreprCapabilityError
 
 
 class Writer(ABC):
-    """Base class for RepIR renderers.
+    """Base class for llrepr renderers.
 
     Subclasses set :attr:`supported_extensions` (default: none) and implement
     :meth:`render`.  Call :meth:`check_capabilities` first.
@@ -40,7 +40,7 @@ class Writer(ABC):
         """Fail-closed gate: refuse documents requiring unsupported extensions."""
         unmet = set(doc.extensions_required) - set(self.supported_extensions)
         if unmet:
-            raise RepIRCapabilityError(
+            raise LlreprCapabilityError(
                 f"{self.format_name} writer cannot satisfy required extensions "
                 f"{sorted(unmet)} (supports {sorted(self.supported_extensions)})"
             )

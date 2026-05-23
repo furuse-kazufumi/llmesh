@@ -1,4 +1,4 @@
-"""RepIR → SVG writer — a typed renderer for web / article embedding.
+"""llrepr → SVG writer — a typed renderer for web / article embedding.
 
 Unlike the Markdown floor, this writer produces a *typed* visual layout: it walks
 the node tree and emits positioned SVG primitives with a running vertical cursor.
@@ -72,7 +72,7 @@ class _Cursor:
 
 
 class SvgWriter(Writer):
-    """Render a RepIR document to a self-contained SVG string."""
+    """Render a llrepr document to a self-contained SVG string."""
 
     format_name = "svg"
     supported_extensions = frozenset()

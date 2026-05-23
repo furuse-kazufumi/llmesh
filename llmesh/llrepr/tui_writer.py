@@ -1,4 +1,4 @@
-"""RepIR → TUI writer — a typed plain-text renderer for ``llove`` (terminal).
+"""llrepr → TUI writer — a typed plain-text renderer for ``llove`` (terminal).
 
 Produces a monospace, box-drawn layout free of Markdown syntax: headings are
 underlined, tables and manga panels use Unicode box-drawing, lists are indented.
@@ -28,7 +28,7 @@ _WIDTH = 78  # target terminal width for box drawing
 
 
 class TuiWriter(Writer):
-    """Render a RepIR document to monospace terminal text."""
+    """Render a llrepr document to monospace terminal text."""
 
     format_name = "tui"
     supported_extensions = frozenset()

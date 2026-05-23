@@ -1,12 +1,12 @@
-"""Build an MCP ``tools/call`` result from a RepIR document.
+"""Build an MCP ``tools/call`` result from a llrepr document.
 
-Implements the design the compat note locked in (``repir_mcp_compat_2026_05_23.md``):
+Implements the design the compat note locked in (``llrepr_mcp_compat_2026_05_23.md``):
 
 - **No custom content type.**  The typed tree rides in standard
-  ``structuredContent`` (under ``repIR``); RepIR-aware consumers validate it
-  against :func:`llmesh.repir.schema.repir_output_schema` and render typed.
+  ``structuredContent`` (under ``llrepr``); llrepr-aware consumers validate it
+  against :func:`llmesh.llrepr.schema.llrepr_output_schema` and render typed.
 - **Markdown degrade co-located** in a ``content`` ``text`` block, the
-  backwards-compatibility pattern the MCP spec recommends, so a non-RepIR client
+  backwards-compatibility pattern the MCP spec recommends, so a non-llrepr client
   (e.g. a generic llama.cpp MCP router) still receives faithful content instead
   of breaking on an unknown block.
 - **512 KB tool-result cap** (matching ``llmesh/mcp/validator.py``): if the
@@ -41,10 +41,10 @@ def build_mcp_result(
     resource_links: list[dict[str, str]] | None = None,
     max_structured_bytes: int = _MAX_STRUCTURED_BYTES,
 ) -> dict[str, Any]:
-    """Build an MCP tool-call result carrying *doc* as RepIR.
+    """Build an MCP tool-call result carrying *doc* as llrepr.
 
     Args:
-        doc: The RepIR document (validated here, fail-closed).
+        doc: The llrepr document (validated here, fail-closed).
         resource_links: Optional MCP ``resource_link`` content blocks for large
             or binary side-channel payloads (each ``{"type": "resource_link",
             "uri": ..., ...}``).
@@ -65,16 +65,16 @@ def build_mcp_result(
 
     result: dict[str, Any] = {"content": content, "isError": False}
 
-    structured = {"repIR": doc.to_dict()}
+    structured = {"llrepr": doc.to_dict()}
     if _structured_size(structured) <= max_structured_bytes:
         result["structuredContent"] = structured
     else:
         # Honest degrade: typed tree too large for a tool result. The Markdown
         # text still carries the content; a side-channel (MQTT/SSE) should deliver
-        # the full RepIR. Flag it so callers/audit can see the downgrade.
+        # the full llrepr. Flag it so callers/audit can see the downgrade.
         result["_meta"] = {
-            "repir.structured_omitted": True,
-            "repir.reason": "structuredContent exceeds tool-result cap; use side-channel",
+            "llrepr.structured_omitted": True,
+            "llrepr.reason": "structuredContent exceeds tool-result cap; use side-channel",
         }
 
     return result

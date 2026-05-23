@@ -1,9 +1,9 @@
-"""Tests for the RepIR core model and writers."""
+"""Tests for the llrepr core model and writers."""
 from __future__ import annotations
 
 import pytest
 
-from llmesh.repir import (
+from llmesh.llrepr import (
     CodeBlock,
     Container,
     Document,
@@ -12,8 +12,8 @@ from llmesh.repir import (
     ListNode,
     MarkdownWriter,
     Panel,
-    RepIRCapabilityError,
-    RepIRValidationError,
+    LlreprCapabilityError,
+    LlreprValidationError,
     Style,
     SvgWriter,
     Table,
@@ -26,7 +26,7 @@ from llmesh.repir import (
 
 def _sample_doc() -> Document:
     return Document.of(
-        Heading(level=1, children=[Text(text="RepIR Demo")]),
+        Heading(level=1, children=[Text(text="llrepr Demo")]),
         Container(
             tag="block",
             children=[Text(text="Intro paragraph.", style=Style(bold=True))],
@@ -51,7 +51,7 @@ def test_document_of_builds_document_container_root():
     doc = Document.of(Text(text="x"))
     assert isinstance(doc.root, Container)
     assert doc.root.tag == "document"
-    assert doc.rep_schema.startswith("repir/")
+    assert doc.rep_schema.startswith("llrepr/")
 
 
 def test_round_trip_to_from_dict():
@@ -63,31 +63,31 @@ def test_round_trip_to_from_dict():
 
 def test_validate_rejects_bad_heading_level():
     doc = Document.of(Heading(level=9, children=[Text(text="bad")]))
-    with pytest.raises(RepIRValidationError):
+    with pytest.raises(LlreprValidationError):
         doc.validate()
 
 
 def test_node_from_dict_rejects_unknown_type():
-    with pytest.raises(RepIRValidationError):
+    with pytest.raises(LlreprValidationError):
         node_from_dict({"type": "wormhole"})
 
 
 def test_table_row_width_mismatch_rejected():
     doc = Document.of(Table(headers=["a", "b"], rows=[["only-one"]]))
-    with pytest.raises(RepIRValidationError):
+    with pytest.raises(LlreprValidationError):
         doc.validate()
 
 
 def test_required_extension_must_be_subset_of_used():
     doc = Document(root=Text(text="x"), extensions_required=["ext.foo"], extensions_used=[])
-    with pytest.raises(RepIRValidationError):
+    with pytest.raises(LlreprValidationError):
         doc.validate()
 
 
 def test_style_round_trip_and_invalid_align():
     s = Style(bold=True, italic=True, align="center")
     assert Style.from_dict(s.to_dict()) == s
-    with pytest.raises(RepIRValidationError):
+    with pytest.raises(LlreprValidationError):
         Style.from_dict({"align": "diagonal"})
 
 
@@ -97,7 +97,7 @@ def test_style_round_trip_and_invalid_align():
 
 def test_markdown_renders_all_core_nodes():
     md = MarkdownWriter().render(_sample_doc())
-    assert "# RepIR Demo" in md
+    assert "# llrepr Demo" in md
     assert "**Intro paragraph.**" in md
     assert "- first" in md
     assert "| a | b |" in md
@@ -118,7 +118,7 @@ def test_writer_refuses_required_unsupported_extension():
         extensions_used=["ext.special"],
         extensions_required=["ext.special"],
     )
-    with pytest.raises(RepIRCapabilityError):
+    with pytest.raises(LlreprCapabilityError):
         MarkdownWriter().render(doc)
 
 
@@ -130,7 +130,7 @@ def test_svg_is_self_contained_and_sized():
     svg = SvgWriter().render(_sample_doc())
     assert svg.startswith("<svg")
     assert svg.rstrip().endswith("</svg>")
-    assert "RepIR Demo" in svg
+    assert "llrepr Demo" in svg
     assert 'href="https://example.com/x.png"' in svg
 
 
@@ -145,12 +145,12 @@ def test_tui_draws_box_table_and_panel():
     out = TuiWriter().render(_sample_doc())
     assert "┌" in out and "┐" in out  # table box
     assert "╭" in out and "╯" in out  # panel box
-    assert "RepIR Demo" in out
+    assert "llrepr Demo" in out
     assert "=" in out  # h1 underline
 
 
 def test_render_dispatch_unknown_format_rejected():
-    with pytest.raises(RepIRValidationError):
+    with pytest.raises(LlreprValidationError):
         render(_sample_doc(), "hologram")
 
 

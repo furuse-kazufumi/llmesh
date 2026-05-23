@@ -1,14 +1,14 @@
-"""RepIR — typed Representation IR ("LLVM-for-expression") for FullSense / LLMesh.
+"""llrepr — typed Representation IR ("LLVM-for-expression") for FullSense / LLMesh.
 
-One typed node tree, many renderers.  LLM output is emitted as RepIR once, then
+One typed node tree, many renderers.  LLM output is emitted as llrepr once, then
 Markdown (the always-safe degrade floor), SVG (web/article), and TUI (``llove``)
 writers render it.  The tree travels over MCP as standard ``structuredContent``
-with Markdown co-located in a ``text`` block, so non-RepIR-aware clients never
+with Markdown co-located in a ``text`` block, so non-llrepr-aware clients never
 break.
 
 Public API::
 
-    from llmesh.repir import Document, Container, Heading, Text, render
+    from llmesh.llrepr import Document, Container, Heading, Text, render
     doc = Document.of(Heading(level=1, children=[Text(text="Hello")]))
     print(render(doc, "markdown"))
 """
@@ -19,7 +19,7 @@ from .mcp_result import build_error_result, build_mcp_result
 from .model import (
     CONTAINER_TAGS,
     NODE_TYPES,
-    REP_SCHEMA_VERSION,
+    LLREPR_SCHEMA_VERSION,
     CodeBlock,
     Container,
     Document,
@@ -28,15 +28,15 @@ from .model import (
     ListNode,
     Node,
     Panel,
-    RepIRCapabilityError,
-    RepIRError,
-    RepIRValidationError,
+    LlreprCapabilityError,
+    LlreprError,
+    LlreprValidationError,
     Style,
     Table,
     Text,
     node_from_dict,
 )
-from .schema import REPIR_DOCUMENT_SCHEMA, repir_output_schema
+from .schema import LLREPR_DOCUMENT_SCHEMA, llrepr_output_schema
 from .svg_writer import SvgWriter
 from .tui_writer import TuiWriter
 from .writer_base import Writer
@@ -53,7 +53,7 @@ def render(doc: Document, fmt: str = "markdown") -> str:
     try:
         writer_cls = _WRITERS[fmt]
     except KeyError:
-        raise RepIRValidationError(
+        raise LlreprValidationError(
             f"unknown render format {fmt!r}; available: {sorted(_WRITERS)}"
         ) from None
     return writer_cls().render(doc)
@@ -75,11 +75,11 @@ __all__ = [
     "node_from_dict",
     "NODE_TYPES",
     "CONTAINER_TAGS",
-    "REP_SCHEMA_VERSION",
+    "LLREPR_SCHEMA_VERSION",
     # errors
-    "RepIRError",
-    "RepIRValidationError",
-    "RepIRCapabilityError",
+    "LlreprError",
+    "LlreprValidationError",
+    "LlreprCapabilityError",
     # writers
     "Writer",
     "MarkdownWriter",
@@ -87,8 +87,8 @@ __all__ = [
     "TuiWriter",
     "render",
     # schema + mcp
-    "REPIR_DOCUMENT_SCHEMA",
-    "repir_output_schema",
+    "LLREPR_DOCUMENT_SCHEMA",
+    "llrepr_output_schema",
     "build_mcp_result",
     "build_error_result",
 ]

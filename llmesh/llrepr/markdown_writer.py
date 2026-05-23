@@ -1,6 +1,6 @@
-"""RepIR → Markdown writer — the minimum-guarantee degrade.
+"""llrepr → Markdown writer — the minimum-guarantee degrade.
 
-Markdown is RepIR's *floor*: every core node renders to it, and the MCP layer
+Markdown is llrepr's *floor*: every core node renders to it, and the MCP layer
 always co-locates this output in a ``text`` block so a client that ignores
 ``structuredContent`` still receives faithful, human-readable content (the
 backwards-compatibility pattern the MCP spec recommends).
@@ -26,7 +26,7 @@ from .writer_base import Writer
 
 
 class MarkdownWriter(Writer):
-    """Render a RepIR document to GitHub-flavoured Markdown."""
+    """Render a llrepr document to GitHub-flavoured Markdown."""
 
     format_name = "markdown"
     supported_extensions = frozenset()
