@@ -14,6 +14,7 @@ Public API::
 """
 from __future__ import annotations
 
+from .diff import apply_patch, diff_documents, prediction_error
 from .markdown_writer import MarkdownWriter
 from .mcp_result import build_error_result, build_mcp_result
 from .model import (
