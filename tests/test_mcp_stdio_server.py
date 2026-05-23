@@ -133,6 +133,11 @@ class TestHandleToolsList:
             assert "inputSchema" in tool
             assert tool["inputSchema"]["type"] == "object"
 
+    def test_each_tool_has_output_schema(self):
+        result = _handle_tools_list({})
+        for tool in result["tools"]:
+            assert tool["outputSchema"] == TOOL_SCHEMAS[tool["name"]]
+
     def test_each_tool_has_description(self):
         result = _handle_tools_list({})
         for tool in result["tools"]:
