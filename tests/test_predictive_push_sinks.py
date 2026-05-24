@@ -11,6 +11,7 @@ from llmesh.predictive_push import (
     JsonlSink,
     MqttPushSink,
     PushFrame,
+    SsePushSink,
 )
 
 
