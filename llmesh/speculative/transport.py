@@ -159,20 +159,29 @@ def ingest_result(
     signed_manifest: SignedManifest,
     signed_result: SignedResult,
     *,
-    expected_pub_hex: str | None = None,
+    enforce_dispatched_peer: bool = True,
 ) -> bool:
     """Origin-side intake of a peer's :class:`SignedResult` (fail-closed).
 
-    Verifies, in order: the result's own signature (provenance), that it binds to
-    ``signed_manifest`` (no cross-manifest replay), and — when ``expected_pub_hex``
-    is given — that it came from the peer the origin actually dispatched to. Only
-    then is it handed to ``coord.submit_result`` (which re-verifies the *manifest*
-    signature and caches it). Any rejection increments
-    ``coord.metrics.signature_rejections`` and returns ``False``.
+    Verifies, in order, then caches via ``coord.submit_result``:
 
-    NOTE (SPEC-MESH-11): this proves authenticity, not correctness. A Byzantine but
-    correctly-signed peer can still return a wrong answer; gate adoption behind a
-    cross-check before promoting a speculative result to a confirmed task.
+    1. the result's own Ed25519 signature (provenance / not tampered in transit);
+    2. that it binds to ``signed_manifest`` (no cross-manifest replay);
+    3. **(default) that it came from the peer the origin actually dispatched to** —
+       ``signed_result.executor_pub_hex`` is mapped to a ``peer:`` node id and required
+       to equal ``coord.expected_executor(manifest_hash)``. This closes the
+       cache-poisoning gap where a peer that was *never* dispatched to could observe
+       the public ``manifest_hash``, sign its own result, and have it accepted.
+       A missing pending entry (already pulled/unknown) or a mismatch is rejected.
+
+    Any rejection increments ``coord.metrics.signature_rejections`` and returns False.
+    Set ``enforce_dispatched_peer=False`` **only** for an open-relay topology that
+    intentionally accepts a validly-signed result from any peer.
+
+    NOTE (SPEC-MESH-11): this proves authenticity + dispatched-peer provenance, not
+    *correctness*. A Byzantine but legitimately-dispatched peer can still return a
+    wrong answer; gate adoption behind a cross-check before promoting a speculative
+    result to a confirmed task.
     """
     if not signed_result.verify():
         coord.metrics.signature_rejections += 1
@@ -180,9 +189,17 @@ def ingest_result(
     if signed_result.manifest_hash != signed_manifest.manifest_hash:
         coord.metrics.signature_rejections += 1
         return False
-    if expected_pub_hex is not None and signed_result.executor_pub_hex != expected_pub_hex:
-        coord.metrics.signature_rejections += 1
-        return False
+    if enforce_dispatched_peer:
+        target = coord.expected_executor(signed_manifest.manifest_hash)
+        try:
+            executor_node_id: str | None = NodeIdentity.node_id_from_public_hex(
+                signed_result.executor_pub_hex
+            )
+        except ValueError:
+            executor_node_id = None
+        if target is None or executor_node_id is None or executor_node_id != target:
+            coord.metrics.signature_rejections += 1
+            return False
     return coord.submit_result(
         signed_manifest, signed_result.result, cost_ms=signed_result.cost_ms
     )
