@@ -50,7 +50,9 @@
 
 ## 5. 着手順 (PoC→本格導入)
 
-1. SPEC-MESH-01 予測器の hit_rate 単体測定 (llive 側、最小 predictor)。
+1. ✅ SPEC-MESH-01 予測器の hit_rate 単体測定 (llive 側、最小 predictor) — **完了 (2026-05-24)**。
+   構造のある系列で markov が baseline を大きく超える (cyclic 0.999 vs 0.25) ことを実証。
+   構造なし系列では baseline 同等 = 過剰主張なし。**次の前提 = 実 ChangeOp 系列のログ化**で合成値を実測上書き。
 2. 効果確認後 SPEC-MESH-02/03 transport+executor 配線 → SPEC-MESH-07 実測で simulation 上書き。
 3. SPEC-MESH-04 fast-fallback を最初から組み込む (後付け不可の最高優先)。
 4. SPEC-MESH-05/08 ゲート + 環境負荷ガード。
