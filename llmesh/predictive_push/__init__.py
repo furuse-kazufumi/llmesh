@@ -32,5 +32,8 @@ __all__ = [
     "PushSink",
     "InMemorySink",
     "PushFrame",
+    "CallbackSink",
+    "JsonlSink",
+    "MqttPushSink",
     "incident_to_llrepr",
 ]
