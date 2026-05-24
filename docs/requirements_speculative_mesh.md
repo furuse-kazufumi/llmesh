@@ -30,6 +30,7 @@
 | **SPEC-MESH-08** | 環境負荷ガード: `wasted_compute_ms` が閾値超過 (低 hit_rate 継続) で投機を自動抑制。予測器精度の floor を設ける | 中 | 低 hit_rate は電力浪費 |
 | **SPEC-MESH-09** | Approval Bus 非迂回: 投機結果を確定タスクに昇格する際は通常の approval を通す。speculative=true は独立 verdict | 高 | fail-closed / 既存 PoC で署名検証は実装済 |
 | **SPEC-MESH-10** | KV-cache 差分共有との結合余地: [[project_idea_kv_cache_memory_translator]] と署名スキーム共通化 (将来) | 低 | 別アイデア #2 と結合 |
+| **SPEC-MESH-11** | **結果検証 (Byzantine 対策)**: Ed25519 署名は manifest 真正性のみ保証し**結果の正しさは保証しない**。投機結果を採用する前に安価な cross-check / 予測検証ゲート で poisoned result を捕捉する | **高** | 敵対的 PoC: 結果検証なしだと Byzantine 50% で正答率 51% に低下、検証(catch 0.9)で 95% 回復 |
 
 ## 3. 成功基準
 
