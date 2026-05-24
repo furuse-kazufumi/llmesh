@@ -267,7 +267,12 @@ class HttpMeshTransport(MeshTransport):
     def send(self, endpoint: str, signed: SignedManifest) -> None:
         url = endpoint.rstrip("/") + _DISPATCH_PATH
         payload = signed.to_dict()
-        self._pool.submit(self._send_blocking, url, payload)
+        try:
+            self._pool.submit(self._send_blocking, url, payload)
+        except RuntimeError:
+            # Pool already shut down: honour the MUST-NOT-raise contract and count it.
+            with self._lock:
+                self.metrics.send_errors += 1
 
     def _send_blocking(self, url: str, payload: dict[str, Any]) -> None:
         try:
