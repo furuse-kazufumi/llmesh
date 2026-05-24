@@ -24,19 +24,39 @@ rate is high *and* a mesh round-trip beats local VRAM swap (LAN, not WAN).
 from __future__ import annotations
 
 from .coordinator import IdleNode, SpeculativeMeshCoordinator, SpeculativeMetrics
+from .executor import ExecutorMetrics, RunFn, SpeculativeExecutor
 from .manifest import (
     SignatureError,
     SignedManifest,
     SpeculativeManifest,
     sign_manifest,
 )
+from .transport import (
+    HttpMeshTransport,
+    LoopbackMesh,
+    MeshTransport,
+    SignedResult,
+    ingest_result,
+    make_loopback_dispatch_fn,
+    make_mesh_dispatch_fn,
+)
 
 __all__ = [
+    "ExecutorMetrics",
+    "HttpMeshTransport",
     "IdleNode",
+    "LoopbackMesh",
+    "MeshTransport",
+    "RunFn",
     "SignatureError",
     "SignedManifest",
+    "SignedResult",
+    "SpeculativeExecutor",
     "SpeculativeManifest",
     "SpeculativeMeshCoordinator",
     "SpeculativeMetrics",
+    "ingest_result",
+    "make_loopback_dispatch_fn",
+    "make_mesh_dispatch_fn",
     "sign_manifest",
 ]
