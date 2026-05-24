@@ -163,6 +163,20 @@ class SignedManifest:
             "speculative": self.speculative,
         }
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> SignedManifest:
+        """Reconstruct a signed manifest from its :meth:`to_dict` form.
+
+        fail-closed: missing/malformed fields raise. The signature is **not**
+        checked here — call :meth:`verify` before trusting the result.
+        """
+        return cls(
+            manifest=SpeculativeManifest.from_dict(d["manifest"]),
+            origin_pub_hex=str(d["origin_pub_hex"]),
+            signature_hex=str(d["signature_hex"]),
+            speculative=bool(d.get("speculative", True)),
+        )
+
 
 def sign_manifest(
     manifest: SpeculativeManifest, identity: NodeIdentity, *, speculative: bool = True
