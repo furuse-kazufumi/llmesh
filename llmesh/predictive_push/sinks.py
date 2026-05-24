@@ -146,4 +146,4 @@ class MqttPushSink(PushSink):
         self._client.publish(self._topic, payload, qos=self._qos)
 
 
-__all__ = ["CallbackSink", "JsonlSink", "MqttPushSink"]
+__all__ = ["CallbackSink", "JsonlSink", "SsePushSink", "MqttPushSink"]
