@@ -18,6 +18,7 @@ from __future__ import annotations
 
 from .coordinator import ObserveResult, PredictiveMetrics, PredictivePush
 from .report_repr import incident_to_llrepr
+from .sinks import CallbackSink, JsonlSink, MqttPushSink
 from .transport import InMemorySink, PushFrame, PushSink
 from .zones import Zone, classify_cusum_zone, classify_shewhart_zone
 
