@@ -20,7 +20,7 @@
 
 | ID | 要件 | 優先 | PoC 由来 |
 |---|---|---|---|
-| **SPEC-MESH-01** | 分岐予測器 (Phase 1): llive MetaMutation を拡張し「次に発生しそうな ChangeOp / Brief」の top-K manifest を生成する predictor を実装 | 高 | PoC は ready-made manifest を消費。実 hit_rate は予測器精度で決まる |
+| **SPEC-MESH-01** ✅ | 分岐予測器 (Phase 1): 最小 predictor 実装済 (`llive/src/llive/evolution/branch_predictor.py`: `FrequencyPredictor`=baseline / `MarkovPredictor`=order-1, top-K を opaque `branch` dict で生成 → `SpeculativeManifest.new(branch=...)`)。hit_rate 単体測定済 (合成系列, k=1): 構造ありで markov 0.87 (noisy.85) / 0.999 (cyclic) vs baseline 0.23–0.25、構造なしは baseline 同等 (sanity 通過)。実運用値は ChangeOp 実ログ待ち | 高 | 測定 doc: `llive/docs/perf_comparison/branch_predictor_hit_rate_2026_05_24.md` |
 | **SPEC-MESH-02** | 実 mesh transport: `dispatch_fn` を llmesh discovery (`NodeRegistry`/`router`) + protocol で実装し、署名 manifest を idle peer へ low-priority (`speculative=true`) で送る | 高 | PoC は dispatch_fn=record only |
 | **SPEC-MESH-03** | peer 側 executor: 受信 manifest を検証 (Ed25519, fail-closed) → 低優先で実行 → 結果を署名して返す | 高 | PoC は submit_result を手動駆動 |
 | **SPEC-MESH-04** | **fast-fallback (非ブロッキング pull)**: origin は投機完了を待たず、`pull` が miss なら即ローカル計算。timeout 待ちを入れない (miss_penalty≈0 を維持) | **最高** | break-even を 0 付近に保つ唯一の条件 |
