@@ -66,6 +66,24 @@
 5. SPEC-MESH-11 結果検証ゲート (Byzantine 対策) — `ingest_result` は authenticity のみ。
    採用前の cross-check は別レイヤ (予測検証ゲート PoC と結合)。
 
+## コードレビュー指摘 (2026-05-24, gem-reviewer / 実コード検証済・要修正)
+
+SPEC-MESH-02/03/04 実装 (transport.py/executor.py) の独立レビューで判明した**本物の**2 件 (high):
+
+1. **`coordinator.submit_result` は manifest 署名のみ検証し result 値は未認証** (coordinator.py:247)。
+   未信頼な peer result を直接渡すと任意 result が hit としてキャッシュされる。設計意図は
+   「未信頼 return は必ず `transport.ingest_result` を通す」だが、公開 API がそれを強制しておらず
+   docstring も過大表現。**修正**: 未信頼境界では `SignedResult` 検証を必須化 (ingest_result 経由を
+   型/契約で強制) か、submit_result を trusted-internal sink と明記し untrusted は ingest_result 限定。
+2. **`ingest_result` の `expected_pub_hex` が既定 None** = 派遣先 peer 以外の署名済み結果も受理
+   (transport.py:162)。manifest_hash は公開なので未派遣 Byzantine peer がキャッシュ汚染可能。
+   **修正**: `coord._pending[hash].target_node_id` → registry の registered pubkey を解決し
+   `signed_result.executor_pub_hex` 一致を**既定で fail-closed 強制** (peer 束縛を opt-in にしない)。
+
+low: `HttpMeshTransport.send` は pool shutdown 後に `submit` が RuntimeError (no-raise 契約違反, 直接呼び時) /
+`LoopbackMesh._deliver_one` は executor duck-typing 無ガード。crypto/canonical-JSON/fail-closed decode/
+metrics thread-safety/非ブロッキング fast-fallback は**正しい**と確認。SPEC-MESH-11 (結果正しさ) は別レイヤ。
+
 ## Sources / 関連
 
 - PoC: `llmesh/speculative/` (commit `2a05f64`) + `bench.py` (`b1d95e6`)
