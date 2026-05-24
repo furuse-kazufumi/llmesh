@@ -285,6 +285,21 @@ class SpeculativeMeshCoordinator:
             self.metrics.wasted += 1
         return False, None
 
+    def pull_or_compute(self, manifest_hash: str, local_fn: Callable[[], Any]) -> Any:
+        """fast-fallback (SPEC-MESH-04): hit を返す、無ければ**即**ローカル計算。
+
+        投機の完了を待たない — ``pull`` が miss を返したら ``local_fn`` を**その場で**
+        呼んで結果を返す。timeout 待ちや inflight 投機の join は一切しない (待つと
+        break-even が崩れる)。これが速度経路の唯一の入口になるよう設計されている
+        (origin の本筋推論が投機の遅延に縛られない = 後付け不可の最高優先要件)。
+
+        遅れて届いた投機結果は ``submit_result`` 側で wasted 計上され、安全に破棄される。
+        """
+        hit, value = self.pull(manifest_hash)
+        if hit:
+            return value
+        return local_fn()
+
     def discard_unpulled(self) -> int:
         """Mark every still-pending/ready speculation as wasted.
 
