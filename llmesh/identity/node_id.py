@@ -127,3 +127,15 @@ class NodeIdentity:
             return True
         except Exception:
             return False
+
+    @staticmethod
+    def node_id_from_public_hex(pub_hex: str) -> str:
+        """Derive the stable ``peer:`` node id from a hex Ed25519 public key.
+
+        Mirrors :pyattr:`node_id` for a remote peer whose only known identifier is
+        its public key (e.g. a signed result's ``executor_pub_hex``). Lets a caller
+        bind a signature to the dispatched peer's node id without a registry lookup.
+
+        Raises ``ValueError`` on malformed hex (fail-closed: caller must catch).
+        """
+        return "peer:" + _b58encode(bytes.fromhex(pub_hex))
