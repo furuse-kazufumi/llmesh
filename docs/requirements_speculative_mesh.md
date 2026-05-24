@@ -38,6 +38,7 @@
 - WAN では投機を発火させない (gate が効く)。
 - `wasted_compute_ms` を監視し、hit_rate floor を下回ったら自動抑制が発火。
 - すべての mesh 結果が Ed25519 検証を通過 (signature_rejections = 改ざん検出のみ)。
+- Byzantine peer 混在下でも **結果検証で正答率 ≥ 95% を維持** (署名のみでは不足, SPEC-MESH-11)。
 
 ## 4. フィジビリティ上の主リスク (honest disclosure)
 
