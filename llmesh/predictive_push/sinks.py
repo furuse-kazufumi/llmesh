@@ -53,6 +53,58 @@ class JsonlSink(PushSink):
             flush()
 
 
+def _sse_safe(value: str) -> str:
+    """Strip CR/LF from an SSE field value to prevent frame-injection.
+
+    SSE delimits fields by ``\\n`` and messages by a blank line, so a stray
+    newline in ``event``/``id`` would let a crafted value forge extra events.
+    The JSON ``data`` payload is safe already — :func:`json.dumps` escapes any
+    embedded newline — so only the structural fields need sanitising. Mirrors the
+    fail-closed posture of :class:`MqttPushSink`'s topic validation.
+    """
+    return value.replace("\r", "").replace("\n", "")
+
+
+class SsePushSink(PushSink):
+    """Write each frame as a Server-Sent Events message to a text stream.
+
+    SSE is the browser-facing twin of :class:`MqttPushSink`: a consumer opens an
+    ``EventSource`` over a long-lived HTTP response and receives each confirmed
+    frame as it happens, applying the typed diff against its held speculative
+    document. Pure stdlib — the *host* owns the HTTP response, the
+    ``text/event-stream`` content type, and connection lifecycle; this sink only
+    formats one message per frame.
+
+    Wire format (per the WHATWG SSE spec)::
+
+        event: <kind>
+        id: <incident_id>
+        data: <single-line JSON payload>
+        <blank line>
+
+    The ``data`` payload is the same JSON wire form the other sinks emit
+    (:meth:`PushFrame.to_payload`); :func:`json.dumps` keeps it on one line, so a
+    single ``data:`` field suffices and the consumer parses it with ``JSON.parse``.
+    """
+
+    def __init__(self, stream: TextIO) -> None:
+        if not hasattr(stream, "write"):
+            raise TypeError("stream must be a writable text stream")
+        self._stream = stream
+
+    def push(self, frame: PushFrame) -> None:
+        payload = json.dumps(frame.to_payload(), ensure_ascii=False)
+        msg = (
+            f"event: {_sse_safe(frame.kind)}\n"
+            f"id: {_sse_safe(frame.incident_id)}\n"
+            f"data: {payload}\n\n"
+        )
+        self._stream.write(msg)
+        flush = getattr(self._stream, "flush", None)
+        if callable(flush):
+            flush()
+
+
 class MqttPushSink(PushSink):
     """Publish frames to an MQTT topic (optional — requires ``paho-mqtt``).
 
