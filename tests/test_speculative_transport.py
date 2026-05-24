@@ -420,7 +420,7 @@ def test_loopback_no_executor_is_undeliverable():
 
 def test_pull_or_compute_returns_hit_without_calling_local():
     origin, peer = _ident(), _ident()
-    coord, signed = _origin_with_pending(origin)
+    coord, signed = _origin_with_pending(origin, peer)
     sr = SignedResult.create(
         manifest_hash=signed.manifest_hash, result={"v": 1}, cost_ms=5.0, identity=peer
     )
@@ -432,8 +432,8 @@ def test_pull_or_compute_returns_hit_without_calling_local():
 
 
 def test_pull_or_compute_computes_locally_on_miss():
-    origin = _ident()
-    coord, signed = _origin_with_pending(origin)
+    origin, peer = _ident(), _ident()
+    coord, signed = _origin_with_pending(origin, peer)
     value = coord.pull_or_compute(signed.manifest_hash, local_fn=lambda: "local-answer")
     assert value == "local-answer"
     assert coord.metrics.misses == 1
