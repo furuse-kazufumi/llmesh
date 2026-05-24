@@ -66,7 +66,19 @@
 5. SPEC-MESH-11 結果検証ゲート (Byzantine 対策) — `ingest_result` は authenticity のみ。
    採用前の cross-check は別レイヤ (予測検証ゲート PoC と結合)。
 
-## コードレビュー指摘 (2026-05-24, gem-reviewer / 実コード検証済・要修正)
+## コードレビュー指摘 (2026-05-24, gem-reviewer / 実コード検証済 → **対応済**)
+
+> 他社 AI (codex) は quota 超過で使えず、Claude 内製 gem-reviewer でレビュー
+> ([[feedback_external_ai_verify]]: コーディング/レビューは Claude 担当)。
+> **下記 high 2 + low 2 はすべて修正済 (2026-05-24, 62 tests green)**:
+> 1. `submit_result` docstring を「manifest 認証のみ・result は未認証の trusted-internal sink」と明記、
+>    未信頼 return は `ingest_result` 経由を契約化。
+> 2. `ingest_result` に **`enforce_dispatched_peer=True` 既定**を導入: `executor_pub_hex` →
+>    `NodeIdentity.node_id_from_public_hex` で node_id 復元し `coord.expected_executor(hash)`
+>    (派遣先 node_id) と一致を fail-closed 強制 (registry 非依存)。未派遣 peer の汚染を遮断。
+>    open-relay は `enforce_dispatched_peer=False` で明示 opt-out。
+> 3. low: `HttpMeshTransport.send` を pool shutdown 後の `submit` RuntimeError からガード (no-raise 契約遵守)。
+> 4. low: `LoopbackMesh._deliver_one` を try/except で best-effort 化 (executor duck-typing で落ちない)。
 
 SPEC-MESH-02/03/04 実装 (transport.py/executor.py) の独立レビューで判明した**本物の**2 件 (high):
 
