@@ -52,14 +52,54 @@ hit rate が十分高い (外れた投機の compute は丸ごと無駄)
 3. 投機ありで同一ワークロードを実行し、`disclosure()` を 1 run = 1 行で追記。
 4. LAN と WAN を**必ず分けて**記録 (混在は `feedback_llive_measurement_purity` に反する)。
 
-## 実測ログ
+## 定量比較 PoC (simulation, 2026-05-24)
+
+`py -3.11 -m llmesh.speculative.bench`。実 `SpeculativeMeshCoordinator` を駆動
+(dispatch→submit_result→pull の lifecycle を本物で回す) しつつ、レイテンシは
+`LatencyModel` パラメータで与える **アルゴリズム寄りシミュレーション**
+(`tests/test_speculative_mesh_bench.py` で解析式と一致を検証, 11 ケース)。
+
+> ⚠️ **これは simulation であり実測ハードウェアではない。** 実 transport / 実 LLM
+> executor 未配線のため、レイテンシは仮定値。break-even の**構造**を見るためのもので、
+> 絶対値は実配線後に上書きする。
+
+**break-even hit_rate** (`h* = miss_penalty / ((baseline − pull) + miss_penalty)`):
+
+| scenario | baseline_ms | pull_ms | break-even hit_rate |
+|---|---|---|---|
+| LAN fast-fallback | 40 | 1.0 | **0.00** (miss が latency-neutral) |
+| LAN slow-fallback (20ms timeout) | 40 | 1.0 | **0.34** |
+| big-model swap-bound | 240 | 1.0 | **0.00** |
+| WAN | 40 | 100.0 | **1.00** (pull > baseline → 原則勝てない) |
+
+**speedup (n=2000 分岐, seed=0)**:
+
+| scenario | hit_rate | speedup | wasted_compute_ms | verdict |
+|---|---|---|---|---|
+| LAN fast-fallback | 0.3 / 0.5 / 0.7 / 0.9 | 1.39x / 1.94x / 3.10x / 7.77x | 49875→7350 | **win** |
+| LAN slow-fallback(20ms) | 0.3 / 0.5 / 0.7 / 0.9 | 0.93x / 1.31x / 2.11x / 5.52x | 49875→7350 | 0.3 で **lose**, 以降 win |
+| big-model swap-bound | 0.3 / 0.5 / 0.7 / 0.9 | 1.40x / 1.99x / 3.26x / **9.18x** | 49875→7350 | **win** |
+| WAN | 0.3 / 0.5 / 0.7 / 0.9 | 0.70x / 0.57x / 0.49x / 0.43x | 49875→7350 | **lose** |
+
+**読み取り (効果判定)**:
+
+- ✅ **効果がありそうな領域**: **LAN** かつ (**fast-fallback** または **hit_rate > break-even**)。
+  特に **大型 swap-bound モデル**で最大 9x (baseline≫pull のため)。
+- miss は fast-fallback なら latency-neutral (= 投機の上振れはタダ) だが、**timeout 待ち
+  (miss_penalty) が入ると break-even が上がり、低 hit_rate で負ける**。→ 実装は
+  **fast-fallback (即時ローカル切替) が必須**。
+- ❌ **WAN は全域で負け** (pull > baseline)。`require_lan=True` 既定の妥当性を定量裏付け。
+- ⚠️ **環境負荷**: 低 hit_rate ほど `wasted_compute_ms` 大 (0.3 で 49,875ms = peer の空振り
+  実行)。latency が neutral でも**電力は浪費**する。hit_rate を上げる予測器精度が ROI を決める。
+
+## 実測ログ (実ハードウェア — 配線後)
 
 | date | env (LAN/WAN) | workload | dispatched | hit_rate | wasted_compute_ms | baseline_ms | speculative_ms | verdict |
 |---|---|---|---|---|---|---|---|---|
 | _TBD_ | _TBD_ | _TBD_ | – | – | – | – | – | _未計測_ |
 
-> まだ実測なし。PoC 着地段階 (mesh transport / 実 LLM executor 未配線)。
-> 配線後にベースライン → 投機ありの順で測り、上表を埋める。
+> simulation 段階。実 transport / 実 LLM executor 配線後に、上の simulation 値を
+> 実測で上書きする (ベースライン → 投機ありの順、LAN/WAN 分離)。
 
 ## 既知の未配線 (honest disclosure)
 
