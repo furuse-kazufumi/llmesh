@@ -237,10 +237,19 @@ class SpeculativeMeshCoordinator:
     def submit_result(
         self, signed: SignedManifest, result: Any, *, cost_ms: float = 0.0
     ) -> bool:
-        """Record a speculative result from an executing peer.
+        """Cache a speculative result for a pending manifest (trusted-internal sink).
 
-        The signature is verified first (fail-closed): a result whose manifest
-        signature does not validate is rejected and counted, never stored.
+        This verifies the **origin's own manifest signature** (fail-closed: a result
+        whose *manifest* signature does not validate is rejected and counted) — it
+        does **not** authenticate ``result``/``cost_ms`` themselves. Those arrive as
+        plain arguments and are cached as-is.
+
+        Therefore: **never feed an untrusted peer's return directly to
+        ``submit_result``.** Route untrusted results through
+        :func:`llmesh.speculative.transport.ingest_result`, which verifies the peer's
+        :class:`~llmesh.speculative.transport.SignedResult` signature and binds it to
+        the dispatched peer before calling this method. Direct callers (bench / tests /
+        in-process trusted producers) may use it with already-trusted results.
 
         Returns True iff the result was accepted into the cache.
         """
