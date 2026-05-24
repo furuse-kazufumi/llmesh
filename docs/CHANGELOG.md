@@ -2,6 +2,29 @@
 
 ## [Unreleased]
 
+### Added — speculative: 思考リレー (Speculative Mesh Execution, PoC)
+
+`llmesh/speculative/` — メイン推論中に予測した分岐を **idle peer へ Ed25519 署名付きで
+投機投入**し、到達時に mesh から回収 (cache hit) する。CPU の分岐予測を agent level へ
+持ち上げる ([[project_idea_speculative_mesh_execution]], Gemini 発ブレスト #4)。
+[[project_llmesh_p2p_winny]] の P2P mesh と整合。
+
+- `manifest.py` — `SpeculativeManifest` (deterministic canonical_bytes / sha256
+  `manifest_hash` = mesh cache key) + `SignedManifest` + `sign_manifest(NodeIdentity)`。
+  署名は `llmesh.auth.signer` と同じく canonical bytes 上。自ノード以外の origin 署名は
+  拒否 (fail-closed)。
+- `coordinator.py` — `SpeculativeMeshCoordinator` (Phase 2 投入 + Phase 3 回収):
+  idle node 選択 (LAN-first, 負荷スコア + VRAM hard filter) / 署名投機投入 /
+  `submit_result` は **Ed25519 検証を fail-closed** で実施 (改ざん/誤配を拒否) /
+  `pull` で hit/miss / `discard_unpulled` で空振り計上。
+- `SpeculativeMetrics` + `disclosure()` — honest disclosure: hit_rate /
+  wasted_compute_ms / wan_dispatches / signature_rejections。**効果は未検証**で、
+  mesh 往復 < ローカル swap かつ高 hit rate のときのみ得 (WAN は負ける前提)。
+  方法論と記録様式: `docs/perf_comparison/speculative_mesh.md`。
+- 分岐予測 (Phase 1) は推論エンジン側 (llive MetaMutation 拡張)、実 transport/executor は
+  未配線。本 PoC は ready-made manifest を消費し lifecycle を検証。
+- `tests/test_speculative_mesh.py`: 23 ケース PASS、ruff + mypy strict green。
+
 ### Changed — MCP stdio_server を 2025-06-18 へ近代化 (structuredContent + outputSchema)
 
 `llmesh/mcp/stdio_server.py` — protocolVersion 2024-11-05→2025-06-18 / tools/list に
