@@ -10,6 +10,11 @@ their dependency is absent.
 - :class:`JsonlSink` — appends each frame as one JSON line to a writable stream
   (file, socket-backed file object, ``io.StringIO``). A genuine, dependency-free
   typed diff-stream that a consumer can tail and replay.
+- :class:`SsePushSink` — formats each frame as a Server-Sent Events message
+  (``event:`` / ``id:`` / ``data:``) on a writable text stream. The browser-facing
+  side-channel from the compat note: a consumer opens an ``EventSource`` and
+  applies each diff as it arrives. Pure stdlib — the host owns the HTTP response
+  and the ``text/event-stream`` content type; this sink only frames bytes.
 - :class:`MqttPushSink` — publishes frames to an MQTT topic (optional, needs
   ``paho-mqtt``). The natural industrial side-channel from the compat note.
 """
