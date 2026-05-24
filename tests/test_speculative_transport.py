@@ -288,16 +288,17 @@ def test_http_transport_send_is_non_blocking_on_background_thread():
 # -- ingest_result (origin intake) -----------------------------------------
 
 
-def _origin_with_pending(origin: NodeIdentity):
+def _origin_with_pending(origin: NodeIdentity, peer: NodeIdentity):
+    """Coordinator with one manifest dispatched to ``peer`` (real node id)."""
     coord = SpeculativeMeshCoordinator(origin)
-    signed = coord.dispatch(_manifest(origin.node_id), [IdleNode("peer:B")])
+    signed = coord.dispatch(_manifest(origin.node_id), [IdleNode(peer.node_id)])
     assert signed is not None
     return coord, signed
 
 
 def test_ingest_result_accepts_and_enables_hit():
     origin, peer = _ident(), _ident()
-    coord, signed = _origin_with_pending(origin)
+    coord, signed = _origin_with_pending(origin, peer)
     sr = SignedResult.create(
         manifest_hash=signed.manifest_hash, result={"v": 7}, cost_ms=33.0, identity=peer
     )
@@ -310,7 +311,7 @@ def test_ingest_result_accepts_and_enables_hit():
 
 def test_ingest_result_rejects_bad_result_signature():
     origin, peer = _ident(), _ident()
-    coord, signed = _origin_with_pending(origin)
+    coord, signed = _origin_with_pending(origin, peer)
     sr = SignedResult.create(
         manifest_hash=signed.manifest_hash, result={"v": 1}, cost_ms=1.0, identity=peer
     )
@@ -322,7 +323,7 @@ def test_ingest_result_rejects_bad_result_signature():
 
 def test_ingest_result_rejects_manifest_hash_mismatch():
     origin, peer = _ident(), _ident()
-    coord, signed = _origin_with_pending(origin)
+    coord, signed = _origin_with_pending(origin, peer)
     sr = SignedResult.create(
         manifest_hash="00" * 32, result={"v": 1}, cost_ms=1.0, identity=peer
     )
@@ -330,14 +331,28 @@ def test_ingest_result_rejects_manifest_hash_mismatch():
     assert coord.metrics.signature_rejections == 1
 
 
-def test_ingest_result_rejects_unexpected_executor():
+def test_ingest_result_rejects_undispatched_peer_by_default():
+    # A peer that was never dispatched to (but signs a valid result over the public
+    # manifest_hash) must be rejected by the default dispatched-peer binding.
     origin, peer, impostor = _ident(), _ident(), _ident()
-    coord, signed = _origin_with_pending(origin)
+    coord, signed = _origin_with_pending(origin, peer)  # dispatched to `peer`
     sr = SignedResult.create(
         manifest_hash=signed.manifest_hash, result={"v": 1}, cost_ms=1.0, identity=impostor
     )
-    assert ingest_result(coord, signed, sr, expected_pub_hex=peer.public_key_hex) is False
+    assert ingest_result(coord, signed, sr) is False
     assert coord.metrics.signature_rejections == 1
+    assert coord.pull(signed.manifest_hash)[0] is False  # cache not poisoned
+
+
+def test_ingest_result_open_relay_accepts_any_signer():
+    # enforce_dispatched_peer=False is the explicit opt-out for open-relay topologies.
+    origin, peer, anyone = _ident(), _ident(), _ident()
+    coord, signed = _origin_with_pending(origin, peer)
+    sr = SignedResult.create(
+        manifest_hash=signed.manifest_hash, result={"v": 2}, cost_ms=1.0, identity=anyone
+    )
+    assert ingest_result(coord, signed, sr, enforce_dispatched_peer=False) is True
+    assert coord.pull(signed.manifest_hash) == (True, {"v": 2})
 
 
 # -- LoopbackMesh: in-process end-to-end -----------------------------------
