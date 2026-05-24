@@ -309,6 +309,17 @@ class SpeculativeMeshCoordinator:
             return value
         return local_fn()
 
+    def expected_executor(self, manifest_hash: str) -> str | None:
+        """node_id of the peer this manifest was dispatched to (if still pending).
+
+        Lets the origin-side result intake bind an incoming result to the peer it
+        actually dispatched to (a peer that was never dispatched to must not be able
+        to inject a result for this branch). Returns ``None`` if the manifest is not
+        pending (already pulled/wasted/unknown) — intake treats that as fail-closed.
+        """
+        entry = self._pending.get(manifest_hash)
+        return entry.target_node_id if entry is not None else None
+
     def discard_unpulled(self) -> int:
         """Mark every still-pending/ready speculation as wasted.
 
