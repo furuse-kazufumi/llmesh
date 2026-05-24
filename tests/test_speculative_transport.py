@@ -362,15 +362,17 @@ def _loopback_pair(*, immediate: bool):
     origin, peer = _ident(), _ident()
     mesh = LoopbackMesh(immediate=immediate)
     executor = SpeculativeExecutor(peer, run_fn=lambda b: {"sq": b["n"] ** 2})
-    mesh.register_executor("peer:exec", executor)
+    # register/dispatch by the executor's REAL node id so the default
+    # dispatched-peer binding in ingest_result holds.
+    mesh.register_executor(peer.node_id, executor)
     coord = SpeculativeMeshCoordinator(origin, dispatch_fn=make_loopback_dispatch_fn(mesh))
     mesh.register_origin(origin.node_id, coord)
-    return origin, coord, mesh
+    return origin, peer, coord, mesh
 
 
 def test_loopback_immediate_roundtrip_is_a_hit():
-    origin, coord, mesh = _loopback_pair(immediate=True)
-    signed = coord.dispatch(_manifest(origin.node_id, branch={"n": 9}), [IdleNode("peer:exec")])
+    origin, peer, coord, mesh = _loopback_pair(immediate=True)
+    signed = coord.dispatch(_manifest(origin.node_id, branch={"n": 9}), [IdleNode(peer.node_id)])
     assert signed is not None
     hit, value = coord.pull(signed.manifest_hash)
     assert hit is True
@@ -379,8 +381,8 @@ def test_loopback_immediate_roundtrip_is_a_hit():
 
 
 def test_loopback_deferred_delivery_then_hit():
-    origin, coord, mesh = _loopback_pair(immediate=False)
-    signed = coord.dispatch(_manifest(origin.node_id, branch={"n": 4}), [IdleNode("peer:exec")])
+    origin, peer, coord, mesh = _loopback_pair(immediate=False)
+    signed = coord.dispatch(_manifest(origin.node_id, branch={"n": 4}), [IdleNode(peer.node_id)])
     assert signed is not None
     # not delivered yet → result not present
     assert coord.inflight == 1
@@ -391,8 +393,8 @@ def test_loopback_deferred_delivery_then_hit():
 
 
 def test_loopback_pull_before_delivery_falls_back_locally():
-    origin, coord, mesh = _loopback_pair(immediate=False)
-    signed = coord.dispatch(_manifest(origin.node_id, branch={"n": 5}), [IdleNode("peer:exec")])
+    origin, peer, coord, mesh = _loopback_pair(immediate=False)
+    signed = coord.dispatch(_manifest(origin.node_id, branch={"n": 5}), [IdleNode(peer.node_id)])
     assert signed is not None
     # fast-fallback: origin reaches the branch before the speculation lands.
     value = coord.pull_or_compute(signed.manifest_hash, local_fn=lambda: {"local": 25})
