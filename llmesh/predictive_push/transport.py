@@ -39,6 +39,17 @@ class PushFrame:
     def is_diff(self) -> bool:
         return self.kind == "diff"
 
+    def to_payload(self) -> dict[str, Any]:
+        """JSON-serialisable wire form (what a real transport publishes)."""
+        return {
+            "kind": self.kind,
+            "incident_id": self.incident_id,
+            "ops": self.ops,
+            "document": self.document,
+            "prediction_error": self.prediction_error,
+            "meta": self.meta,
+        }
+
 
 class PushSink(ABC):
     """Where confirmed frames are delivered."""
