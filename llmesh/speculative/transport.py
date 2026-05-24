@@ -384,20 +384,26 @@ class LoopbackMesh(MeshTransport):
         return delivered
 
     def _deliver_one(self, node_id: str, signed: SignedManifest) -> bool:
-        executor = self._executors.get(node_id)
-        if executor is None:
+        # Best-effort, never raises (mirrors the HTTP transport's posture): a
+        # misconfigured executor is counted as undeliverable, not propagated.
+        try:
+            executor = self._executors.get(node_id)
+            if executor is None:
+                self.undeliverable += 1
+                return False
+            signed_result = executor.handle_signed(signed)
+            if signed_result is None:
+                return False
+            origin = self._origins.get(signed.manifest.origin_node_id)
+            if origin is None:
+                self.undeliverable += 1
+                return False
+            # Default dispatched-peer binding applies: register executors under their
+            # real node id (NodeIdentity.node_id) so the binding in ingest_result holds.
+            return ingest_result(origin, signed, signed_result)
+        except Exception:
             self.undeliverable += 1
             return False
-        signed_result = executor.handle_signed(signed)
-        if signed_result is None:
-            return False
-        origin = self._origins.get(signed.manifest.origin_node_id)
-        if origin is None:
-            self.undeliverable += 1
-            return False
-        return ingest_result(
-            origin, signed, signed_result, expected_pub_hex=executor.public_key_hex
-        )
 
 
 def make_loopback_dispatch_fn(mesh: LoopbackMesh) -> Any:
