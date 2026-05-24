@@ -86,6 +86,23 @@ class SpeculativeManifest:
             priority=int(priority),
         )
 
+    @classmethod
+    def from_dict(cls, d: dict[str, Any]) -> SpeculativeManifest:
+        """Reconstruct a manifest from its :meth:`to_dict` form (wire decode).
+
+        fail-closed: missing/malformed fields raise (``KeyError`` / ``TypeError`` /
+        ``ValueError``); callers decoding untrusted peer payloads must catch and
+        reject. The reconstructed manifest still has to pass signature
+        verification before it is trusted.
+        """
+        return cls(
+            manifest_id=str(d["manifest_id"]),
+            origin_node_id=str(d["origin_node_id"]),
+            branch=dict(d["branch"]),
+            created_at_ms=int(d["created_at_ms"]),
+            priority=int(d.get("priority", 0)),
+        )
+
     def _canonical_payload(self) -> dict[str, Any]:
         return {
             "manifest_id": self.manifest_id,
