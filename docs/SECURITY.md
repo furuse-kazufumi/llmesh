@@ -182,7 +182,7 @@ Bandit, Semgrep, and CI:
 
 ---
 
-## フェイルクローズド（fail-closed） Design
+## Fail-Closed Design
 
 Every security component must return **BLOCK** (not raise, not return ALLOW) on
 any unhandled exception:
