@@ -234,8 +234,16 @@ Network Time Protocol。`SqliteNonceStore` の TTL とリプレイ防御に
 
 ## O
 
+### Observability（可観測性）
+システム内部の状態を外から観測できる度合い。LLMesh では構造化ログ /
+メトリクス / `AuditTrace` 監査チェーンで重要な状態変化を残す。
+
 ### Ollama
 ローカル LLM 実行環境。`OllamaBackend` がデフォルト LLM バックエンド。
+
+### On-prem（オンプレミス）
+クラウドではなく自社の建物・サーバー内で稼働させる構成。LLMesh の
+基本前提であり、機密データを外部に送らずに LLM を運用できる。
 
 ### OPC-UA
 産業用標準プロトコル。`OPCUAAdapter` が `asyncua` 経由でサポート。
