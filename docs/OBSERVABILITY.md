@@ -56,7 +56,7 @@ logging.getLogger("llmesh.industrial.dnp3_adapter").setLevel(logging.DEBUG)
 | `llmesh.industrial.dnp3_adapter` | callback 例外（v2.16+ で可視化）|
 | `llmesh.industrial.goose_adapter` | リプレイ拒否、callback 例外（v2.16+）|
 | `llmesh.industrial.websocket_adapter` | handshake 失敗 |
-| `llmesh.security.cross_protocol` | クロスプロトコル nonce 衝突 |
+| `llmesh.security.cross_protocol` | クロスプロトコル ナンス（nonce） 衝突 |
 | `llmesh.discovery.gossip` | peer 不到達、レスポンス過大 |
 | `llmesh.audit.trace` | 監査 append、verify 結果 |
 
