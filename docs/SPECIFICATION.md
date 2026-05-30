@@ -276,7 +276,7 @@ class IndustrialAdapter(Protocol):
 - 制限: `MAX_DATASET_VALUES=256`（オーバーサイズ拒否）
 - フィルタ:
   - `allow_iedids`: `goCBRef` ホワイトリスト
-  - リプレイ防御: per-`goCBRef` の `stNum` 単独カウンター（後退は drop、
+  - リプレイ防御（replay protection）: per-`goCBRef` の `stNum` 単独カウンター（後退は drop、
     等値は許可 — 同一 state 内の sqNum 違いリトランスミッション対応）
 - 出力: 1 dataset member につき 1 `SensorEvent`（`Priority.HIGH`、
   protocol="iec61850_goose"、metadata に PDU 座標）
