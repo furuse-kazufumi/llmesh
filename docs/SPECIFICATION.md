@@ -207,7 +207,7 @@ class IndustrialAdapter(Protocol):
 
 - 入力: `AlarmEvent(incident_id, timestamp, sensor_id, statistic, threshold, metric, contributing_dims, metadata)`
 - 出力: `IncidentReport(incident_id, severity, cause, suggestion, markdown, payload)`
-- LLM オプショナル: 未配線時はテンプレート、LLM 失敗時もテンプレート復帰（fail-safe）
+- LLM オプショナル: 未配線時はテンプレート、LLM 失敗時もテンプレート復帰（フェイルセーフ（fail-safe））
 - LLM 応答は 1024 文字に bound、空応答はテンプレート
 - severity_map: 既定 `(2.0, "critical"), (1.0, "warn"), (0.0, "info")`
   — `deviation / threshold` 比率で分類（threshold=0 は raw deviation）
