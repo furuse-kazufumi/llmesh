@@ -193,7 +193,7 @@ class IndustrialAdapter(Protocol):
 - polarity フィルタ: `both` / `on` / `off`
 - センサー解像度マッピングは線形クリップで境界保護
 
-### 4.7 UnifiedSPC — マルチモーダル SPC（v2.13+）
+### 4.7 UnifiedSPC — マルチモーダル（multimodal） SPC（v2.13+）
 
 - センサー時系列 + VLM テキスト特徴の 2 系統 SPC を結合
 - 各チャネルは `XbarRChart` または `CUSUMChart`

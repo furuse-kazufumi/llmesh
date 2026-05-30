@@ -286,7 +286,7 @@ python -m llmesh timeline resumable --db /var/lib/llmesh/timeline.sqlite
 ### Row 4: 産業
 - sensor events / sec by protocol
 - anomalies detected by engine
-- circuit breaker state
+- サーキットブレーカー（circuit breaker） state
 
 ### Row 5: 観測性自身
 - audit log size growth
