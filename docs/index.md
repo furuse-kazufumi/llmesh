@@ -42,7 +42,7 @@ flowchart TD
 
 ## Architecture — Secure LLM Hub (MCP) Topology
 
-llmesh は **on-prem MCP server** として複数の LLM client (Claude Desktop / LM Studio / Open WebUI / Cursor) を 1 つの hub に集約し、プライバシーフィルタ + 監査チェーンを挟む。
+llmesh は **オンプレミス（on-prem） MCP server** として複数の LLM client (Claude Desktop / LM Studio / Open WebUI / Cursor) を 1 つの hub に集約し、プライバシーフィルタ + 監査チェーン（audit chain）を挟む。
 
 ```mermaid
 flowchart LR
