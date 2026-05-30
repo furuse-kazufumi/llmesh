@@ -370,7 +370,7 @@ class IndustrialPipeline:
 
 - 鍵対: Ed25519（署名）/ X25519（鍵交換）
 - 乱数: `secrets`（v1.2.1 以降）
-- 監査チェーン: SHA-256 ハッシュチェイン
+- 監査チェーン（audit chain）: SHA-256 ハッシュチェイン
 - TLS: 各アダプターで `ssl.SSLContext` 渡しでオプトイン
 
 ---
