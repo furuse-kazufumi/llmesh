@@ -33,7 +33,7 @@ node-to-node trust fabric.
 
 ### S — Spoofing
 
-**Threat:** An attacker impersonates a trusted peer node to send tool calls that
+**Threat:** An attacker impersonates a trusted ピア（peer） node to send tool calls that
 bypass the firewall or extract privileged outputs.
 
 **Controls:**
