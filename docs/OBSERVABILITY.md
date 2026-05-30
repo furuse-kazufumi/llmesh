@@ -300,7 +300,7 @@ python -m llmesh timeline resumable --db /var/lib/llmesh/timeline.sqlite
 - ログにプロンプト本文を含めない（`firewall.py` は SHA-256 のみ記録）
 - AuditTrace のメタデータも sensitive 情報を含めない
 - Grafana / Prometheus へ流す前に `data_level` ラベルでフィルタ
-- 顧客テナント分離: `TenantScope`（`llmesh/industrial/tenant.py`）で
+- 顧客テナント（tenant）分離: `TenantScope`（`llmesh/industrial/tenant.py`）で
   メトリクスにテナント ID をラベル付与
 
 ---
