@@ -1,5 +1,9 @@
 # LLMesh
 
+> **かみ砕いた説明（中学生レベル）:** llmesh は、いろんな会社の賢いおしゃべりAI（LLM、人間のように文章を作るプログラム）を、自分のパソコンや会社の中だけで安全に使うための「受付係」です。工場のセンサーやカメラの情報も同じ窓口でまとめて受け取り、外に勝手に漏らさないよう見張りながら、AIに渡したり結果を記録したりします。だから個人情報や会社の秘密を外のインターネットに出さずに、AIの便利さだけを使えます。
+>
+> → 用語集: [docs/GLOSSARY.md](docs/GLOSSARY.md)
+
 > **Part of the FullSense ™ family** — **llmesh** (本リポ・secure LLM hub) ・ `llive` (self-evolving memory) ・ `llove` (TUI dashboard) の 3 製品を束ねる FullSense ブランドの中で、MCP 経由のセキュアな LLM ハブを担当します。FullSense Spec v1.1 は `llive` リポジトリの `docs/fullsense_spec_eternal.md` 参照。
 
 **Secure LLM Mesh over MCP** — **v3.1.0**
