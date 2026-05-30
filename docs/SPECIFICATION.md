@@ -307,8 +307,8 @@ class IndustrialPipeline:
 
 1. 生 L4 プロンプトは LLM バックエンドに到達しない
 2. 生 L3 プロンプトは LLM バックエンドに到達しない（要約後のみ通過）
-3. 拒否動作はフェイルクローズ（任意の例外で BLOCK）
-4. 監査チェーン検証で改ざんを検出
+3. 拒否動作はフェイルクローズ（fail-closed）（任意の例外で BLOCK）
+4. 監査チェーン（audit chain）検証で改ざんを検出
 5. `shell=True` / `eval` / `exec` / `pickle` / 安全でない SQL を使用しない
 6. すべてのアダプターは TrustedPeers または明示的オプトアウトで認証
 7. Telnet アダプターは二重オプトイン + 廃止警告
