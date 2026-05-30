@@ -47,7 +47,7 @@ py -3.11 scripts/demo_clustering.py --json
 | 1.00  | en-math-13B    | math tool ✓ + en ✓                    |
 | 1.00  | multi-lang-7B  | math tool ✓ + en を含む ✓             |
 
-`math` tool を持たない peer (ja-code / en-code / private-only) は hard filter で除外。
+`math` tool を持たない ピア（peer） (ja-code / en-code / private-only) は hard filter で除外。
 
 ### Q3: "High data sensitivity (level >= 2)" — `min_data_level=2`, `preferred_domains=[code, math]`
 
