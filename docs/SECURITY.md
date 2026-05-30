@@ -15,7 +15,7 @@ Do **not** open a public issue for security bugs.
 
 ## STRIDE Threat Model
 
-LLMesh is a peer-to-peer LLM swarm in which nodes exchange MCP tool calls over
+LLMesh is a ピアツーピア（peer-to-peer） LLM swarm in which nodes exchange MCP tool calls over
 HTTP.  The threat model covers the HTTP boundary, the prompt pipeline, and the
 node-to-node trust fabric.
 
