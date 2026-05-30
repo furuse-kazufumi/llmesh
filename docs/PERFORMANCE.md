@@ -135,7 +135,7 @@ recall ベンチで 100 query 中 >85 ヒット、CI 緩和閾値）。
 ## 7. テスト・CI 性能
 
 - pytest 全スイート（v2.14）: **2253 passed, 29 skipped, 12 分 06 秒**
-  （シングルプロセス、property-based 1200+ ケース含む）
+  （シングルプロセス、プロパティベーステスト（property-based testing）1200+ ケース含む）
 - `pytest -n auto`（pytest-xdist）導入で 4–5× 短縮可能
 
 ## 8. 推奨運用パラメータ
