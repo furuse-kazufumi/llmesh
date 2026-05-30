@@ -377,7 +377,7 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ### `llmesh.audit.trace` との関係
 
-`audit.trace` は HMAC チェーンで改竄検知する compliance-grade。`core.trace` は研究運用のための operational trace で、HMAC を持たない代わりに append-only JSONL の単純さを優先する。両者は意図的に分離されており、研究イテレーション速度と audit chain rotation を結合させない。
+`audit.trace` は HMAC チェーンで改竄検知する compliance-grade。`core.trace` は研究運用のための operational trace で、HMAC を持たない代わりに append-only JSONL の単純さを優先する。両者は意図的に分離されており、研究イテレーション速度と 監査チェーン（audit chain）rotation を結合させない。
 
 ---
 
