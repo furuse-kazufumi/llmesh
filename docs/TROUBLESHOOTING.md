@@ -266,7 +266,7 @@ StartLimitIntervalSec=120
 
 ---
 
-## 7. ログ / 観測性
+## 7. ログ / 可観測性（observability）
 
 ### "ログが出ない / 多すぎる"
 
