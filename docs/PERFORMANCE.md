@@ -100,7 +100,7 @@ recall ベンチで 100 query 中 >85 ヒット、CI 緩和閾値）。
 |------|------:|------|
 | `update(sensor, text)` | 内部チャート 2 つの更新 | < 50 µs（Xbar+Xbar） |
 
-## 4. Adapters — v3-N7
+## 4. アダプタ（adapter） — v3-N7
 
 ### DNP3Adapter
 
