@@ -1,7 +1,12 @@
+> **かみ砕いた説明**
+> このページは、たくさんの AI のお手伝い役（仲間）の中から「日本語が得意」「数学が得意」といった希望に一番ぴったりの相手を自動で選ぶ仕組みの、お試し実行の記録です。たとえばクラスの係決めで「絵が得意な人」「計算が速い人」と条件を出すと、ぴったりの人が点数つきで上に並ぶようなイメージです。下の表は、その点数の高い順に選ばれた結果を示しています。
+>
+> 用語の意味は [用語集（GLOSSARY.md）](../GLOSSARY.md) を参照してください。
+
 # Capability Clustering Demo (RFC Phase 2a)
 
 > `scripts/demo_clustering.py` の実行スナップショット。`POST /registry/query`
-> 経由で **capability-aware peer matching** が動くことを確認するための
+> 経由で **capability-aware ピア（peer） matching** が動くことを確認するための
 > end-to-end demo。FastAPI TestClient で in-process HTTP を回すので外部
 > process は不要。
 
