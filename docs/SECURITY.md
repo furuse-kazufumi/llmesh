@@ -1,5 +1,11 @@
 # Security Policy — LLMesh v0.2.0
 
+> **かみ砕いた説明（中学生レベル）**
+>
+> このページは「LLMesh をどう安全に守るか」のルールブックです。LLMesh は、たくさんのコンピュータ（ノード）が手をつないで、文章を作る AI に仕事を頼み合うしくみです。悪い人がなりすましたり、こっそりデータを盗み見たり、わざとたくさん仕事を投げてパンクさせたりしないよう、入り口ごとに「合言葉の確認」「中身の検査」「記録の保存」といった見張りを置いています。あやしいときは通さず止める（安全側に倒す）のが基本です。
+>
+> 用語の意味は [用語集（GLOSSARY.md）](GLOSSARY.md) を見てください。
+
 ## Reporting Vulnerabilities
 
 Report vulnerabilities by opening a GitHub Security Advisory (private disclosure).
