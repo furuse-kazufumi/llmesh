@@ -241,7 +241,7 @@ class IndustrialAdapter(Protocol):
   - 前半: caption 内の数値トークンを `_NUMBER_RE` で抽出
   - 後半: 欠陥キーワード集計 + 文字長 / 数字数 / 文字数
   - 必ず `dimension` 長で 0 パディング
-- fail-closed:
+- フェイルクローズド（fail-closed）:
   - ImageFirewall 例外 → BLOCK (`image_firewall_error_fail_closed`)
   - captioner 例外 → BLOCK (`captioner_error_fail_closed`)
   - 非文字列 caption → BLOCK (`captioner_returned_non_string`)
