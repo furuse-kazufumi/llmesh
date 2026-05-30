@@ -412,9 +412,9 @@ python -m twine upload dist/*
 ## 9. 推奨運用パターン
 
 - **ローカル LLM (Ollama / LlamaCpp)** を使う — クラウド送信ゼロ
-- **TenantScope** でテナント分離 — 顧客ごとの誤配信防止
-- **IndustrialMetrics + Prometheus + Grafana** で観測性確保
-- **`llmesh audit verify`** で監査チェーンを定期検証
+- **TenantScope** でテナント（tenant）分離 — 顧客ごとの誤配信防止
+- **IndustrialMetrics + Prometheus + Grafana** で可観測性（observability）確保
+- **`llmesh audit verify`** で監査チェーン（audit chain）を定期検証
 - **NTP 同期必須**（`LLMESH_MAX_CLOCK_DRIFT_S=10`）— リプレイ攻撃対策
 
 ## 10. 関連リンク
