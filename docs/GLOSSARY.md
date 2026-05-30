@@ -180,6 +180,11 @@ Hash-based MAC。`AuditTrace` のチェーン整合性、challenge protocol で
 モジュール先頭ではなく、関数内で `import` を実行する手法。重い依存
 （numpy / scipy / Pillow）を本体 import から切り離す。
 
+### LLM hub
+複数の LLM バックエンド（OpenAI / Anthropic / Ollama / Qwen 等）を
+1 か所に束ね、統一インターフェース経由で配信する中枢。LLMesh 全体の
+役割そのものを指す概念語。
+
 ### LSH（Locality-Sensitive Hashing）
 近似最近傍探索アルゴリズム。`LSHVectorStore`（v2.15+）が
 random-hyperplane LSH を実装。
