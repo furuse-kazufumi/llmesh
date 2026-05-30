@@ -263,7 +263,7 @@ class IndustrialAdapter(Protocol):
   analog_input/output、time、unknown は `dnp3_g{N}`）
 - 値エンコーディング: bool→1B / int→struct.pack("<q") / float→struct.pack("<d") /
   bytes 透過 / その他は str→utf-8
-- allow-list: `(master_addr, outstation_addr)` ペア集合
+- 許可リスト（allow-list）: `(master_addr, outstation_addr)` ペア集合
 - `connect(driver=None)`: driver 注入で wire 層を bypass、未指定なら pydnp3 を
   optional 動的 import、不在時 RuntimeError
 - `poll()`: 接続済 + driver あり時のみ `driver.read_static()` を呼び SensorEvent
