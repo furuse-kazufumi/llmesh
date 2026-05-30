@@ -188,7 +188,7 @@ pip install "llmesh[industrial]"
 - そもそも PII 検査をオフにしたい場合は `PromptFirewall(presidio=None)`
   （既定）。
 
-### "監査チェーンが verify で FAIL"
+### "監査チェーン（audit chain）が verify で FAIL"
 
 **原因**: ファイル書き込み中の中断、または改ざん。
 
