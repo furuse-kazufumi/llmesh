@@ -260,8 +260,8 @@ pytest tests/test_x.py -k "test_specific" --lf  # 直近の失敗のみ
 
 - **依存性注入**: 外部 I/O（HTTP / sqlite / LLM 呼び出し）は引数で
   受け取る。テストでは fake / mock を渡す。
-- **fail-closed**: セキュリティ判定モジュールは例外で BLOCK / L4 を
-  返す。捕捉漏れによる fail-open を避ける。
+- **フェイルクローズド（fail-closed）**: セキュリティ判定モジュールは例外で BLOCK / L4 を
+  返す。捕捉漏れによるフェイルオープン（fail-open）を避ける。
 - **副作用の分離**: pure な計算と I/O を関数レベルで分ける。
 - **Optional 依存は遅延 import**: `def f(): import numpy as np` 形式で
   本体 import を軽量に保つ。
