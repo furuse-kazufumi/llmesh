@@ -207,7 +207,7 @@ python scripts/llmesh_setup.py peer list
 
 ### Gossip の信頼モデル
 
-Gossip は **推移的信頼** を使用します:
+ゴシップ伝播（gossip）は **推移的信頼** を使用します:
 - A が B を信頼 → B が C を紹介 → A は C を自動信頼
 
 厳格な管理が必要な場合は Gossip を無効にし、全ノードを手動で `peer add` してください。
