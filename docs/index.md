@@ -7,7 +7,13 @@ nav_order: 1
 
 # FullSense ™ — llmesh
 
-> **Part of the [FullSense ™](https://github.com/furuse-kazufumi/llive/blob/main/TRADEMARK.md) family** — **llmesh** ・ `llive` ・ `llove` の 3 製品で構成される FullSense ブランドの中で、本サイトは **llmesh (secure LLM hub over MCP)** の公式 documentation です。
+> **ざっくり何の文書？（中学生にもわかる説明）**
+> このページは、いろいろな AI（人工知能）を 1 か所にまとめて安全に使うための道具「llmesh」の、案内地図のようなものです。会社の中の秘密や個人の情報を外に出さずに、自分のパソコンや社内のサーバーだけで AI を動かす仕組みを目指しています。下の表やリンクから、もっとくわしい説明のページへ進めます。
+> 専門用語の意味は [用語集（GLOSSARY.md）](GLOSSARY.md) にまとめてあります。
+
+---
+
+> **Part of the [FullSense ™](https://github.com/furuse-kazufumi/llive/blob/main/TRADEMARK.md) family** — **llmesh** ・ `llive` ・ `llove` の 3 製品で構成される FullSense ブランドの中で、本サイトは **llmesh (secure LLM ハブ（LLM hub） over MCP)** の公式 documentation です。
 
 ---
 
