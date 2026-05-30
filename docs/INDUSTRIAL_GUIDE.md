@@ -261,7 +261,7 @@ if not out.in_control:
 
 SPC / MT-method の `AlarmEvent` を Markdown + JSON 構造化 `IncidentReport`
 に変換。LLM オプショナル設計 — 未配線時はテンプレート出力、LLM 失敗時も
-テンプレート復帰（fail-safe）。
+テンプレート復帰（フェイルセーフ（fail-safe））。
 
 ```python
 from llmesh.industrial.explainer import AlarmEvent, LLMExplainer
