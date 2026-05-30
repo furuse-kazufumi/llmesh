@@ -236,7 +236,7 @@ python -m llmesh timeline resumable --db /var/lib/llmesh/timeline.sqlite
 
 ## 7. SLO 例
 
-### 推奨 SLO（Edge 単機）
+### 推奨 SLO（エッジ（edge） 単機）
 
 | 指標 | 目標 | 対応メトリクス |
 |------|------|--------------|
