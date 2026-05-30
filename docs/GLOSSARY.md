@@ -205,6 +205,10 @@ stdio MCP サーバーとして動作可能（`python -m llmesh serve-mcp`）。
 正常データから「単位空間」を学習し、Mahalanobis 距離で異常検知する
 品質工学手法。`MTEngine` 実装。
 
+### MQTT（Message Queuing Telemetry Transport）
+軽量な publish/subscribe 型メッセージングプロトコル。産業 IoT で
+広く使われ、`MQTTAdapter` でセンサーデータを受信。
+
 ### Multimodal
 複数モダリティ（センサー時系列 + 画像 / 動画）を融合した解析。
 `UnifiedSPC` / `VideoCUSUM` / `VLMFeatureExtractor`（v2.13+）。
