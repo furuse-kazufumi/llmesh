@@ -348,7 +348,7 @@ FanoutExecutor(k=1, protocol="udp").execute(tool_name, body, nodes)
 
 ## Research-orchestration core (Phase 0a / 0b)
 
-`llmesh/core/` は research-automation / robotics planning / multimodal knowledge を 1 つの基盤に統合するための最小プリミティブ群。pydantic 依存を持たず標準 `dataclasses` のみで構成され、`llmesh-mcp` の組み込み Linux / RTOS 配布制約に従う。
+`llmesh/core/` は research-automation / robotics planning / マルチモーダル（multimodal）knowledge を 1 つの基盤に統合するための最小プリミティブ群。pydantic 依存を持たず標準 `dataclasses` のみで構成され、`llmesh-mcp` の組み込み Linux / RTOS 配布制約に従う。
 
 | モジュール | 役割 |
 |------------|------|
