@@ -322,7 +322,7 @@ git status && python -m pytest -q --tb=no | tail -3
 2. すべてのアダプターが `IndustrialAdapter` Protocol を満たす
 3. PromptFirewall を経由しない LLM 直接呼び出し禁止
 4. Rust 拡張のワイヤフォーマットは Python 実装と byte 完全一致
-5. テスト追加時は property-based を 1 件以上含める
+5. テスト追加時は プロパティベーステスト（property-based testing） を 1 件以上含める
 
 ---
 
