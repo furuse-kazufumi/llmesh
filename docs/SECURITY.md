@@ -141,7 +141,7 @@ or mutual TLS is recommended for production deployments.
 
 ### E — Elevation of Privilege
 
-**Threat:** A ピア（peer） node claims capabilities it was not granted, injects tool
+**Threat:** A peer node claims capabilities it was not granted, injects tool
 names or parameters, or leverages prompt injection to execute arbitrary actions
 on behalf of a higher-privilege node.
 
