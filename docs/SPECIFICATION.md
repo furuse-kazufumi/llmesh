@@ -380,7 +380,7 @@ class IndustrialPipeline:
 ### 7.1 テスト総数（v2.0.1 時点）
 
 - 例ベーステスト: ~1,829 件
-- プロパティベーステスト: 12 関数 × 50 ランダム入力 = 600 ケース（hypothesis）
+- プロパティベーステスト（property-based testing）: 12 関数 × 50 ランダム入力 = 600 ケース（hypothesis）
 - すべて pytest 経由、`asyncio_mode = "auto"`
 
 ### 7.2 カバレッジ目標
