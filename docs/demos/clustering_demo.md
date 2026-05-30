@@ -57,7 +57,7 @@ py -3.11 scripts/demo_clustering.py --json
 | 0.50  | en-code-7B     | level 2 ✓ + code のみ            |
 | 0.50  | en-math-13B    | level 2 ✓ + math のみ            |
 
-`ja-code-7B` (level 0,1) と `private-only-7B` (level 0) は data level filter で除外。
+`ja-code-7B` (level 0,1) と `private-only-7B` (level 0) は データレベル（data level） filter で除外。
 
 ### Q4: "Embedding tool required"
 
