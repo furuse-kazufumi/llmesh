@@ -17,11 +17,9 @@ from __future__ import annotations
 
 import dataclasses
 import importlib.metadata
-import sys
 import tomllib
 from collections.abc import Iterable
 from pathlib import Path
-from typing import Optional
 
 _BUNDLED_DB = Path(__file__).resolve().parent.parent / "data" / "origins.toml"
 
