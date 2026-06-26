@@ -29,7 +29,21 @@ from llmesh.llm.backend import LLMBackend  # noqa: E402
 from llmesh.llm.llcore_backend import LlcoreBackend  # noqa: E402
 
 
+def _ensure_utf8_stdout() -> None:
+    """Windows 既定の cp932 console で日本語/↔/— を print してもクラッシュさせない。
+
+    Windows console の既定 encoding は cp932 (Shift-JIS 派生) で、``↔`` (U+2194) や
+    em-dash ``—`` (U+2014) を ``print`` すると ``UnicodeEncodeError`` で即死する。
+    stdout を UTF-8 に貼り替えて fail-safe にする (llmesh.cli.* と同じ helper)。
+    """
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+    except (AttributeError, ValueError):  # pragma: no cover
+        pass
+
+
 def main() -> int:
+    _ensure_utf8_stdout()
     ap = argparse.ArgumentParser(description="llmesh ↔ llcore backend demo (watchable)")
     ap.add_argument("--model", default="D:/models/Qwen2.5-0.5B-Instruct",
                     help="local model dir or HF id (HF id downloads on first run)")
