@@ -150,8 +150,10 @@ Vulnerabilities" セクションに従って非公開で連絡してください
 
 ## 6. ライセンス
 
-LLMesh は MIT ライセンスです。PR を提出することで、貢献内容が同じ
-ライセンスで配布されることに同意したものとみなします。
+LLMesh は **Apache-2.0 + Commercial の dual-license** です（`LICENSE` /
+`LICENSE-COMMERCIAL`）。PR を提出することで、貢献内容が **Apache-2.0** で
+ライセンスされ、プロジェクトオーナーの裁量で商用ライセンス下にも
+再許諾され得ることに同意したものとみなします。
 
 ---
 
