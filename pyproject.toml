@@ -36,6 +36,7 @@ keywords = [
     "multivariate-analysis", "spc", "anomaly-detection",
 ]
 classifiers = [
+    "License :: OSI Approved :: Apache Software License",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Intended Audience :: Manufacturing",
