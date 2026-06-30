@@ -34,12 +34,14 @@ def _ensure_utf8_stdout() -> None:
 
     Windows console の既定 encoding は cp932 (Shift-JIS 派生) で、``↔`` (U+2194) や
     em-dash ``—`` (U+2014) を ``print`` すると ``UnicodeEncodeError`` で即死する。
-    stdout を UTF-8 に貼り替えて fail-safe にする (llmesh.cli.* と同じ helper)。
+    stdout と stderr (後者は transformers の重みロード進捗バー ``█`` の出力先) を
+    両方 UTF-8 に貼り替えて fail-safe にする (llmesh.cli.* と同じ helper)。
     """
-    try:
-        sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
-    except (AttributeError, ValueError):  # pragma: no cover
-        pass
+    for stream in (sys.stdout, sys.stderr):
+        try:
+            stream.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
+        except (AttributeError, ValueError):  # pragma: no cover
+            pass
 
 
 def main() -> int:
