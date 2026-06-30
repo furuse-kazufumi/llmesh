@@ -1,0 +1,43 @@
+Commercial License for llmesh
+=============================
+
+This software (llmesh, including the PyPI package `llmesh`) is dual-licensed:
+
+  * **Open Source License**: Apache License, Version 2.0 (see `LICENSE`)
+  * **Commercial License**: this file
+
+The Apache-2.0 license covers most use cases (research, personal use,
+open-source projects, evaluation, internal R&D). If your use case requires
+terms that the Apache-2.0 license does not provide — for example:
+
+  * proprietary integration into a closed-source product
+  * removal of the Apache-2.0 attribution / NOTICE requirement
+  * indemnification beyond the Apache-2.0 disclaimer
+  * an SLA, priority support, or guaranteed bug-fix timelines
+  * private security disclosure under a contractual NDA
+  * a license that survives a hostile fork of upstream
+
+— then a separate commercial license is available.
+
+To request a commercial license, contact:
+
+    Kazufumi Furuse
+    kazufumi@furuse.work
+
+Please include in your request:
+
+  * a brief description of the intended use
+  * the version(s) of llmesh in scope
+  * whether you require indemnification, support, or SLA terms
+  * the legal entity that will be the licensee
+
+The commercial license is offered on a case-by-case basis and pricing
+reflects the scope of indemnification, support level, and deployment scale.
+For non-commercial, research, and most internal use, the Apache-2.0 license
+is sufficient and no separate agreement is necessary.
+
+----
+
+This Commercial License notice is provided for clarity. The terms of any
+commercial agreement are governed solely by the executed contract between
+the parties, not by this notice.
