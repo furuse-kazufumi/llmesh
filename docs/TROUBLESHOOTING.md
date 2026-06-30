@@ -305,8 +305,10 @@ JSONL 出力なので filebeat 等でそのまま取り込めます。
 A. [`MIGRATION.md`](MIGRATION.md) 参照。
 
 ### Q. 商用利用は可能？
-A. MIT ライセンスです。`LICENSE` ファイルを確認の上、自由にお使い
-ください。
+A. **Apache-2.0 + Commercial の dual-license** です。OSS 用途（研究・個人利用・
+内部 R&D 等）は Apache-2.0（`LICENSE`）で自由にお使いいただけます。クローズド
+ソース製品への組込みや、SLA・無保証超の補償等が必要な場合は商用ライセンス
+（`LICENSE-COMMERCIAL`）をご検討ください。
 
 ### Q. プロジェクトに参加したい
 A. [`CONTRIBUTING.md`](../CONTRIBUTING.md) 参照。
