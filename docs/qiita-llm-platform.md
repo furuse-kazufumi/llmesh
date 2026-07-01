@@ -208,7 +208,7 @@ python -c "from llmesh.llm import OllamaBackend; print(OllamaBackend(model='llam
 
 - GitHub: <https://github.com/furuse-kazufumi/llmesh>
 - PyPI: <https://pypi.org/project/llmesh-mcp/>
-- License: MIT
+- License: Apache-2.0 + Commercial (dual-license)
 - Issue 歓迎: <https://github.com/furuse-kazufumi/llmesh/issues>
 
 ---

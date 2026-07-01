@@ -237,7 +237,7 @@ CI artifact にも `bench-report.json` を残しています（`docs/PERFORMANCE
 - GitHub: <https://github.com/furuse-kazufumi/llmesh>
 - PyPI: <https://pypi.org/project/llmesh-mcp/>
 - 仕様: `docs/API_STABILITY.md` / `docs/PERFORMANCE.md`
-- License: MIT
+- License: Apache-2.0 + Commercial (dual-license)
 
 ---
 

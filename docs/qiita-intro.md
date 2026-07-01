@@ -303,7 +303,7 @@ pip install "llmesh-mcp[industrial,vision,presidio,rag]"
 
 - GitHub: <https://github.com/furuse-kazufumi/llmesh>
 - PyPI: <https://pypi.org/project/llmesh-mcp/>
-- License: MIT
+- License: Apache-2.0 + Commercial (dual-license)
 
 ---
 

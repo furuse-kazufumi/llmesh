@@ -116,7 +116,7 @@ python -m llmesh.cli.sbom > llmesh.sbom.cdx.json
 - **現行**: v3.1.0（クラウド LLM 統合）
 - **API 安定性**: v3.0.0 で SemVer 正式適用、`docs/API_STABILITY.md` の公開シンボル一覧が契約
 - **テスト**: 2300+ 件全 PASS（Hypothesis property-based 1,200 ケース含む）
-- **ライセンス**: MIT
+- **ライセンス**: Apache-2.0 + Commercial (dual-license)
 
 ---
 

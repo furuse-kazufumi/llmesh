@@ -286,7 +286,7 @@ python -c "from llmesh import PromptFirewall; print(PromptFirewall().check('sk-t
 - GitHub: <https://github.com/furuse-kazufumi/llmesh>
 - PyPI: <https://pypi.org/project/llmesh-mcp/>
 - Issue: <https://github.com/furuse-kazufumi/llmesh/issues>
-- License: MIT
+- License: Apache-2.0 + Commercial (dual-license)
 
 ---
 
