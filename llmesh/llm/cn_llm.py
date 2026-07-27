@@ -19,8 +19,8 @@ Coverage (v3.2 α):
 - **Yi** (零一万物) — api.lingyiwanwu.com v1 (bundled bonus)
 
 Strategy reference:
-- ``D:/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PART2.md`` §5.2
-- ``D:/projects/llmesh/docs/market/gap-analysis.md`` 領域 2
+- ``C:/dev/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PART2.md`` §5.2
+- ``C:/dev/projects/llmesh/docs/market/gap-analysis.md`` 領域 2
 
 Each preset is a pure-data namespace — no network call, no provider
 SDK import. The actual HTTP plumbing reuses

@@ -7,13 +7,13 @@ chat round-trips so you can SEE llmesh → llcore → a CPU-only small LLM answe
 
 Run (Windows / Git Bash, from anywhere):
 
-    py -3.11 D:/projects/llmesh/examples/llcore_backend_demo.py
+    py -3.11 C:/dev/projects/llmesh/examples/llcore_backend_demo.py
 
 Prerequisites (all already present on this machine, 2026-06-26):
   - Python 3.11, ``pip install torch transformers safetensors`` (transformers 5.x verified)
-  - A local Apache model dir, default ``D:/models/Qwen2.5-0.5B-Instruct``
+  - A local Apache model dir, default ``C:/dev/models/Qwen2.5-0.5B-Instruct``
     (override with ``--model <path-or-HF-id>``; an HF id downloads ~1GB on first run)
-  - llcore importable: this script adds ``D:/projects/llcore/src`` to ``sys.path`` for the demo.
+  - llcore importable: this script adds ``C:/dev/projects/llcore/src`` to ``sys.path`` for the demo.
 """
 from __future__ import annotations
 
@@ -22,8 +22,8 @@ import sys
 import time
 
 # Make llmesh and llcore importable when run as a standalone script.
-sys.path.insert(0, "D:/projects/llmesh")
-sys.path.insert(0, "D:/projects/llcore/src")
+sys.path.insert(0, "C:/dev/projects/llmesh")
+sys.path.insert(0, "C:/dev/projects/llcore/src")
 
 from llmesh.llm.backend import LLMBackend  # noqa: E402
 from llmesh.llm.llcore_backend import LlcoreBackend  # noqa: E402
@@ -47,7 +47,7 @@ def _ensure_utf8_stdout() -> None:
 def main() -> int:
     _ensure_utf8_stdout()
     ap = argparse.ArgumentParser(description="llmesh ↔ llcore backend demo (watchable)")
-    ap.add_argument("--model", default="D:/models/Qwen2.5-0.5B-Instruct",
+    ap.add_argument("--model", default="C:/dev/models/Qwen2.5-0.5B-Instruct",
                     help="local model dir or HF id (HF id downloads on first run)")
     ap.add_argument("--max-new-tokens", type=int, default=32)
     args = ap.parse_args()

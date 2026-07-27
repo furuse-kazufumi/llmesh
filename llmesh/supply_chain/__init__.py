@@ -14,7 +14,7 @@ Public API
 - :class:`SupplyRisk`      — load known supply chain incident database
 - :func:`audit_installed`  — audit the currently installed environment
 
-Strategy reference: ``D:/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PART6_DEPS_AUDIT.md``
+Strategy reference: ``C:/dev/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PART6_DEPS_AUDIT.md``
 """
 from __future__ import annotations
 

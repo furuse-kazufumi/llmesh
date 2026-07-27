@@ -12,7 +12,7 @@ sanction-clean enterprise procurement reviewers. The output deliberately
 foregrounds the per-package country-of-origin column so a procurement
 officer can scan it in seconds.
 
-Strategy reference: ``D:/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PART6_DEPS_AUDIT.md``
+Strategy reference: ``C:/dev/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PART6_DEPS_AUDIT.md``
 """
 from __future__ import annotations
 
