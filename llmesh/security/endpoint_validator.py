@@ -30,6 +30,10 @@ _BLOCKED_HOSTS: frozenset[str] = frozenset({
     "169.254.169.254",             # AWS/Azure/GCP IMDS
 })
 
+# localhost の綴り。allow_loopback=True のときだけ _BLOCKED_HOSTS から外れる。
+# ★IMDS(169.254.169.254 / metadata.google.internal)は決して外さない。
+_LOOPBACK_HOSTS: frozenset[str] = frozenset({"localhost", "127.0.0.1", "::1"})
+
 # RFC1918 + link-local ranges; blocked unless allow_private=True
 _PRIVATE_NETWORKS: tuple[ipaddress.IPv4Network | ipaddress.IPv6Network, ...] = (
     ipaddress.ip_network("10.0.0.0/8"),
@@ -51,15 +55,24 @@ class EndpointValidator:
     Args:
         allow_private:    Allow RFC1918 private IP ranges (for LAN deployments).
         allowed_schemes:  Set of permitted URL schemes.
+        allow_loopback:   Allow ``localhost`` / ``127.0.0.1`` / ``::1``.
+            Off by default: for a *peer-registered* endpoint, loopback means
+            "call yourself", which is the classic SSRF pivot.  On-prem
+            callers that legitimately talk to a node on the same host
+            (single-box install, in-process test server) opt in explicitly.
+            Cloud metadata hosts stay blocked either way -- they are never a
+            legitimate peer.
     """
 
     def __init__(
         self,
         allow_private: bool = False,
         allowed_schemes: frozenset[str] = _ALLOWED_SCHEMES,
+        allow_loopback: bool = False,
     ) -> None:
         self._allow_private = allow_private
         self._allowed_schemes = allowed_schemes
+        self._allow_loopback = allow_loopback
 
     def validate(self, endpoint: str) -> str:
         """Validate and normalize an endpoint URL.
@@ -88,7 +101,9 @@ class EndpointValidator:
         if not host:
             raise EndpointValidationError("missing_host")
 
-        if host.lower() in _BLOCKED_HOSTS:
+        if host.lower() in _BLOCKED_HOSTS and not (
+            self._allow_loopback and host.lower() in _LOOPBACK_HOSTS
+        ):
             raise EndpointValidationError(f"blocked_host:{host}")
 
         # Reject credentials embedded in URL (e.g. http://user:pass@host/)
@@ -102,6 +117,8 @@ class EndpointValidator:
         # IP-based SSRF check
         try:
             addr = ipaddress.ip_address(host)
+            if addr.is_loopback and self._allow_loopback:
+                return endpoint.rstrip("/")
             if host in _BLOCKED_HOSTS or addr.is_loopback or addr.is_unspecified:
                 raise EndpointValidationError(f"blocked_address:{host}")
             if not self._allow_private:

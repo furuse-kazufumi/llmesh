@@ -26,11 +26,22 @@ from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from typing import Any, Literal, Protocol
 
+from llmesh.security.endpoint_validator import (
+    EndpointValidationError,
+    EndpointValidator,
+)
 from llmesh.skills.chunk import SkillChunk
 from llmesh.skills.replica import SkillReplica
 from llmesh.skills.reputation import PeerReputation
 
 logger = logging.getLogger(__name__)
+
+# ★peer の URL は**信頼境界の外**から来る。register 時に検査していても、
+# urlopen を呼ぶ手前でもう一度見る(MCP 規約「境界を越えるたびに再検証」)。
+# on-prem の mesh は私設アドレスと同一ホストで正当に喋るのでその 2 つは許し、
+# 閉じるのは scheme(`file:` で**ローカルファイルを読ませる**経路)と
+# 資格情報・fragment・クラウド metadata である。
+_endpoint_validator = EndpointValidator(allow_private=True, allow_loopback=True)
 
 _DEFAULT_TIMEOUT = 10
 _DEFAULT_INTERVAL = 30
@@ -39,6 +50,18 @@ _DEFAULT_MAX_PULLS = 8
 
 class SkillSyncError(Exception):
     """Raised on transport failure or malformed remote response."""
+
+
+def _validated(url: str) -> str:
+    """urlopen に渡す直前の再検査。落ちたら開かない(fail-closed)。
+
+    戻すのは検査後の綴り —— 検査した文字列と開く文字列を**同じ物**にしておく
+    (別々にすると、検査を通った綴りと違う物を開く隙ができる)。
+    """
+    try:
+        return _endpoint_validator.validate(url)
+    except EndpointValidationError as exc:
+        raise SkillSyncError(f"refused url {url!r}: {exc}") from exc
 
 
 class HTTPTransport(Protocol):
@@ -55,11 +78,14 @@ class UrllibTransport:
         self._timeout = timeout
 
     def get_json(self, url: str) -> Any:
+        url = _validated(url)
         req = urllib.request.Request(
             url, method="GET", headers={"Accept": "application/json"}
         )
         try:
-            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # noqa: S310
+            # nosec B310 — scheme は _validated() が http/https に限っている
+            # (`file:` を渡すとローカルファイルが読めてしまう。CWE-22)。
+            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # noqa: S310  # nosec B310
                 payload = resp.read()
         except (urllib.error.URLError, urllib.error.HTTPError, OSError) as exc:
             raise SkillSyncError(f"GET {url}: {exc}") from exc
@@ -69,6 +95,7 @@ class UrllibTransport:
             raise SkillSyncError(f"GET {url}: malformed JSON ({exc})") from exc
 
     def post_json(self, url: str, body: dict[str, Any]) -> Any:
+        url = _validated(url)
         data = json.dumps(body).encode("utf-8")
         req = urllib.request.Request(
             url,
@@ -77,7 +104,8 @@ class UrllibTransport:
             headers={"Content-Type": "application/json", "Accept": "application/json"},
         )
         try:
-            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # noqa: S310
+            # nosec B310 — scheme は _validated() が http/https に限っている。
+            with urllib.request.urlopen(req, timeout=self._timeout) as resp:  # noqa: S310  # nosec B310
                 payload = resp.read()
         except (urllib.error.URLError, urllib.error.HTTPError, OSError) as exc:
             raise SkillSyncError(f"POST {url}: {exc}") from exc

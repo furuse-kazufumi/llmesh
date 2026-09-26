@@ -98,7 +98,7 @@ def evaluate_poison(
     n: int = 4000, seed: int = 0,
 ) -> PoisonResult:
     """Byzantine peer が署名済 manifest に poisoned result を返す。結果検証の効果を測る."""
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # nosec B311 — 種を与えた再現可能な乱数。暗号用途ではなく、再現性こそ要件である
     poisoned = 0
     accept_no_verify = 0
     accept_with_verify = 0

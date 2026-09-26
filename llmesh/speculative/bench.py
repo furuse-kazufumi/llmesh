@@ -106,7 +106,7 @@ def simulate(
     ident = NodeIdentity.generate()
     coord = SpeculativeMeshCoordinator(ident, require_lan=True)
     idle = IdleNode("peer:executor", pending_tasks=0, cpu_load=0.1, vram_free_mb=8000.0, is_lan=True)
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # nosec B311 — 種を与えた再現可能な乱数。暗号用途ではなく、再現性こそ要件である
 
     baseline_total = 0.0
     spec_total = 0.0

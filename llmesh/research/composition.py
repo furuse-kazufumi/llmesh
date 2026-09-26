@@ -126,7 +126,7 @@ def _monte_carlo_shapley(
     n_permutations: int,
     seed: int | None,
 ) -> tuple[ComponentScore, ...]:
-    rng = random.Random(seed)
+    rng = random.Random(seed)  # nosec B311 — 種を与えた再現可能な乱数。暗号用途ではなく、再現性こそ要件である
     n = len(components)
     if n == 0:
         return ()

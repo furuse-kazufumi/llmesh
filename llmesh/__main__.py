@@ -595,7 +595,7 @@ def _cmd_dashboard(args: list[str]) -> int:
 
     未インストール時は `pip install llmesh-llove` を案内し exit 1.
     """
-    import subprocess
+    import subprocess  # nosec B404 — llove CLI へ委譲するためだけに使い、shell=True も外部入力の補間もしない
 
     if args and args[0] == "--check":
         if _llove_module_present():

@@ -36,6 +36,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
 from ..identity.node_id import NodeIdentity
+from ..security.endpoint_validator import EndpointValidator
 from .manifest import SignedManifest
 
 if TYPE_CHECKING:  # avoid import cycles at runtime
@@ -45,6 +46,19 @@ if TYPE_CHECKING:  # avoid import cycles at runtime
 _DISPATCH_PATH = "/speculative/dispatch"
 _RESULT_PATH = "/speculative/result"
 _DEFAULT_TIMEOUT = 10  # seconds (mirrors DiscoveryClient)
+
+# ★peer の endpoint は信頼境界の外から来る。`NodeRegistry.register()` は endpoint を
+# 検証しない —— 検証しているのは `discovery/router.py` の HTTP 入口だけで、
+# ライブラリ API から直接 register すれば素通りする。だから**開く手前**で見る
+# (MCP 規約「入力は信頼境界を越えるたびに再検証」)。on-prem の mesh は私設
+# アドレスと同一ホストで正当に喋るのでその 2 つは許し、閉じるのは scheme
+# (`file:` で**ローカルファイルを読ませる**経路)・資格情報・fragment・IMDS。
+_endpoint_validator = EndpointValidator(allow_private=True, allow_loopback=True)
+
+
+def _validated_endpoint(url: str) -> str:
+    """urlopen に渡す直前の再検査。落ちたら送らない(fail-closed)。"""
+    return _endpoint_validator.validate(url)
 
 
 def _canonical_json(payload: dict[str, Any]) -> bytes:
@@ -285,6 +299,7 @@ class HttpMeshTransport(MeshTransport):
             self.metrics.sent += 1
 
     def _urllib_post(self, url: str, payload: dict[str, Any]) -> None:
+        url = _validated_endpoint(url)
         data = json.dumps(payload).encode()
         req = urllib.request.Request(
             url,
@@ -292,8 +307,11 @@ class HttpMeshTransport(MeshTransport):
             headers={"Content-Type": "application/json"},
             method="POST",
         )
-        # nosec B310 — url is built from a registry endpoint (validated on register).
-        with urllib.request.urlopen(req, timeout=self._timeout):  # noqa: S310
+        # ★ここに在った `# nosec B310` は urlopen の 1 行手前に書かれていて、bandit は
+        #   **同じ行**しか見ないので何も抑制していなかった。文面も「register で検証
+        #   済み」と書いてあったが `NodeRegistry.register()` は endpoint を検証しない。
+        #   だから `_validated_endpoint()` を通し、抑制はこの行に書く。
+        with urllib.request.urlopen(req, timeout=self._timeout):  # noqa: S310  # nosec B310
             pass
 
     def close(self) -> None:
