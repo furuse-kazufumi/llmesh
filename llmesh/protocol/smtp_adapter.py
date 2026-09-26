@@ -230,7 +230,13 @@ class SMTPAdapter(ProtocolAdapter):
             relay_port=self._relay_port,
             node_address=node_addr,
         )
-        self._controller = Controller(smtp_handler, hostname=host, port=port)
+        # ★ready_timeout: aiosmtpd の既定(1 秒)は共有 CI ランナーだと間に合わず、
+        #   macOS で統合試験 3 件が TimeoutError で落ちていた。測っているのは
+        #   「サーバが応答すること」で、**ランナーの速さではない**。起きなければ
+        #   今でも落ちるので門は弱まらない(待つ上限が伸びるだけ)。
+        self._controller = Controller(
+            smtp_handler, hostname=host, port=port, ready_timeout=30.0
+        )
         self._controller.start()
         self._running = True
         logger.info("SMTPAdapter: listening on %s:%d", host, port)

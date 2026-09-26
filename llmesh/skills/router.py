@@ -148,11 +148,17 @@ def _request_id(request: Request) -> str:
     boundary. Real authentication lives in ``llmesh.auth`` / Ed25519
     signature verification, which the reputation layer also leans on.
     """
+    # ★semgrep の `directly-returned-format-string` はここを route handler だと
+    #   思って当たるが、この関数は handler ではない。返り値は rate limiter の鍵に
+    #   しかならず、HTTP 応答の本体には出ない(規則が見ているのは XSS)。
+    #   抑制が正当なのは、理由が**本当**で、かつ**効く位置**に在るときだけである。
     pid = request.headers.get("X-Peer-Id", "").strip()
     if pid:
+        # nosemgrep: python.flask.security.audit.directly-returned-format-string.directly-returned-format-string
         return f"peer:{pid}"
     fwd = request.headers.get("X-Forwarded-For", "").strip()
     if fwd:
+        # nosemgrep: python.flask.security.audit.directly-returned-format-string.directly-returned-format-string
         return f"fwd:{fwd.split(',')[0].strip()}"
     if request.client is not None:
         return f"ip:{request.client.host}"

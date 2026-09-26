@@ -34,8 +34,18 @@ jobs:
       - name: Run tests with coverage
         run: python -m pytest --cov=llmesh --cov-fail-under=80 -q
 
-      - name: Bandit security scan (medium+ severity)
-        run: bandit -r llmesh/ -ll -q
+      - name: Bandit security scan
+        # ★`-c pyproject.toml` を必ず渡す。渡さないと pyproject.toml に理由まで
+        #   書いてある skip(B104 = 文書化された opt-in の bind 設定 等)が効かず、
+        #   B104 5 件で落ちる。security.yml は渡していて ci.yml は渡していなかった
+        #   —— **同じ問いに答える入口が 2 つあって、片方が方針を読んでいなかった**。
+        #   方針は 1 か所(pyproject.toml)にしか書かない。
+        # ★PYTHONUTF8: Windows で bandit が報告のソース行(日本語)を cp1252 に
+        #   書けず UnicodeEncodeError で落ちていた。検査の結果でなく文字コードで
+        #   落ちる門は門ではない。
+        env:
+          PYTHONUTF8: "1"
+        run: bandit -r llmesh/ -c pyproject.toml -q
 
   build:
     runs-on: ubuntu-latest

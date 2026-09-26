@@ -69,7 +69,9 @@ def _stable_float(seed: str, lo: float, hi: float) -> float:
     """Deterministic float in ``[lo, hi]`` derived from ``seed``."""
     if hi <= lo:
         raise ValueError("hi must be > lo")
-    digest = hashlib.sha1(seed.encode("utf-8"), usedforsecurity=False)
+    # SHA-256(暗号目的ではなく、実行間で塩が変わらない決定的な導出のため。
+    # SHA-1 でも同じだが、選ぶ理由が無い方を選ぶと走査器が毎回ここで止まらない)
+    digest = hashlib.sha256(seed.encode("utf-8"), usedforsecurity=False)
     frac = int.from_bytes(digest.digest()[:4], "big") / 0xFFFFFFFF
     return lo + frac * (hi - lo)
 

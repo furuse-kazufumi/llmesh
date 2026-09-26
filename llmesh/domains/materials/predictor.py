@@ -135,10 +135,12 @@ def _stable_hash(*parts: object) -> int:
     """Hash composition + property into a stable non-negative int.
 
     Plain ``hash()`` is salted across Python runs which would make
-    test fixtures non-reproducible; SHA-1 of a deterministic encoding
-    is salt-free and dependency-free.
+    test fixtures non-reproducible; a SHA-256 of a deterministic encoding
+    is salt-free and dependency-free.  (SHA-1 would do the same job, but
+    there is no reason to prefer it, and it makes every scanner stop here.)
     """
-    digest = hashlib.sha1("|".join(repr(p) for p in parts).encode(), usedforsecurity=False)
+    digest = hashlib.sha256("|".join(repr(p) for p in parts).encode(),
+                            usedforsecurity=False)
     return int.from_bytes(digest.digest()[:4], "big")
 
 
