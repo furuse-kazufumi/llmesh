@@ -230,14 +230,35 @@ class SMTPAdapter(ProtocolAdapter):
             relay_port=self._relay_port,
             node_address=node_addr,
         )
-        # ★ready_timeout: aiosmtpd の既定(1 秒)は共有 CI ランナーだと間に合わず、
-        #   macOS で統合試験 3 件が TimeoutError で落ちていた。測っているのは
-        #   「サーバが応答すること」で、**ランナーの速さではない**。起きなければ
-        #   今でも落ちるので門は弱まらない(待つ上限が伸びるだけ)。
+        # ★ready_timeout を 30 秒に伸ばす(aiosmtpd の既定は 1 秒)。ただし
+        #   **これは macOS の失敗の原因ではなかった** —— 伸ばしても落ちた。
+        #   aiosmtpd の文面は「システムが混んでいる、ready_timeout を増やせ」と
+        #   言うが、実際に落ちているのは「起動はした、**応答しない**」段
+        #   (`_factory_invoked` が立たない = 自分への試験接続が届かない)で、
+        #   待ち時間の話ではない。メッセージを額面どおり受け取ると原因を見失う。
         self._controller = Controller(
             smtp_handler, hostname=host, port=port, ready_timeout=30.0
         )
-        self._controller.start()
+        try:
+            self._controller.start()
+        except (TimeoutError, OSError) as exc:
+            # ★何が起きたかを言える形にして投げ直す。aiosmtpd は thread の中で
+            #   起きた例外を `_thread_exception` に持っているが、第 2 段
+            #   (応答待ち)ではそれを見ずに TimeoutError にすり替えてしまう。
+            #   すり替えられた文面だけが残ると、次に見た人も同じ回り道をする。
+            inner = getattr(self._controller, "_thread_exception", None)
+            self._controller = None
+            from_thread = (
+                "" if inner is None
+                else f" (server thread raised {type(inner).__name__}: {inner})"
+            )
+            raise OSError(
+                f"SMTPAdapter: could not bring up the SMTP server on {host}:{port}"
+                f" — {type(exc).__name__}: {exc}{from_thread}. The port was chosen "
+                "as free moments earlier, so a collision is possible; aiosmtpd's own "
+                "message blames a busy system, which was measured not to be the cause "
+                "(raising ready_timeout to 30 s did not help on macOS CI, 2026-09-26)."
+            ) from exc
         self._running = True
         logger.info("SMTPAdapter: listening on %s:%d", host, port)
 
