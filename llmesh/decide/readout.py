@@ -125,8 +125,8 @@ def ask_choice(source: LogitSource, state: str, instructions: str,
         probs, mass, miss = _renormalise(lp, pb, temperature)
         if not probs:
             raise ValueError(
-                "上位 %d に選択肢の符号が 1 つも現れなかった。答えを作らない ——"
-                "符号が 1 トークンでないか、問いの形がモデルに通っていない" % k)
+                f"上位 {k} に選択肢の符号が 1 つも現れなかった。答えを作らない ——"
+                "符号が 1 トークンでないか、問いの形がモデルに通っていない")
         for name, p in probs.items():
             acc[name] += p
         masses.append(mass)

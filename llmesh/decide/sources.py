@@ -48,8 +48,8 @@ def check_base_url(base_url: str) -> str:
         raise SourceError("base_url を解釈できない") from exc
     if parts.scheme.lower() not in _ALLOWED_SCHEMES:
         raise SourceError(
-            "base_url の scheme %r は許していない(http / https のみ)。"
-            "urlopen は file: も開くので、ここで止める" % parts.scheme)
+            f"base_url の scheme {parts.scheme!r} は許していない(http / https のみ)。"
+            "urlopen は file: も開くので、ここで止める")
     if not parts.netloc:
         raise SourceError("base_url にホストが無い")
     return str(base_url)
@@ -130,7 +130,7 @@ class OpenAICompatLogitSource:
             # nosec B310 —— scheme は直前の check_base_url で http/https に限定
             # 済み(file: や独自 scheme は SourceError)。門 =
             # tests/test_decide.py::test_a_file_scheme_base_url_is_refused
-            with urllib.request.urlopen(  # noqa: S310  # nosec B310
+            with urllib.request.urlopen(  # nosec B310
                     req, timeout=self.timeout) as resp:
                 raw = json.loads(resp.read().decode("utf-8"))
         except (urllib.error.URLError, OSError, ValueError) as exc:

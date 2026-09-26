@@ -48,8 +48,8 @@ def reliability(confidences: list[float], correct: list[bool],
         ValueError: 長さが違う / 空。
     """
     if len(confidences) != len(correct):
-        raise ValueError("自信 %d 件と正否 %d 件で数が違う"
-                         % (len(confidences), len(correct)))
+        raise ValueError(
+            f"自信 {len(confidences)} 件と正否 {len(correct)} 件で数が違う")
     if not confidences:
         raise ValueError("空では較正を測れない(★空を通す門にしない)")
     n = len(confidences)
@@ -108,7 +108,8 @@ def fit_temperature(logprob_rows: list[dict[str, float]], truths: list[str], *,
         ValueError: 行が空 / 数が合わない。
     """
     if len(logprob_rows) != len(truths):
-        raise ValueError("行 %d 件と正解 %d 件で数が違う" % (len(logprob_rows), len(truths)))
+        raise ValueError(
+            f"行 {len(logprob_rows)} 件と正解 {len(truths)} 件で数が違う")
     if not logprob_rows:
         raise ValueError("空では温度を当てられない")
     gr = (math.sqrt(5.0) - 1.0) / 2.0
@@ -192,8 +193,8 @@ def fit_isotonic(confidences: list[float], correct: list[bool]) -> IsotonicCalib
         ValueError: 数が合わない / 空。
     """
     if len(confidences) != len(correct):
-        raise ValueError("自信 %d 件と正否 %d 件で数が違う"
-                         % (len(confidences), len(correct)))
+        raise ValueError(
+            f"自信 {len(confidences)} 件と正否 {len(correct)} 件で数が違う")
     if not confidences:
         raise ValueError("空では当てはめられない(★空を通す門にしない)")
     order = sorted(range(len(confidences)), key=lambda i: confidences[i])

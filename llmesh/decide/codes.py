@@ -67,11 +67,12 @@ def build_codebook(options: list[str] | tuple[str, ...],
         raise CodeError(f"選択肢名が重複している: {dup}")
     if len(opts) > cap:
         raise CodeError(
-            "選択肢が %d 個で、1 回の読み出しの上限 %d を超える。"
+            f"選択肢が {len(opts)} 個で、1 回の読み出しの上限 {cap} を超える。"
             "★切り詰めると「選ばれない選択肢」が黙って生まれるので拒否する。"
-            "段に分けて訊くか、cap を上げられる backend を使うこと" % (len(opts), cap))
+            "段に分けて訊くか、cap を上げられる backend を使うこと")
     if len(opts) > len(alphabet):
-        raise CodeError("符号が足りない(選択肢 %d / 符号 %d)" % (len(opts), len(alphabet)))
+        raise CodeError(
+            f"符号が足りない(選択肢 {len(opts)} / 符号 {len(alphabet)})")
     codes = tuple(alphabet[i] for i in range(len(opts)))
     return CodeBook(options=opts, codes=codes,
                     by_code={c: o for c, o in zip(codes, opts)})
