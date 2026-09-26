@@ -24,10 +24,9 @@ import json
 import sqlite3
 import threading
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
-
 
 _TERMINAL_EVENTS: frozenset[str] = frozenset({"completed", "failed"})
 _DEFAULT_TTL_DAYS: int = 7
@@ -41,7 +40,7 @@ _RESUMABLE_TASKS_SQL: str = "SELECT task_id, node_id, event_type AS last_event, 
 
 
 def _now_utc() -> str:
-    return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
+    return datetime.now(UTC).isoformat(timespec="milliseconds")
 
 
 @dataclass(frozen=True)
@@ -57,7 +56,7 @@ class TimelineEvent:
     def is_terminal(self) -> bool:
         return self.event_type in _TERMINAL_EVENTS
 
-    def delta_ms(self, other: "TimelineEvent") -> int:
+    def delta_ms(self, other: TimelineEvent) -> int:
         """Milliseconds between this event and *other* (positive = self is later)."""
         def _parse(ts: str) -> datetime:
             return datetime.fromisoformat(ts)
@@ -133,7 +132,7 @@ class TimelineStore:
     def _prune_locked(self) -> None:
         """Remove events older than ttl_days. Must be called with _lock held."""
         from datetime import timedelta
-        cutoff = (datetime.now(timezone.utc) - timedelta(days=self._ttl_days)).isoformat()
+        cutoff = (datetime.now(UTC) - timedelta(days=self._ttl_days)).isoformat()
         self._conn.execute(
             "DELETE FROM timeline_events WHERE timestamp_utc < ?", (cutoff,)
         )
@@ -197,7 +196,7 @@ class TimelineStore:
         with self._lock:
             rows = self._conn.execute(sql, tuple(_TERMINAL_EVENTS)).fetchall()
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         result = []
         for task_id, node_id, last_event, last_ts in rows:
             try:

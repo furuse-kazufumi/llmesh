@@ -21,9 +21,8 @@ Reference: Gerstner & Kistler, *Spiking Neuron Models* (2002), ch. 4.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Iterable
-
 
 # ---------------------------------------------------------------------------
 # Leaky Integrate-and-Fire neuron

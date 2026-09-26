@@ -12,7 +12,7 @@ from __future__ import annotations
 import json
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from ..identity.node_id import NodeIdentity
 
@@ -26,7 +26,7 @@ class LookupError(Exception):
 
 
 def _now_utc_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def announce(
@@ -48,7 +48,7 @@ def announce(
         AnnounceError: Server returned an error or connection failed.
     """
     timestamp_utc = _now_utc_iso()
-    message = f"{identity.node_id}|{endpoint}|{timestamp_utc}|{identity.public_key_hex}|{identity.did_key}".encode("utf-8")
+    message = f"{identity.node_id}|{endpoint}|{timestamp_utc}|{identity.public_key_hex}|{identity.did_key}".encode()
     signature_hex = identity.sign(message).hex()
 
     payload = {

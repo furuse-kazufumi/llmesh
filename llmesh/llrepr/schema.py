@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from .model import CONTAINER_TAGS, NODE_TYPES, LLREPR_SCHEMA_VERSION
+from .model import CONTAINER_TAGS, LLREPR_SCHEMA_VERSION, NODE_TYPES
 
 _NODE_REF = {"$ref": "#/$defs/node"}
 

@@ -23,7 +23,6 @@ from typing import Any
 from ..classifier.data_level import ClassifiedPayload, DataLevel
 from .firewall import _L1_PATTERNS  # reuse compiled secret patterns
 
-
 _DEFAULT_MAX_CHARS = 512
 _ABSOLUTE_PATH_RE = re.compile(
     r'(?:^|[\s"\'`])(/[a-zA-Z0-9_\-\.]+){3,}|[A-Za-z]:\\[^\s"\']{10,}'

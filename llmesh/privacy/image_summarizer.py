@@ -27,9 +27,9 @@ import io
 import ipaddress
 import json
 import os
+import urllib.error
 import urllib.parse
 import urllib.request
-import urllib.error
 from dataclasses import dataclass
 
 _DEFAULT_CAPTIONER = "ollama/llava"

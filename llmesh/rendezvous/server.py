@@ -15,14 +15,14 @@ Security invariants:
 from __future__ import annotations
 
 import threading
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, field_validator
 
 from ..identity.node_id import NodeIdentity
-from ..security.endpoint_validator import EndpointValidator, EndpointValidationError
+from ..security.endpoint_validator import EndpointValidationError, EndpointValidator
 
 _endpoint_validator = EndpointValidator(allow_private=True)
 
@@ -98,7 +98,7 @@ class _Registry:
 def _signed_message(node_id: str, endpoint: str, timestamp_utc: str,
                     public_key_hex: str = "", did: str = "") -> bytes:
     """Canonical signed payload: binds key material to prevent MITM substitution."""
-    return f"{node_id}|{endpoint}|{timestamp_utc}|{public_key_hex}|{did}".encode("utf-8")
+    return f"{node_id}|{endpoint}|{timestamp_utc}|{public_key_hex}|{did}".encode()
 
 
 def _verify_timestamp(timestamp_utc: str) -> None:
@@ -107,7 +107,7 @@ def _verify_timestamp(timestamp_utc: str) -> None:
         ts = datetime.fromisoformat(timestamp_utc)
     except ValueError:
         raise HTTPException(status_code=400, detail="invalid timestamp format")
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     # Normalise to UTC
     if ts.tzinfo is None:
         raise HTTPException(status_code=400, detail="timestamp must include timezone")
@@ -164,7 +164,7 @@ def make_app(registry: _Registry | None = None) -> FastAPI:
             did=req.did,
             endpoint=req.endpoint,
             public_key_hex=req.public_key_hex,
-            registered_at=datetime.now(timezone.utc).isoformat(),
+            registered_at=datetime.now(UTC).isoformat(),
         )
         _reg.put(record)
         return {"status": "registered", "node_id": req.node_id}

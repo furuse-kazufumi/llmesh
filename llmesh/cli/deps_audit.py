@@ -23,8 +23,8 @@ import sys
 from pathlib import Path
 
 from llmesh.supply_chain import (
-    Origins,
     OriginEntry,
+    Origins,
     SupplyRisk,
     audit_installed,
     audit_requirements_file,

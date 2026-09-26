@@ -64,12 +64,14 @@ _OID_ORDER: list[tuple] = sorted(_OID_DEFS)
 StatsProvider = Callable[[], dict]
 
 try:
-    from pysnmp.entity import engine as _snmp_engine_mod
-    from pysnmp.entity import config as _snmp_config
     from pysnmp.carrier.asyncio.dgram import udp as _udp_transport
-    from pysnmp.entity.rfc3413 import cmdrsp as _cmdrsp, context as _snmp_context
+    from pysnmp.entity import config as _snmp_config
+    from pysnmp.entity import engine as _snmp_engine_mod
+    from pysnmp.entity.rfc3413 import cmdrsp as _cmdrsp
+    from pysnmp.entity.rfc3413 import context as _snmp_context
     from pysnmp.proto import rfc1902 as _rfc1902
-    from pysnmp.smi import instrum as _instrum, error as _smi_error
+    from pysnmp.smi import error as _smi_error
+    from pysnmp.smi import instrum as _instrum
 
     _PYSNMP_AVAILABLE = True
 except ImportError:
@@ -211,7 +213,7 @@ class SNMPAdapter(ProtocolAdapter):
         self._node_id = node_id
         self._handler: MessageHandler | None = None
         self._snmp_engine = None
-        self._mib_controller: "_LlmeshMibController | None" = None
+        self._mib_controller: _LlmeshMibController | None = None
         self._loop: asyncio.AbstractEventLoop | None = None
         self._thread: threading.Thread | None = None
         self._running = False
@@ -352,7 +354,7 @@ class SNMPAdapter(ProtocolAdapter):
                     self._mib_controller._values[oid] = stats[key]
 
     @property
-    def mib_controller(self) -> "_LlmeshMibController | None":
+    def mib_controller(self) -> _LlmeshMibController | None:
         return self._mib_controller
 
     @property

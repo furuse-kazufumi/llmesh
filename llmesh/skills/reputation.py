@@ -83,7 +83,7 @@ class PeerReputation:
         window_s: int = _DEFAULT_WINDOW_S,
         warn_threshold: float = _DEFAULT_WARN,
         block_threshold: float = _DEFAULT_BLOCK,
-        clock: "callable[[], float] | None" = None,  # type: ignore[type-arg]
+        clock: callable[[], float] | None = None,  # type: ignore[type-arg]
     ) -> None:
         if not 0.0 <= block_threshold <= warn_threshold <= 1.0:
             raise ValueError(

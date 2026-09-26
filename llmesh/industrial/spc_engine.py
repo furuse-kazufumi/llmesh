@@ -20,8 +20,8 @@ No external dependencies (pure stdlib math).
 from __future__ import annotations
 
 import statistics
-from dataclasses import dataclass, field
 from collections.abc import Sequence
+from dataclasses import dataclass, field
 
 # -----------------------------------------------------------------------
 # Shewhart control chart constants (ASTM / ISO 8258 table)

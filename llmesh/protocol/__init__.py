@@ -19,35 +19,35 @@ Protocol comparison:
   udp         — UDP datagrams; unreliable, suitable for gossip / heartbeats
 """
 from .adapter import MessageHandler, ProtocolAdapter, TransportError
-from .codec import JSON, MSGPACK, CODECS, decode, encode, is_msgpack_available
 from .assembler import CompletedStream, MessageAssembler, RetransmitInfo
 from .chunk_sender import ChunkSender
+from .codec import CODECS, JSON, MSGPACK, decode, encode, is_msgpack_available
 from .device_profile import (
     DeviceProfile,
     PayloadTooLargeError,
     ProfileType,
     ProtocolNotAllowedError,
 )
-from .message import MessageType, NodeAddress, UnifiedMessage
-from .outbox import OutboxQueue
-from .qos import DeadlineExpiredError, check_deadline, is_expired
-from .registry import AdapterRegistry
-from .reliable_stream import ReliableStream
-from .watchdog import WatchdogTimer
+from .ftp_adapter import FTPAdapter
 
 # Register built-in adapters
 from .http_adapter import HTTPAdapter
+from .imap_adapter import IMAPAdapter
+from .local_file_adapter import LocalFileAdapter
+from .message import MessageType, NodeAddress, UnifiedMessage
+from .outbox import OutboxQueue
+from .pop3_adapter import POP3Adapter
+from .qos import DeadlineExpiredError, check_deadline, is_expired
+from .registry import AdapterRegistry
+from .reliable_stream import ReliableStream
+from .sftp_adapter import SFTPAdapter
+from .smtp_adapter import SMTPAdapter
+from .snmp_adapter import SNMPAdapter
+from .ssh_adapter import SSHAdapter
 from .tcp_adapter import TCPAdapter
 from .tcp_stream_adapter import TCPStreamAdapter
 from .udp_adapter import UDPAdapter
-from .ssh_adapter import SSHAdapter
-from .sftp_adapter import SFTPAdapter
-from .smtp_adapter import SMTPAdapter
-from .imap_adapter import IMAPAdapter
-from .pop3_adapter import POP3Adapter
-from .ftp_adapter import FTPAdapter
-from .snmp_adapter import SNMPAdapter
-from .local_file_adapter import LocalFileAdapter
+from .watchdog import WatchdogTimer
 
 AdapterRegistry.register("http", HTTPAdapter)
 AdapterRegistry.register("tcp", TCPAdapter)

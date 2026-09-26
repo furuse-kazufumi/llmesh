@@ -93,7 +93,7 @@ class _LLMeshROS2Node(RclpyNode):  # type: ignore[misc]
         node_name: str,
         request_topic: str,
         response_topic: str,
-        adapter: "ROS2Adapter",
+        adapter: ROS2Adapter,
     ) -> None:
         super().__init__(node_name)
         self._adapter = adapter

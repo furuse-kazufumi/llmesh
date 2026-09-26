@@ -37,8 +37,8 @@ from __future__ import annotations
 
 import logging
 import struct
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Callable, Iterable
 
 from .sensor_event import Priority, SensorEvent
 

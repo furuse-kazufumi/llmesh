@@ -1,16 +1,15 @@
 """Ed25519 Node ID and did:key derivation."""
 from __future__ import annotations
 
-
 from cryptography.hazmat.primitives.asymmetric.ed25519 import (
     Ed25519PrivateKey,
     Ed25519PublicKey,
 )
 from cryptography.hazmat.primitives.serialization import (
     Encoding,
-    PublicFormat,
-    PrivateFormat,
     NoEncryption,
+    PrivateFormat,
+    PublicFormat,
 )
 
 # Multicodec prefix for Ed25519 public key: 0xed01
@@ -54,12 +53,12 @@ class NodeIdentity:
         )
 
     @classmethod
-    def generate(cls) -> "NodeIdentity":
+    def generate(cls) -> NodeIdentity:
         """Generate a new random Ed25519 keypair."""
         return cls(Ed25519PrivateKey.generate())
 
     @classmethod
-    def from_private_bytes(cls, raw: bytes) -> "NodeIdentity":
+    def from_private_bytes(cls, raw: bytes) -> NodeIdentity:
         """Restore identity from raw 32-byte private key."""
         from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PrivateKey
         return cls(Ed25519PrivateKey.from_private_bytes(raw))
@@ -121,7 +120,9 @@ class NodeIdentity:
     def verify_with_public_hex(message: bytes, signature: bytes, pub_hex: str) -> bool:
         """Verify without needing a full NodeIdentity (for remote nodes)."""
         try:
-            from cryptography.hazmat.primitives.asymmetric.ed25519 import Ed25519PublicKey
+            from cryptography.hazmat.primitives.asymmetric.ed25519 import (
+                Ed25519PublicKey,
+            )
             pub = Ed25519PublicKey.from_public_bytes(bytes.fromhex(pub_hex))
             pub.verify(signature, message)
             return True

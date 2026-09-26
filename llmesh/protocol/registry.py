@@ -37,12 +37,12 @@ class AdapterRegistry:
         adapter = AdapterRegistry.create("grpc", timeout=10)
     """
 
-    _registry: dict[str, type["ProtocolAdapter"]] = {}
+    _registry: dict[str, type[ProtocolAdapter]] = {}
     # Tracks which names were loaded from external plugin specs
     _plugin_specs: dict[str, str] = {}   # protocol_name -> "module:Class=name"
 
     @classmethod
-    def register(cls, name: str, adapter_cls: type["ProtocolAdapter"]) -> None:
+    def register(cls, name: str, adapter_cls: type[ProtocolAdapter]) -> None:
         """Register *adapter_cls* under *name*."""
         cls._registry[name] = adapter_cls
 
@@ -97,7 +97,7 @@ class AdapterRegistry:
         return protocol_name
 
     @classmethod
-    def create(cls, protocol: str, **kwargs: Any) -> "ProtocolAdapter":
+    def create(cls, protocol: str, **kwargs: Any) -> ProtocolAdapter:
         """Instantiate the adapter for *protocol*, forwarding **kwargs**.
 
         Raises KeyError if *protocol* is not registered.

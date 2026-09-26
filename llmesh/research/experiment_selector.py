@@ -29,9 +29,8 @@ hitting an under-explored branch of the hypothesis tree are more useful.
 from __future__ import annotations
 
 import math
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
-
 
 _EPS = 1e-12
 
@@ -73,7 +72,7 @@ class Belief:
         total = a + b
         return (a * b) / (total * total * (total + 1.0))
 
-    def updated(self, *, success: bool, strength: float = 1.0) -> "Belief":
+    def updated(self, *, success: bool, strength: float = 1.0) -> Belief:
         """Apply one observation. ``success=True`` bumps alpha, else beta.
 
         ``strength`` lets a high-confidence observation count more than

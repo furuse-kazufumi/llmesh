@@ -38,7 +38,7 @@ _CDX_BOM_FORMAT = "CycloneDX"
 
 
 def _utc_now_iso() -> str:
-    return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+    return datetime.datetime.now(datetime.UTC).isoformat(timespec="seconds")
 
 
 def _purl_for(pkg_name: str, version: str) -> str:

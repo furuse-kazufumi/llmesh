@@ -60,7 +60,7 @@ class OutboxQueue:
     # Public API
     # ------------------------------------------------------------------
 
-    def enqueue(self, msg: "UnifiedMessage", target: "NodeAddress") -> None:
+    def enqueue(self, msg: UnifiedMessage, target: NodeAddress) -> None:
         """Persist *msg* for later delivery to *target*."""
         payload = msg.to_bytes()
         with self._lock:
@@ -80,7 +80,7 @@ class OutboxQueue:
             )
             self._conn.commit()
 
-    def dequeue(self, n: int = 1) -> "list[tuple[UnifiedMessage, NodeAddress]]":
+    def dequeue(self, n: int = 1) -> list[tuple[UnifiedMessage, NodeAddress]]:
         """Return up to *n* pending messages ordered by priority (high first), then age.
 
         Does NOT remove them — call mark_sent() after successful delivery.

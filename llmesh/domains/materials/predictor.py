@@ -22,10 +22,9 @@ become a drop-in replacement at the ABC boundary in later phases.
 
 from __future__ import annotations
 
+import hashlib
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-import hashlib
-
 
 # ---------------------------------------------------------------------------
 # dataclasses

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-from .model import Document, Node, LlreprCapabilityError
+from .model import Document, LlreprCapabilityError, Node
 
 
 class Writer(ABC):

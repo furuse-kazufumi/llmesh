@@ -18,12 +18,11 @@ without changing this module's API.
 
 from __future__ import annotations
 
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from typing import Callable, Iterable
 
 from llmesh.core.cost_attribution import AttributionLink
 from llmesh.vla.joint_decoder import JointTrajectory
-
 
 # ---------------------------------------------------------------------------
 # Constraint protocol

@@ -36,6 +36,11 @@ from llmesh.vla.decoders import (
     Twist,
     TwistActionStream,
 )
+from llmesh.vla.encoders import (
+    MockTextSceneEncoder,
+    SceneFeatures,
+    VisionEncoder,
+)
 from llmesh.vla.image_encoder import (
     ImageEncoder,
     ImageObservation,
@@ -48,6 +53,8 @@ from llmesh.vla.joint_decoder import (
     MockJointTrajectoryDecoder,
     waypoints_to_trajectory,
 )
+from llmesh.vla.metrics import EpisodeOutcome, EvaluationReport, evaluate_trials
+from llmesh.vla.mock_agent import MockVLAAgent
 from llmesh.vla.replan import (
     ExecutionFault,
     FailureMode,
@@ -64,6 +71,7 @@ from llmesh.vla.replay import (
     replay_episode,
     velocity_cap_checker,
 )
+from llmesh.vla.scene import SceneObject, SceneState, parse_scene_text
 from llmesh.vla.snn import (
     LIFLayer,
     LIFParams,
@@ -84,14 +92,6 @@ from llmesh.vla.sparse_vla import (
     SparseVLAAgent,
     SparseVLAConfig,
 )
-from llmesh.vla.encoders import (
-    MockTextSceneEncoder,
-    SceneFeatures,
-    VisionEncoder,
-)
-from llmesh.vla.metrics import EpisodeOutcome, EvaluationReport, evaluate_trials
-from llmesh.vla.mock_agent import MockVLAAgent
-from llmesh.vla.scene import SceneObject, SceneState, parse_scene_text
 from llmesh.vla.vla import (
     ActionStream,
     VisionLanguageRequest,
@@ -99,6 +99,20 @@ from llmesh.vla.vla import (
 )
 
 __all__ = [
+    "LIFLayer",
+    "LIFParams",
+    "LIFState",
+    "run_layer",
+    "spikes_to_rates",
+    "step_lif",
+    "EventToken",
+    "SparseEncoder",
+    "SparseObservation",
+    "dense_to_events",
+    "events_to_feature_vector",
+    "DiscreteAction",
+    "SparseVLAAgent",
+    "SparseVLAConfig",
     "ActionDecoder",
     "ActionStream",
     "BCEvalReport",

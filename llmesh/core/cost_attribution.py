@@ -29,11 +29,11 @@ they're one append-only file with first-class accessors.
 from __future__ import annotations
 
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Literal
+from typing import Any, Literal
 
 from llmesh.core.trace import TraceEntry
-
 
 # ---------------------------------------------------------------------------
 # Per-step cost
@@ -147,7 +147,7 @@ EXTRA_KEY_REDUNDANCY = "redundancy"
 def attribution_to_extra(
     links: Iterable[AttributionLink],
     *,
-    redundancy: "RedundancyFlag | None" = None,
+    redundancy: RedundancyFlag | None = None,
 ) -> dict[str, Any]:
     """Render attribution + redundancy as an extra-dict patch.
 

@@ -52,8 +52,8 @@ class SmartNodeSelector:
         breakers: NodeCircuitBreakerMap | None = None,
         contribution: ContributionTracker | None = None,
         candidate_multiplier: int = 3,
-        fairness_policy: "FairnessPolicy | None" = None,
-        overrides: "NodeOverrides | None" = None,
+        fairness_policy: FairnessPolicy | None = None,
+        overrides: NodeOverrides | None = None,
     ) -> None:
         if candidate_multiplier < 1:
             raise ValueError("candidate_multiplier must be >= 1")
@@ -160,9 +160,9 @@ class SmartNodeSelector:
         return self._contribution
 
     @property
-    def fairness_policy(self) -> "FairnessPolicy | None":
+    def fairness_policy(self) -> FairnessPolicy | None:
         return self._fairness_policy
 
     @property
-    def overrides(self) -> "NodeOverrides | None":
+    def overrides(self) -> NodeOverrides | None:
         return self._overrides

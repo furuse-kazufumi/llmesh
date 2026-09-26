@@ -100,7 +100,9 @@ class MockTwistDecoder(ActionDecoder):
 
         # Use the encoder's distance/bearing when targeting nearest;
         # recompute for explicit colour targets.
-        from llmesh.vla.encoders import _bearing as bearing_fn  # local import keeps cycle small
+        from llmesh.vla.encoders import (
+            _bearing as bearing_fn,  # local import keeps cycle small
+        )
         from llmesh.vla.encoders import _distance as distance_fn
 
         target_obj = features.state.find(chosen_name) if chosen_name else None

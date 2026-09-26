@@ -17,14 +17,13 @@ can swap weights / depth / backend without touching the agent API.
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from dataclasses import dataclass, field
-from typing import Sequence
 
 from llmesh.core.agent import AgentConfig
 from llmesh.vla.snn import LIFLayer, LIFParams, spikes_to_rates
 from llmesh.vla.sparse_encoder import SparseEncoder, events_to_feature_vector
 from llmesh.vla.vla import ActionStream, VisionLanguageRequest, VLAAgent
-
 
 # ---------------------------------------------------------------------------
 # Action space

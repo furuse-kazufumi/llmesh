@@ -418,7 +418,7 @@ class SFTPAdapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
         client_key: paramiko.PKey | None = None,
         poll_timeout: float = _POLL_TIMEOUT,
     ) -> UnifiedMessage | None:
@@ -512,7 +512,7 @@ class SFTPAdapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         if not targets:
             return

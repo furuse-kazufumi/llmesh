@@ -24,7 +24,6 @@ Usage
 """
 from __future__ import annotations
 
-
 # Module-level defaults. Per-caller overrides are encouraged; these
 # values exist so a downstream that just wants "something sensible" can
 # import them.

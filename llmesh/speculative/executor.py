@@ -30,9 +30,12 @@ from __future__ import annotations
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from time import perf_counter
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .manifest import SignedManifest
+
+if TYPE_CHECKING:          # 実行時は import しない(transport との循環を避ける)
+    from .transport import SignedResult
 
 # branch dict -> opaque result payload (JSON-serialisable).
 RunFn = Callable[[dict[str, Any]], Any]
@@ -102,7 +105,7 @@ class SpeculativeExecutor:
 
     # ------------------------------------------------------------------
 
-    def handle_signed(self, signed: SignedManifest) -> "SignedResult | None":
+    def handle_signed(self, signed: SignedManifest) -> SignedResult | None:
         """Verify, run, and sign one speculative branch.
 
         Returns a :class:`SignedResult` on success, or ``None`` when the manifest

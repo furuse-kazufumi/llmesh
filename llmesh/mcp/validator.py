@@ -20,12 +20,12 @@ from typing import TYPE_CHECKING, Any
 
 import jsonschema
 
+from .sca_gate import BLOCKING_SEVERITIES, OsvQueryError, check_dependencies
 from .schemas import TOOL_SCHEMAS
-from .sca_gate import OsvQueryError, check_dependencies, BLOCKING_SEVERITIES
 
 if TYPE_CHECKING:
-    from .nonce_store import NonceStore
     from ..audit import AuditTrace
+    from .nonce_store import NonceStore
 
 _MAX_RAW_BYTES = 512_000  # 512 KB hard cap before JSON parse
 
@@ -44,8 +44,8 @@ class OutputValidator:
 
     def __init__(
         self,
-        nonce_store: "NonceStore | None" = None,
-        audit_trace: "AuditTrace | None" = None,
+        nonce_store: NonceStore | None = None,
+        audit_trace: AuditTrace | None = None,
     ) -> None:
         """Create an OutputValidator.
 

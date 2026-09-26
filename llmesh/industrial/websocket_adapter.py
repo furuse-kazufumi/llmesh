@@ -242,7 +242,7 @@ class WebSocketAdapter:
                 reader.readuntil(b"\r\n\r\n"),
                 timeout=10.0,
             )
-        except (asyncio.IncompleteReadError, asyncio.TimeoutError):
+        except (TimeoutError, asyncio.IncompleteReadError):
             return False
         if len(buf) > _MAX_HANDSHAKE_BYTES:
             return False
@@ -301,7 +301,7 @@ class WebSocketAdapter:
                     self._read_frame(reader),
                     timeout=_FRAME_READ_TIMEOUT_S,
                 )
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # Send ping; if no pong within timeout, close
                 try:
                     writer.write(self._encode_frame(_OP_PING, b"keepalive"))

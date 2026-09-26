@@ -80,7 +80,7 @@ class ImageClassification:
 
 def _try_import_pillow() -> Any:
     try:
-        from PIL import Image, ExifTags  # type: ignore[import]
+        from PIL import ExifTags, Image  # type: ignore[import]
         return Image, ExifTags
     except ImportError:
         return None, None

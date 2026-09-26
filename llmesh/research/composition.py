@@ -31,9 +31,8 @@ from __future__ import annotations
 import itertools
 import math
 import random
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Callable, Iterable
-
 
 # A scalar score for a given subset of component IDs.
 ValueFn = Callable[[frozenset[str]], float]

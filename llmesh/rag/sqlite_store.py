@@ -38,11 +38,10 @@ import array
 import json
 import sqlite3
 import time
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from .store import Document, RetrievedDocument, VectorStore
-
 
 _SCHEMA_VERSION = 1
 
@@ -248,7 +247,7 @@ class SqliteVectorStore(VectorStore):
             dst.close()
 
     @classmethod
-    def load(cls, path) -> "SqliteVectorStore":
+    def load(cls, path) -> SqliteVectorStore:
         # Re-open by reading the dimension stored in meta_kv. A file
         # without the schema is not a SqliteVectorStore — turn the
         # underlying OperationalError into a clean ValueError.
@@ -278,7 +277,7 @@ class SqliteVectorStore(VectorStore):
         except Exception:
             pass
 
-    def __enter__(self) -> "SqliteVectorStore":
+    def __enter__(self) -> SqliteVectorStore:
         return self
 
     def __exit__(self, *exc):

@@ -20,10 +20,11 @@ from __future__ import annotations
 
 import hashlib
 import re
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Sequence
+from typing import TYPE_CHECKING
 
-from llmesh.classifier.data_level import DataLevel, ClassifiedPayload
+from llmesh.classifier.data_level import ClassifiedPayload, DataLevel
 
 if TYPE_CHECKING:
     from llmesh.audit import AuditTrace
@@ -144,8 +145,8 @@ class PromptFirewall:
         self,
         extra_patterns: Sequence[tuple[str, re.Pattern]] | None = None,
         max_payload_chars: int = _MAX_PAYLOAD_CHARS,
-        audit_trace: "AuditTrace | None" = None,
-        presidio: "PresidioDetector | None" = None,
+        audit_trace: AuditTrace | None = None,
+        presidio: PresidioDetector | None = None,
     ) -> None:
         self._patterns = list(_L1_PATTERNS) + list(extra_patterns or [])
         self._max_chars = max_payload_chars

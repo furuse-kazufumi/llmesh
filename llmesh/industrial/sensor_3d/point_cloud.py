@@ -20,14 +20,14 @@ Security invariants
 from __future__ import annotations
 
 import struct
-from dataclasses import dataclass
 from collections.abc import Iterable
+from dataclasses import dataclass
 
 # Optional Rust acceleration (~10× faster).  When `llmesh_rust` is
 # importable it transparently replaces the encode/decode hot paths;
 # otherwise the pure-stdlib implementation is used.
 try:
-    import llmesh_rust as _rust    # type: ignore[import-not-found]
+    import llmesh_rust as _rust  # type: ignore[import-not-found]
     _RUST_AVAILABLE = True
 except ImportError:
     _rust = None                   # type: ignore[assignment]

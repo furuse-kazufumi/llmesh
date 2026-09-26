@@ -24,7 +24,6 @@ from __future__ import annotations
 
 from collections import deque
 from dataclasses import dataclass
-from typing import Deque
 
 from .spc_engine import CUSUMChart, SPCResult
 
@@ -87,8 +86,8 @@ class VideoCUSUM:
         self._frame = frame_chart
         self._sensor = sensor_chart
         self._sync = float(sync_window_s)
-        self._frame_buf: Deque[_Alarm] = deque(maxlen=buffer_size)
-        self._sensor_buf: Deque[_Alarm] = deque(maxlen=buffer_size)
+        self._frame_buf: deque[_Alarm] = deque(maxlen=buffer_size)
+        self._sensor_buf: deque[_Alarm] = deque(maxlen=buffer_size)
 
     # ------------------------------------------------------------------
     # Properties
@@ -148,7 +147,7 @@ class VideoCUSUM:
             timestamp=timestamp, channel=channel, spc_result=spc,
         )
 
-    def _find_match(self, buf: Deque[_Alarm], timestamp: float) -> _Alarm | None:
+    def _find_match(self, buf: deque[_Alarm], timestamp: float) -> _Alarm | None:
         """Return the closest in-window alarm from ``buf``, else None.
 
         Eviction:

@@ -96,7 +96,7 @@ def _is_image_prompt(path: str) -> bool:
 class _PromptEventHandler(FileSystemEventHandler):  # type: ignore[misc]
     """Watchdog event handler that processes new .prompt.txt files."""
 
-    def __init__(self, adapter: "LocalFileAdapter") -> None:
+    def __init__(self, adapter: LocalFileAdapter) -> None:
         super().__init__()
         self._adapter = adapter
         self._seen: set[str] = set()
@@ -224,9 +224,9 @@ class LocalFileAdapter(ProtocolAdapter):
     def _build_pipeline(self) -> tuple:
         from ..llm.llamacpp import LlamaCppBackend
         from ..llm.ollama import OllamaBackend
+        from ..mcp.validator import OutputValidator
         from ..privacy.firewall import PromptFirewall
         from ..privacy.summarizer import PrivacySummarizer
-        from ..mcp.validator import OutputValidator
 
         firewall = PromptFirewall()
         summarizer = PrivacySummarizer()
@@ -328,10 +328,10 @@ class LocalFileAdapter(ProtocolAdapter):
 
     def _process_image_file(self, src_path: str) -> None:
         """Process an image prompt file through ImageFirewall → ImageSummarizer → LLM."""
-        from ..privacy.image_firewall import ImageFirewall
-        from ..privacy.image_summarizer import ImageSummarizer
         from ..llm.backend import BackendError
         from ..mcp.validator import ValidationError
+        from ..privacy.image_firewall import ImageFirewall
+        from ..privacy.image_summarizer import ImageSummarizer
 
         p = Path(src_path)
         if not p.exists():

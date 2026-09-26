@@ -74,7 +74,7 @@ class DvsEvent:
 
 # Optional Rust acceleration (built from rust_ext/, ~10× faster).
 try:
-    import llmesh_rust as _rust    # type: ignore[import-not-found]
+    import llmesh_rust as _rust  # type: ignore[import-not-found]
     _RUST_AVAILABLE = True
 except ImportError:
     _rust = None                   # type: ignore[assignment]

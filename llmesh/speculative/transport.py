@@ -155,7 +155,7 @@ class SignedResult:
 
 
 def ingest_result(
-    coord: "SpeculativeMeshCoordinator",
+    coord: SpeculativeMeshCoordinator,
     signed_manifest: SignedManifest,
     signed_result: SignedResult,
     *,
@@ -300,7 +300,7 @@ class HttpMeshTransport(MeshTransport):
         if self._owns_pool:
             self._pool.shutdown(wait=True)
 
-    def __enter__(self) -> "HttpMeshTransport":
+    def __enter__(self) -> HttpMeshTransport:
         return self
 
     def __exit__(self, *exc: object) -> None:
@@ -308,7 +308,7 @@ class HttpMeshTransport(MeshTransport):
 
 
 def make_mesh_dispatch_fn(
-    registry: "NodeRegistry",
+    registry: NodeRegistry,
     transport: MeshTransport,
 ) -> Any:
     """Build a ``dispatch_fn`` for :class:`SpeculativeMeshCoordinator` (SPEC-MESH-02).

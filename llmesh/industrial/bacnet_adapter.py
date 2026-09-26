@@ -51,7 +51,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 try:
-    import bacpypes3 as _bacpypes3      # type: ignore[import-not-found]
+    import bacpypes3 as _bacpypes3  # type: ignore[import-not-found]
     _BACPYPES_AVAILABLE = True
 except ImportError:
     _bacpypes3 = None                   # type: ignore[assignment]
@@ -261,7 +261,7 @@ class BACnetAdapter:
     async def _open_app(self) -> bool:
         """Initialise the bacpypes3 BACnet application."""
         try:
-            from bacpypes3.app import Application       # type: ignore
+            from bacpypes3.app import Application  # type: ignore
             from bacpypes3.local.device import DeviceObject  # type: ignore
             self._app = Application.from_args(
                 argv=[],
@@ -319,7 +319,7 @@ class BACnetAdapter:
         """Read one property — separated for easy mocking in tests."""
         # bacpypes3.read_property returns the value directly (async).
         # Implementations may override this in tests.
-        from bacpypes3.pdu import Address                # type: ignore
+        from bacpypes3.pdu import Address  # type: ignore
         from bacpypes3.primitivedata import ObjectIdentifier  # type: ignore
 
         target = Address(f"{spec.device_id}")

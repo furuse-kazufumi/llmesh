@@ -23,7 +23,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -43,15 +43,15 @@ _SENSOR_SOURCE_DEFAULT = "llmesh.sensor"
 def _ts_to_iso(ts: float | datetime | str | None) -> str:
     """Coerce a variety of timestamp inputs into an ISO-8601 string."""
     if ts is None:
-        return datetime.now(tz=timezone.utc).isoformat()
+        return datetime.now(tz=UTC).isoformat()
     if isinstance(ts, str):
         return ts
     if isinstance(ts, datetime):
         if ts.tzinfo is None:
-            ts = ts.replace(tzinfo=timezone.utc)
+            ts = ts.replace(tzinfo=UTC)
         return ts.isoformat()
     # Float epoch seconds
-    return datetime.fromtimestamp(float(ts), tz=timezone.utc).isoformat()
+    return datetime.fromtimestamp(float(ts), tz=UTC).isoformat()
 
 
 class LloveJSONLExporter:

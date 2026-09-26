@@ -29,7 +29,7 @@ def _ensure_utf8_stdout() -> None:
 
 
 def _fixed_clock():
-    return _dt.datetime(2026, 5, 24, 0, 0, 0, tzinfo=_dt.timezone.utc)
+    return _dt.datetime(2026, 5, 24, 0, 0, 0, tzinfo=_dt.UTC)
 
 
 def _counter_ids():
@@ -75,8 +75,8 @@ def main() -> None:
     _ensure_utf8_stdout()
 
     sink_a = InMemorySink()
-    pp_a = _run("Episode A — drift -> warning -> alarm (diff push)",
-                [2.0, 2.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.5], sink_a)
+    _run("Episode A — drift -> warning -> alarm (diff push)",
+         [2.0, 2.0, 3.0, 3.5, 3.5, 4.0, 4.0, 4.5], sink_a)
 
     sink_b = InMemorySink()
     _run("Episode B — warning recedes to nominal (speculation discarded)",

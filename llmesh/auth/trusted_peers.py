@@ -35,11 +35,10 @@ from __future__ import annotations
 import hashlib
 import json
 import threading
+from collections.abc import Iterator
 from dataclasses import dataclass
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
-from typing import Iterator
-
 
 _DID_PREFIX = "did:llmesh:1:z"
 
@@ -71,7 +70,7 @@ class PeerInfo:
             return False
         try:
             exp = datetime.fromisoformat(self.expires_at)
-            return datetime.now(timezone.utc) > exp
+            return datetime.now(UTC) > exp
         except ValueError:
             return True
 
@@ -96,7 +95,7 @@ def _fingerprint(pub_hex: str) -> str:
 
 
 def _now_iso() -> str:
-    return datetime.now(timezone.utc).isoformat()
+    return datetime.now(UTC).isoformat()
 
 
 def _validate_did(did: str) -> bool:
@@ -221,7 +220,7 @@ class TrustedPeers:
         if not _validate_did(introduced_by):
             return None
 
-        expires = datetime.now(timezone.utc) + timedelta(seconds=self._gossip_ttl)
+        expires = datetime.now(UTC) + timedelta(seconds=self._gossip_ttl)
 
         with self._lock:
             existing = self._peers.get(node_id)
@@ -333,7 +332,7 @@ class TrustedPeers:
     # ------------------------------------------------------------------
 
     @classmethod
-    def create_empty(cls, path: str | Path, **kwargs) -> "TrustedPeers":
+    def create_empty(cls, path: str | Path, **kwargs) -> TrustedPeers:
         p = Path(path)
         p.parent.mkdir(parents=True, exist_ok=True)
         p.write_text("{}\n", encoding="utf-8")

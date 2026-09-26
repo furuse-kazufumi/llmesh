@@ -62,7 +62,7 @@ class ChallengeToken:
         }
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "ChallengeToken":
+    def from_dict(cls, d: dict[str, Any]) -> ChallengeToken:
         return cls(
             token_id=d["token_id"],
             task_id=d["task_id"],

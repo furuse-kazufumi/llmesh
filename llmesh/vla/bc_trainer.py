@@ -29,13 +29,13 @@ Public surface::
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from math import sqrt
-from typing import Any, Iterable
+from typing import Any
 
 from llmesh.vla.dataset import TrajectoryEpisode
 from llmesh.vla.joint_decoder import JointTrajectory, JointWaypoint
-
 
 _COLOUR_VOCAB: tuple[str, ...] = (
     "red",

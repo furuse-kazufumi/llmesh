@@ -21,9 +21,10 @@ from __future__ import annotations
 
 import threading
 import uuid
+from collections.abc import Iterable
 from pathlib import Path
 from types import TracebackType
-from typing import Any, Iterable
+from typing import Any
 
 from llmesh.core.cost_attribution import (
     AttributionLink,

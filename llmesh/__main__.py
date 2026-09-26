@@ -207,13 +207,14 @@ def _cmd_configure(args: list[str]) -> int:
         llmesh configure --show            (print current industrial config)
     """
     from pathlib import Path
-    from llmesh.config.toml_config import LLMeshTomlConfig
+
     from llmesh.config.industrial_config import (
-        SUPPORTED_PROTOCOLS,
-        SUPPORTED_DEVICE_TYPES,
-        SUPPORTED_ANALYSIS_METHODS,
         NETWORK_POLICIES,
+        SUPPORTED_ANALYSIS_METHODS,
+        SUPPORTED_DEVICE_TYPES,
+        SUPPORTED_PROTOCOLS,
     )
+    from llmesh.config.toml_config import LLMeshTomlConfig
 
     toml_path = Path("llmesh.toml")
     show_only = False

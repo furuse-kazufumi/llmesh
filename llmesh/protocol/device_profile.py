@@ -55,11 +55,11 @@ class DeviceProfile:
     # ------------------------------------------------------------------
 
     @classmethod
-    def full(cls) -> "DeviceProfile":
+    def full(cls) -> DeviceProfile:
         return cls(profile_type=ProfileType.FULL)
 
     @classmethod
-    def nano(cls, *, no_crypto: bool | None = None) -> "DeviceProfile":
+    def nano(cls, *, no_crypto: bool | None = None) -> DeviceProfile:
         """Create a NANO profile.
 
         Args:

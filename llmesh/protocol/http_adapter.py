@@ -122,7 +122,7 @@ class HTTPAdapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
     ) -> UnifiedMessage | None:
         """POST *message* to http://{target}/msg and return the parsed response."""
         url = f"http://{target.host}:{target.port}/msg"
@@ -163,7 +163,7 @@ class HTTPAdapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         """Send *message* to each target; errors are logged, not raised."""
         if not targets:

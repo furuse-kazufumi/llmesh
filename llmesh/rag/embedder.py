@@ -18,8 +18,7 @@ import math
 import urllib.error
 import urllib.request
 from abc import ABC, abstractmethod
-from typing import Sequence
-
+from collections.abc import Sequence
 
 from llmesh.security.http_limits import (
     DEFAULT_MAX_RESPONSE_BYTES,

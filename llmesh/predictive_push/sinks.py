@@ -21,7 +21,8 @@ their dependency is absent.
 from __future__ import annotations
 
 import json
-from typing import Any, Callable, TextIO
+from collections.abc import Callable
+from typing import Any, TextIO
 
 from .transport import PushFrame, PushSink
 

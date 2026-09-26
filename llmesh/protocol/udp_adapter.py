@@ -47,7 +47,7 @@ def _unpack(data: bytes) -> tuple[int, bytes]:
 class _UDPProtocol(asyncio.DatagramProtocol):
     """asyncio DatagramProtocol that dispatches to UDPAdapter._on_datagram."""
 
-    def __init__(self, adapter: "UDPAdapter") -> None:
+    def __init__(self, adapter: UDPAdapter) -> None:
         self._adapter = adapter
         self.transport: asyncio.DatagramTransport | None = None
 
@@ -131,7 +131,7 @@ class UDPAdapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
     ) -> UnifiedMessage | None:
         """Send *message* to *target*.
 
@@ -172,7 +172,7 @@ class UDPAdapter(ProtocolAdapter):
         self._pending[message.id] = fut
         try:
             return await asyncio.wait_for(fut, timeout=self._reply_timeout)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return None
         finally:
             self._pending.pop(message.id, None)
@@ -180,7 +180,7 @@ class UDPAdapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         if not targets:
             return

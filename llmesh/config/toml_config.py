@@ -61,7 +61,7 @@ class AdapterConfig:
     extra: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "AdapterConfig":
+    def from_dict(cls, d: dict[str, Any]) -> AdapterConfig:
         return cls(
             host=str(d.get("host", "0.0.0.0")),
             port=int(d.get("port", 0)),
@@ -82,7 +82,7 @@ class SecurityConfig:
     rate_limit_burst: float = 20.0
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "SecurityConfig":
+    def from_dict(cls, d: dict[str, Any]) -> SecurityConfig:
         return cls(
             ntp_servers=list(d.get("ntp_servers", ["pool.ntp.org", "time.cloudflare.com"])),
             max_clock_drift_s=int(d.get("max_clock_drift_s", 10)),
@@ -99,7 +99,7 @@ class CircuitBreakerConfig:
     recovery_timeout: float = 60.0
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "CircuitBreakerConfig":
+    def from_dict(cls, d: dict[str, Any]) -> CircuitBreakerConfig:
         return cls(
             failure_threshold=int(d.get("failure_threshold", 3)),
             recovery_timeout=float(d.get("recovery_timeout", 60.0)),
@@ -136,7 +136,7 @@ class LLMeshTomlConfig:
     # ------------------------------------------------------------------
 
     @classmethod
-    def load(cls, path: str | Path | None = None) -> "LLMeshTomlConfig":
+    def load(cls, path: str | Path | None = None) -> LLMeshTomlConfig:
         """Load config from *path* (default: ``llmesh.toml`` in cwd).
 
         Returns defaults if the file is absent or unreadable.
@@ -151,7 +151,7 @@ class LLMeshTomlConfig:
         return cls._from_dict(raw)
 
     @classmethod
-    def _from_env(cls) -> "LLMeshTomlConfig":
+    def _from_env(cls) -> LLMeshTomlConfig:
         """Build a minimal config from environment variables (legacy fallback)."""
         return cls(
             node_id=os.environ.get("LLMESH_NODE_ID", ""),
@@ -170,7 +170,7 @@ class LLMeshTomlConfig:
         )
 
     @classmethod
-    def _from_dict(cls, raw: dict[str, Any]) -> "LLMeshTomlConfig":
+    def _from_dict(cls, raw: dict[str, Any]) -> LLMeshTomlConfig:
         node = raw.get("node", {})
         adapters_raw = raw.get("adapters", {})
 

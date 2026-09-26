@@ -107,7 +107,7 @@ class Style:
         return out
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Style":
+    def from_dict(cls, data: dict[str, Any]) -> Style:
         if not isinstance(data, dict):
             raise LlreprValidationError(f"style must be an object, got {type(data).__name__}")
         align = data.get("align")
@@ -196,7 +196,7 @@ class Text(Node):
             raise LlreprValidationError("text.text must be a string")
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Text":
+    def from_dict(cls, data: dict[str, Any]) -> Text:
         return cls(text=str(data.get("text", "")), **cls._common_kwargs(data))
 
 
@@ -221,7 +221,7 @@ class Heading(Node):
             child.validate()
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Heading":
+    def from_dict(cls, data: dict[str, Any]) -> Heading:
         return cls(
             level=int(data.get("level", 1)),
             children=[node_from_dict(c) for c in data.get("children", [])],
@@ -250,7 +250,7 @@ class CodeBlock(Node):
             raise LlreprValidationError("code_block.language must be a string")
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "CodeBlock":
+    def from_dict(cls, data: dict[str, Any]) -> CodeBlock:
         return cls(
             code=str(data.get("code", "")),
             language=str(data.get("language", "")),
@@ -286,7 +286,7 @@ class Figure(Node):
             raise LlreprValidationError("figure.src must be a non-empty URI string")
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Figure":
+    def from_dict(cls, data: dict[str, Any]) -> Figure:
         return cls(
             src=str(data.get("src", "")),
             caption=str(data.get("caption", "")),
@@ -323,7 +323,7 @@ class ListNode(Node):
                 node.validate()
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "ListNode":
+    def from_dict(cls, data: dict[str, Any]) -> ListNode:
         raw_items = data.get("items", [])
         if not isinstance(raw_items, list):
             raise LlreprValidationError("list.items must be an array")
@@ -360,7 +360,7 @@ class Table(Node):
                 raise LlreprValidationError(f"table.rows[{r_idx}] cells must be strings")
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Table":
+    def from_dict(cls, data: dict[str, Any]) -> Table:
         return cls(
             headers=[str(h) for h in data.get("headers", [])],
             rows=[[str(c) for c in row] for row in data.get("rows", [])],
@@ -397,7 +397,7 @@ class Panel(Node):
             raise LlreprValidationError("panel.characters must be strings")
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Panel":
+    def from_dict(cls, data: dict[str, Any]) -> Panel:
         dialogue = []
         for d in data.get("dialogue", []):
             if not isinstance(d, dict):
@@ -439,7 +439,7 @@ class Container(Node):
             child.validate()
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Container":
+    def from_dict(cls, data: dict[str, Any]) -> Container:
         return cls(
             tag=str(data.get("tag", "block")),
             children=[node_from_dict(c) for c in data.get("children", [])],
@@ -517,7 +517,7 @@ class Document:
         self.root.validate()
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Document":
+    def from_dict(cls, data: dict[str, Any]) -> Document:
         if not isinstance(data, dict):
             raise LlreprValidationError("document must be an object")
         if "root" not in data:
@@ -534,6 +534,6 @@ class Document:
     # -- ergonomic constructor ---------------------------------------------
 
     @classmethod
-    def of(cls, *children: Node, **kwargs: Any) -> "Document":
+    def of(cls, *children: Node, **kwargs: Any) -> Document:
         """Build a ``document``-tagged container root from top-level children."""
         return cls(root=Container(tag="document", children=list(children)), **kwargs)

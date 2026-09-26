@@ -88,14 +88,14 @@ class TCPAdapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
     ) -> UnifiedMessage | None:
         try:
             reader, writer = await asyncio.wait_for(
                 asyncio.open_connection(target.host, target.port),
                 timeout=_CONNECT_TIMEOUT,
             )
-        except (OSError, asyncio.TimeoutError) as exc:
+        except (TimeoutError, OSError) as exc:
             raise TransportError(
                 str(exc), protocol="tcp", target=str(target)
             ) from exc
@@ -105,7 +105,7 @@ class TCPAdapter(ProtocolAdapter):
             try:
                 raw = await _read_frame(reader)
                 return UnifiedMessage.from_bytes(raw) if raw else None
-            except (asyncio.IncompleteReadError, asyncio.TimeoutError):
+            except (TimeoutError, asyncio.IncompleteReadError):
                 return None
         except TransportError:
             raise
@@ -123,7 +123,7 @@ class TCPAdapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         if not targets:
             return
@@ -149,8 +149,7 @@ class TCPAdapter(ProtocolAdapter):
                 response = await self._handler(msg)
                 if response is not None:
                     await _write_frame(writer, response.to_bytes(self._codec))
-        except (asyncio.IncompleteReadError, asyncio.TimeoutError, TransportError,
-                ValueError, KeyError):
+        except (TimeoutError, asyncio.IncompleteReadError, TransportError, ValueError, KeyError):
             pass
         finally:
             writer.close()

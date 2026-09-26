@@ -18,7 +18,8 @@ from __future__ import annotations
 
 import json
 import os
-from dataclasses import asdict, dataclass, field, fields as dc_fields
+from dataclasses import asdict, dataclass, field
+from dataclasses import fields as dc_fields
 from pathlib import Path
 
 _DEFAULT_PATH = Path("config") / "settings.json"
@@ -56,7 +57,7 @@ class LLMeshSettings:
     # ------------------------------------------------------------------
 
     @classmethod
-    def load(cls, path: str | Path | None = None) -> "LLMeshSettings":
+    def load(cls, path: str | Path | None = None) -> LLMeshSettings:
         """Load settings from JSON file.  Missing keys get class defaults."""
         p = Path(path) if path else _DEFAULT_PATH
         if not p.exists():

@@ -39,12 +39,14 @@ import time
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, IO
+from typing import IO, Any
 
-from llmesh.industrial.sensor_event import Priority, SensorEvent
 from llmesh.industrial.pipeline import (
-    DiagnosisResult, DiagnosisStatus, IndustrialPipeline,
+    DiagnosisResult,
+    DiagnosisStatus,
+    IndustrialPipeline,
 )
+from llmesh.industrial.sensor_event import Priority, SensorEvent
 
 logger = logging.getLogger(__name__)
 
@@ -193,7 +195,7 @@ class DebugRecorder:
         with contextlib.suppress(Exception):
             self._fp.close()
 
-    def __enter__(self) -> "DebugRecorder":
+    def __enter__(self) -> DebugRecorder:
         return self
 
     def __exit__(self, *a: Any) -> None:

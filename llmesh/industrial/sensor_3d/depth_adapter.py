@@ -34,8 +34,8 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
-from llmesh.industrial.sensor_event import Priority, SensorEvent
 from llmesh.industrial.sensor_3d.point_cloud import PointCloud
+from llmesh.industrial.sensor_event import Priority, SensorEvent
 
 logger = logging.getLogger(__name__)
 

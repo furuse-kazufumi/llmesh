@@ -75,7 +75,7 @@ class HotellingT2Chart:
     # Fit
     # ------------------------------------------------------------------
 
-    def fit(self, reference) -> "HotellingT2Chart":
+    def fit(self, reference) -> HotellingT2Chart:
         """Compute centroid and inverse covariance from reference data."""
         np = _require_numpy()
         ref = np.asarray(reference, dtype=np.float64)

@@ -32,7 +32,6 @@ from typing import Any
 
 from .spc_engine import CUSUMChart, SPCResult, XbarRChart
 
-
 _VALID_MODES = ("and", "or", "weighted")
 
 

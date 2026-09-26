@@ -27,7 +27,7 @@ import importlib
 import json
 import platform
 import sys
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from typing import Any
 
 # Adapter modules to probe (matches REQUIREMENTS Volume A–L).

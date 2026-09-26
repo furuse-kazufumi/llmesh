@@ -105,7 +105,7 @@ class NodeClient:
     def __init__(
         self,
         timeout: int = _DEFAULT_TIMEOUT,
-        signer: "RequestSigner | None" = None,
+        signer: RequestSigner | None = None,
         ssl_context: ssl.SSLContext | None = None,
         max_response_bytes: int = _DEFAULT_MAX_RESPONSE_BYTES,
         protocol: str = "http",

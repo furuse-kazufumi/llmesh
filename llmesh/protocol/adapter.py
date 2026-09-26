@@ -39,9 +39,9 @@ class ProtocolAdapter(ABC):
     @abstractmethod
     async def send(
         self,
-        message: "UnifiedMessage",
-        target: "NodeAddress",
-    ) -> "UnifiedMessage | None":
+        message: UnifiedMessage,
+        target: NodeAddress,
+    ) -> UnifiedMessage | None:
         """Send *message* to *target* and return the response.
 
         Returns None for fire-and-forget semantics (e.g. UDP broadcast).
@@ -51,8 +51,8 @@ class ProtocolAdapter(ABC):
     @abstractmethod
     async def broadcast(
         self,
-        message: "UnifiedMessage",
-        targets: "list[NodeAddress] | None" = None,
+        message: UnifiedMessage,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         """Send *message* to multiple targets (or all known peers if None)."""
 

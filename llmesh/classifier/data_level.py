@@ -74,7 +74,7 @@ class ClassifiedPayload:
         level: DataLevel,
         lineage: list[str] | tuple[str, ...] = (),
         policy_decision: str = "pending",
-    ) -> "ClassifiedPayload":
+    ) -> ClassifiedPayload:
         return cls(
             data=data,
             level=level,
@@ -83,7 +83,7 @@ class ClassifiedPayload:
             sha256=_sha256(data),
         )
 
-    def with_decision(self, decision: str) -> "ClassifiedPayload":
+    def with_decision(self, decision: str) -> ClassifiedPayload:
         return ClassifiedPayload(
             data=self.data,
             level=self.level,
@@ -92,7 +92,7 @@ class ClassifiedPayload:
             sha256=self.sha256,
         )
 
-    def reclassify(self, new_level: DataLevel, reason: str) -> "ClassifiedPayload":
+    def reclassify(self, new_level: DataLevel, reason: str) -> ClassifiedPayload:
         """Return a copy with a new (usually higher) level and updated lineage."""
         return ClassifiedPayload(
             data=self.data,

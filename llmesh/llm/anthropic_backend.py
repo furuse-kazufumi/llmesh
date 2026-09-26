@@ -32,7 +32,6 @@ from llmesh.security.http_limits import (
 from .backend import BackendError, LLMBackend
 from .prompt import build_prompt
 
-
 _DEFAULT_BASE_URL = "https://api.anthropic.com"
 _DEFAULT_MODEL = "claude-haiku-4-5"
 _DEFAULT_TIMEOUT = 120

@@ -23,11 +23,11 @@ import hmac
 import json
 import os
 import threading
+from collections.abc import Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Generator
 
 # ---------------------------------------------------------------------------
 # Platform locking
@@ -252,7 +252,7 @@ class AuditTrace:
             "task_id": task_id,
             "policy_decision": policy_decision,
             "output_sha256": output_sha256,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         if data_level >= 3 and prompt_sha256:

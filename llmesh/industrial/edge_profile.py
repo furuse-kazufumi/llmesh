@@ -162,7 +162,7 @@ def detect_recommended_preset() -> EdgePreset:
     """Best-effort recommendation based on available system memory."""
     try:
         # psutil is optional — fall back to MEDIUM if absent
-        import psutil          # type: ignore[import-not-found]
+        import psutil  # type: ignore[import-not-found]
         total_gb = psutil.virtual_memory().total / (1024 ** 3)
     except ImportError:
         return EdgePreset.MEDIUM

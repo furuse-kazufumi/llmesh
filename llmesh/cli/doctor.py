@@ -26,7 +26,7 @@ import json
 import platform
 import socket
 import sys
-from dataclasses import dataclass, field, asdict
+from dataclasses import asdict, dataclass, field
 from typing import Any
 
 # ---------------------------------------------------------------------------
@@ -177,7 +177,9 @@ def run_doctor(check_ntp: bool = False, check_ports: bool = True) -> DoctorRepor
     # NTP clock check (best-effort, only if requested)
     if check_ntp:
         try:
-            from llmesh.security.clock import check_drift_ok  # type: ignore[import-not-found]
+            from llmesh.security.clock import (
+                check_drift_ok,  # type: ignore[import-not-found]
+            )
             ok, drift = check_drift_ok()
             if ok:
                 report.add("ntp drift", "ok", f"drift={drift:.2f}s")

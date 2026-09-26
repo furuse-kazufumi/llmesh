@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import json
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed, Future
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any
 
@@ -114,9 +114,9 @@ class FanoutExecutor:
         node_timeout: int = 60,
         validator: OutputValidator | None = None,
         synthesizer: LocalSynthesizer | None = None,
-        selector: "SmartNodeSelector | None" = None,
+        selector: SmartNodeSelector | None = None,
         protocol: str = "http",
-        fairness_policy: "FairnessPolicy | None" = None,
+        fairness_policy: FairnessPolicy | None = None,
     ) -> None:
         if k < 1:
             raise ValueError("k must be >= 1")

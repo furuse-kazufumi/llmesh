@@ -102,7 +102,9 @@ dev = [
     "bandit>=1.8",
     "httpx>=0.27",
     "hypothesis>=6.0",
-    "ruff>=0.5",
+    # ★上限も書く。下限だけだと既定規則が増えた版で CI が勝手に赤くなる
+    # (2026-06-30 以降そうなっていた)。上げるときは選択規則を見直す回に。
+    "ruff>=0.5,<0.17",
     "coverage>=7.0",
 ]
 msgpack   = ["msgpack>=1.0"]
@@ -208,3 +210,44 @@ asyncio_mode = "auto"
 # Medium+ severity issues are not skipped here — they are annotated per-site with `# nosec BXXX`.
 skips = ["B101", "B104", "B107", "B110"]
 exclude_dirs = ["tests"]
+
+[tool.ruff]
+# ★選ぶ規則は repo 側に固定する。理由: 設定が無いと ruff の**既定**が使われ、
+# 版が上がって既定が増えた瞬間にコードを変えずに CI が赤くなる。実際 2026-06-30
+# 以降ずっと赤で、原因は ruff 0.16 の既定が 499 規則になったこと(612 件検出)。
+# 古い既定 E4/E7/E9/F なら 23 件だった。門が「その日の ruff の気分」で動くなら
+# 門ではない。増やすときは、ここに足して同じ commit で直す。
+target-version = "py311"          # requires-python = ">=3.11,<3.12" に合わせる
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E4", "E7", "E9",   # pycodestyle の実害がある部分
+    "F",                # pyflakes(未定義名・未使用 import など)
+    "W",                # 末尾空白など
+    "I",                # import の並び
+    "UP",               # 古い書き方の更新(py311 基準)
+]
+# ★まだ選んでいないもの(意図的)。選ぶと 300 件超になり、いずれも**設計判断**を
+#   含むので、別の巡で内容を見ながら入れる:
+#     BLE001 (151) 広い except —— この repo は「記録して続ける」fail-soft を
+#                  意図して使っている箇所が多く、機械的に狭めると挙動が変わる
+#     S110   (37)  try/except/pass —— 同上
+#     RUF022 (28)  __all__ の並び —— 並べ替えは差分が大きく、意味は変わらない
+#     TRY*         例外の書き方の様式
+#   選ばない理由を書いておかないと、次に見た人が「漏れ」と読んで一括で当ててしまう。
+ignore = [
+    # ★UP042 `class X(str, Enum)` -> `StrEnum` は**挙動が変わる**。
+    #   `str, Enum` では `str(X.A) == "X.A"`、`StrEnum` では `str(X.A) == "a"` になる。
+    #   8 クラスあり、いずれも JSON / ログ / 台帳に載る値なので、機械的に変えると
+    #   外に出る文字列が変わる。移すなら `str()` と直列化の使用箇所を全数で見てから。
+    "UP042",
+    # ★UP036 `llmesh/cli/doctor.py` の `sys.version_info < (3, 11)` は
+    #   「古い Python で動かされていないか」を**診断するのが仕事**の分岐。
+    #   宣言上は到達しないが、ソースから直に走らせれば到達する。消さない。
+    "UP036",
+]
+
+[tool.ruff.lint.per-file-ignores]
+# 再エクスポートの __init__.py は F401 を許す(名前は __all__ で宣言している)
+"llmesh/*/__init__.py" = ["F401"]

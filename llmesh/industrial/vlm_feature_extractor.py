@@ -32,9 +32,9 @@ from __future__ import annotations
 
 import hashlib
 import re
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass
-from typing import Callable, Iterable, Protocol
-
+from typing import Protocol
 
 # ---------------------------------------------------------------------------
 # Result type
@@ -76,8 +76,9 @@ class MockVisionCaptioner:
 
     def caption(self, image_bytes: bytes) -> str:
         try:
-            from PIL import Image  # noqa: PLC0415
             from io import BytesIO
+
+            from PIL import Image  # noqa: PLC0415
             img = Image.open(BytesIO(image_bytes))
             img.load()
             w, h = img.size

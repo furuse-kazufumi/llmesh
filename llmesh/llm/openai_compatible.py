@@ -50,7 +50,6 @@ from llmesh.security.http_limits import (
 from .backend import BackendError, LLMBackend
 from .prompt import build_prompt
 
-
 _DEFAULT_BASE_URL = "https://api.openai.com/v1"
 _DEFAULT_MODEL = "gpt-4o-mini"
 _DEFAULT_TIMEOUT = 60

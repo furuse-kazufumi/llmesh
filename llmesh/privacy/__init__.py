@@ -1,6 +1,6 @@
-from .firewall import PromptFirewall, FirewallDecision
+from .firewall import FirewallDecision, PromptFirewall
 from .presidio_detector import PresidioDetector, PresidioResult
-from .summarizer import PrivacySummarizer, SummaryResult, SummarizationError
+from .summarizer import PrivacySummarizer, SummarizationError, SummaryResult
 
 __all__ = [
     "PromptFirewall",

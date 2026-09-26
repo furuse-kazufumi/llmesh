@@ -169,7 +169,7 @@ class TelnetAdapter(ProtocolAdapter):
                 asyncio.open_connection(target.host, target.port),
                 timeout=10.0,
             )
-        except (OSError, asyncio.TimeoutError) as exc:
+        except (TimeoutError, OSError) as exc:
             raise TransportError(str(exc), protocol="telnet", target=str(target)) from exc
         try:
             data = message.to_bytes() + b"\n"
@@ -181,7 +181,7 @@ class TelnetAdapter(ProtocolAdapter):
             if not clean:
                 return None
             return UnifiedMessage.from_bytes(clean)
-        except (OSError, asyncio.TimeoutError, KeyError, json.JSONDecodeError) as exc:
+        except (TimeoutError, OSError, KeyError, json.JSONDecodeError) as exc:
             raise TransportError(str(exc), protocol="telnet", target=str(target)) from exc
         finally:
             writer.close()

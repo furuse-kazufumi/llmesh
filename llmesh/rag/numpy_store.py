@@ -25,8 +25,8 @@ from __future__ import annotations
 
 import json
 import os
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import numpy as np
 
@@ -152,7 +152,7 @@ class NumpyVectorStore(VectorStore):
         os.replace(tmp, path)
 
     @classmethod
-    def load(cls, path) -> "NumpyVectorStore":
+    def load(cls, path) -> NumpyVectorStore:
         path = Path(path)
         with np.load(path, allow_pickle=False) as npz:
             dim = int(npz["dimension"])

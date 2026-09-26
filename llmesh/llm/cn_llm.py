@@ -31,7 +31,6 @@ from __future__ import annotations
 
 import dataclasses
 import os
-from typing import Optional
 
 from .openai_compatible import OpenAICompatibleBackend
 
@@ -114,9 +113,9 @@ def get_preset(code: str) -> CNProviderPreset:
 def build_backend(
     code: str,
     *,
-    api_key: Optional[str] = None,
-    model: Optional[str] = None,
-    base_url: Optional[str] = None,
+    api_key: str | None = None,
+    model: str | None = None,
+    base_url: str | None = None,
 ) -> OpenAICompatibleBackend:
     """Build an OpenAICompatibleBackend pre-configured for ``code``.
 

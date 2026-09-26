@@ -47,7 +47,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 
 try:
-    from pymodbus.client import AsyncModbusTcpClient, AsyncModbusSerialClient
+    from pymodbus.client import AsyncModbusSerialClient, AsyncModbusTcpClient
     from pymodbus.exceptions import ModbusException
     _PYMODBUS_AVAILABLE = True
 except ImportError:

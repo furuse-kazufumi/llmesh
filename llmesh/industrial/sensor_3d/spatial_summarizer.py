@@ -25,8 +25,8 @@ from __future__ import annotations
 
 from typing import Any
 
-from llmesh.industrial.sensor_event import SensorEvent
 from llmesh.industrial.sensor_3d.point_cloud import PointCloud
+from llmesh.industrial.sensor_event import SensorEvent
 
 _MAX_POINTS_FOR_STATS = 100_000   # avoid O(N) cost on huge clouds
 _DVS_EVENT_BYTES = 9

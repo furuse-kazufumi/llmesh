@@ -25,9 +25,9 @@ runner in order and aborts as soon as one fails the promotion gate.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Callable
 
 
 class FidelityTier(str, Enum):

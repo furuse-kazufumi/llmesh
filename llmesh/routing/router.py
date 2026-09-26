@@ -48,7 +48,7 @@ class RoutingGuard:
     # Public API
     # ------------------------------------------------------------------
 
-    def check(self, msg: "UnifiedMessage") -> None:
+    def check(self, msg: UnifiedMessage) -> None:
         """Validate *msg* before processing or forwarding.
 
         Raises:
@@ -69,7 +69,7 @@ class RoutingGuard:
                 f"message {msg.id!r} route too long ({len(msg.route)} hops)"
             )
 
-    def forward(self, msg: "UnifiedMessage") -> "UnifiedMessage":
+    def forward(self, msg: UnifiedMessage) -> UnifiedMessage:
         """Return a copy of *msg* stamped for forwarding.
 
         Appends the local node ID to route and decrements ttl by 1.
@@ -99,7 +99,7 @@ class RoutingGuard:
             route=msg.route + [self._local],
         )
 
-    def is_routable(self, msg: "UnifiedMessage") -> bool:
+    def is_routable(self, msg: UnifiedMessage) -> bool:
         """Return True if *msg* passes routing checks, False otherwise."""
         try:
             self.check(msg)
@@ -108,7 +108,7 @@ class RoutingGuard:
             return False
 
     def filter_nodes(
-        self, node_ids: list[str], msg: "UnifiedMessage"
+        self, node_ids: list[str], msg: UnifiedMessage
     ) -> list[str]:
         """Remove node IDs already present in *msg.route* from *node_ids*.
 

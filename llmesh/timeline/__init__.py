@@ -1,3 +1,3 @@
-from .store import TimelineStore, TimelineEvent
+from .store import TimelineEvent, TimelineStore
 
 __all__ = ["TimelineStore", "TimelineEvent"]

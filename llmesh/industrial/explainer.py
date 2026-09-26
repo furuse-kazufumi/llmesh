@@ -27,9 +27,9 @@ Output shape
 from __future__ import annotations
 
 import json
+from collections.abc import Callable, Iterable
 from dataclasses import asdict, dataclass, field
-from typing import Any, Callable, Iterable
-
+from typing import Any
 
 _VALID_SEVERITY = ("info", "warn", "critical")
 

@@ -72,5 +72,5 @@ class VectorStore(ABC):
 
     @classmethod
     @abstractmethod
-    def load(cls, path) -> "VectorStore":
+    def load(cls, path) -> VectorStore:
         """Load a previously saved store from disk."""

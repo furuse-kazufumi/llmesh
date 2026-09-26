@@ -27,7 +27,8 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 
 try:
-    from importlib.metadata import PackageNotFoundError, version as _pkg_version
+    from importlib.metadata import PackageNotFoundError
+    from importlib.metadata import version as _pkg_version
     try:
         __version__ = _pkg_version("llmesh")
     except PackageNotFoundError:
@@ -44,7 +45,8 @@ except Exception:  # pragma: no cover — defensive
 # ``from llmesh import PromptFirewall`` without remembering paths.
 # ---------------------------------------------------------------------------
 
-from llmesh.classifier import DataLevel, ClassifiedPayload
+from llmesh.classifier import ClassifiedPayload, DataLevel
+from llmesh.industrial.sensor_event import Priority, SensorEvent
 from llmesh.privacy import (
     FirewallDecision,
     PresidioDetector,
@@ -52,8 +54,6 @@ from llmesh.privacy import (
     PrivacySummarizer,
     PromptFirewall,
 )
-from llmesh.industrial.sensor_event import Priority, SensorEvent
-
 
 __all__ = [
     "__version__",

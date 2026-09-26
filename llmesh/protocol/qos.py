@@ -13,7 +13,7 @@ def is_expired(deadline: float | None) -> bool:
     return deadline is not None and time.time() > deadline
 
 
-def check_deadline(msg: "UnifiedMessage") -> None:
+def check_deadline(msg: UnifiedMessage) -> None:
     """Raise DeadlineExpiredError if the message deadline has passed."""
     if is_expired(msg.deadline):
         raise DeadlineExpiredError(

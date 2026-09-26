@@ -27,7 +27,6 @@ from llmesh.identity.node_id import NodeIdentity
 from llmesh.speculative.coordinator import IdleNode, SpeculativeMeshCoordinator
 from llmesh.speculative.manifest import SpeculativeManifest
 
-
 # ---------------------------------------------------------------------------
 # 1. malformed / forged manifest の fail-closed 拒否 (実 coordinator)
 # ---------------------------------------------------------------------------

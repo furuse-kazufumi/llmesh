@@ -71,6 +71,7 @@ _FTP_PERMS = "elradfmwMT"               # full access inside home dir
 def _generate_self_signed_cert(dest_dir: str) -> tuple[str, str]:
     """Generate a self-signed RSA cert and return (certfile, keyfile) paths."""
     import datetime
+
     from cryptography import x509
     from cryptography.hazmat.primitives import hashes, serialization
     from cryptography.hazmat.primitives.asymmetric import rsa
@@ -232,7 +233,7 @@ class FTPAdapter(ProtocolAdapter):
         self._passive_ports = passive_ports
         self._node_id = node_id
         self._handler: MessageHandler | None = None
-        self._server: "FTPServer | None" = None
+        self._server: FTPServer | None = None
         self._server_thread: threading.Thread | None = None
         self._tmpdir: str | None = None
         self._running = False
@@ -301,7 +302,7 @@ class FTPAdapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
     ) -> UnifiedMessage | None:
         """Upload prompt and poll for result via FTP.
 
@@ -361,7 +362,7 @@ class FTPAdapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         if not targets:
             return

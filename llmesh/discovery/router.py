@@ -17,8 +17,8 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 
+from ..security.endpoint_validator import EndpointValidationError, EndpointValidator
 from .registry import NodeRegistry, RegistryError
-from ..security.endpoint_validator import EndpointValidator, EndpointValidationError
 
 # allow_private=True: LAN nodes use RFC1918 addresses; localhost still blocked
 _endpoint_validator = EndpointValidator(allow_private=True)

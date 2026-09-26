@@ -111,7 +111,7 @@ def _resolve_host_addresses(host: str) -> list[bytes]:
     return addresses or [socket.inet_aton("127.0.0.1")]
 
 
-def _build_service_info(cfg: DnsSdConfig, service_type: str, port: int) -> "ServiceInfo":
+def _build_service_info(cfg: DnsSdConfig, service_type: str, port: int) -> ServiceInfo:
     """Build a zeroconf ServiceInfo for one endpoint."""
     addresses = _resolve_host_addresses(cfg.host)
     txt: dict[str, str | bytes] = {
@@ -152,8 +152,8 @@ class DnsSdAnnouncer:
                 "zeroconf is required for DNS-SD: pip install llmesh[udp]"
             )
         self._config = config
-        self._zeroconf: "AsyncZeroconf | None" = None
-        self._registered: list["ServiceInfo"] = []
+        self._zeroconf: AsyncZeroconf | None = None
+        self._registered: list[ServiceInfo] = []
         self._running = False
 
     @property

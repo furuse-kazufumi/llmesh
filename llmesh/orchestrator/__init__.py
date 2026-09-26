@@ -1,6 +1,6 @@
+from .fanout import FanoutError, FanoutExecutor, FanoutResult, NodeResult
+from .node_client import NodeCallError, NodeClient
 from .synthesizer import LocalSynthesizer, SynthesisError
-from .node_client import NodeClient, NodeCallError
-from .fanout import FanoutExecutor, FanoutResult, FanoutError, NodeResult
 
 __all__ = [
     "LocalSynthesizer",

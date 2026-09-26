@@ -16,15 +16,12 @@ from llmesh.research.composition import (
     compose,
 )
 from llmesh.research.e2e import E2EResult, run_research_pipeline
-from llmesh.research.fidelity import (
-    DEFAULT_TIER_ORDER,
-    FidelityResult,
-    FidelityRunner,
-    FidelityTier,
-    PipelineConfig,
-    PipelineRun,
-    make_mock_runner,
-    run_pipeline,
+from llmesh.research.executor import (
+    ExperimentExecutor,
+    ExperimentResult,
+    MockExperimentExecutor,
+    StepRun,
+    summarise_result,
 )
 from llmesh.research.experiment_selector import (
     Belief,
@@ -45,21 +42,15 @@ from llmesh.research.failure_driven import (
     invert_failures,
     mock_failure_driven_extract,
 )
-from llmesh.research.paper_exporter import (
-    ExportBundle,
-    export_metrics_csv,
-    export_paper_bundle,
-    export_runs_csv,
-    iter_trace,
-    render_paper_md,
-    render_timing_svg,
-)
-from llmesh.research.executor import (
-    ExperimentExecutor,
-    ExperimentResult,
-    MockExperimentExecutor,
-    StepRun,
-    summarise_result,
+from llmesh.research.fidelity import (
+    DEFAULT_TIER_ORDER,
+    FidelityResult,
+    FidelityRunner,
+    FidelityTier,
+    PipelineConfig,
+    PipelineRun,
+    make_mock_runner,
+    run_pipeline,
 )
 from llmesh.research.hypothesis import (
     Hypothesis,
@@ -81,6 +72,15 @@ from llmesh.research.literature import (
     mock_extract,
     parse_literature_result,
 )
+from llmesh.research.paper_exporter import (
+    ExportBundle,
+    export_metrics_csv,
+    export_paper_bundle,
+    export_runs_csv,
+    iter_trace,
+    render_paper_md,
+    render_timing_svg,
+)
 from llmesh.research.planner import (
     ExperimentPlan,
     ExperimentStep,
@@ -91,15 +91,17 @@ from llmesh.research.planner import (
     mock_planner_extract,
     parse_plan_result,
 )
-from llmesh.research.ros2_demo import (
-    ROS2_MOTION_TOOL_NAME,
-    MockROS2MotionTool,
-    ROS2DemoResult,
-    ROS2MotionRequest,
-    ROS2MotionResponse,
-    ROS2Unavailable,
-    make_ros2_motion_tool,
-    run_ros2_demo_loop,
+from llmesh.research.reviewer import (
+    LoopResult,
+    ReviewerAgent,
+    ReviewerRequest,
+    ReviewerResponse,
+    Verdict,
+    VerdictKind,
+    build_reviewer_prompt,
+    mock_reviewer_extract,
+    parse_verdict_result,
+    run_plan_review_loop,
 )
 from llmesh.research.robotics import (
     ContactEvent,
@@ -115,33 +117,35 @@ from llmesh.research.robotics import (
     PlanningRequest,
     PlanningResult,
     Pose6D,
+    ReplanningAgent,
     ReplanRequest,
     ReplanResponse,
-    ReplanningAgent,
     RoboticsPipelineResult,
     TaskGoal,
     TaskPlan,
+    TaskPlannerAgent,
     TaskPlanRequest,
     TaskPlanResponse,
-    TaskPlannerAgent,
     Trajectory,
     Waypoint,
     run_robotics_pipeline,
 )
-from llmesh.research.reviewer import (
-    LoopResult,
-    ReviewerAgent,
-    ReviewerRequest,
-    ReviewerResponse,
-    Verdict,
-    VerdictKind,
-    build_reviewer_prompt,
-    mock_reviewer_extract,
-    parse_verdict_result,
-    run_plan_review_loop,
+from llmesh.research.ros2_demo import (
+    ROS2_MOTION_TOOL_NAME,
+    MockROS2MotionTool,
+    ROS2DemoResult,
+    ROS2MotionRequest,
+    ROS2MotionResponse,
+    ROS2Unavailable,
+    make_ros2_motion_tool,
+    run_ros2_demo_loop,
 )
 
 __all__ = [
+    "PipelineConfig",
+    "PipelineRun",
+    "make_mock_runner",
+    "run_pipeline",
     "Belief",
     "BeliefStore",
     "CandidateExperiment",

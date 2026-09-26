@@ -30,14 +30,14 @@ from ..audit import AuditTrace
 from ..auth.trusted_peers import TrustedPeers
 from ..auth.verifier import make_auth_middleware
 from ..classifier.data_level import DataLevel
+from ..discovery.router import registry_router
+from ..fairness import ContributionLedger, FairnessPolicy
 from ..identity.node_id import NodeIdentity
 from ..llm.backend import BackendError, LLMBackend
 from ..llm.llamacpp import LlamaCppBackend
 from ..llm.ollama import OllamaBackend
 from ..privacy.firewall import PromptFirewall
 from ..privacy.summarizer import PrivacySummarizer
-from ..discovery.router import registry_router
-from ..fairness import ContributionLedger, FairnessPolicy
 from ..security.rate_limiter import PerNodeRateLimiter, RateLimitExceeded
 from ..skills.router import skills_router
 from ..timeline.store import TimelineStore

@@ -36,8 +36,8 @@ from __future__ import annotations
 import json
 import os
 from collections import defaultdict
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 from .store import Document, RetrievedDocument, VectorStore
 
@@ -236,7 +236,7 @@ class LSHVectorStore(VectorStore):
         os.replace(tmp, path)
 
     @classmethod
-    def load(cls, path) -> "LSHVectorStore":
+    def load(cls, path) -> LSHVectorStore:
         import numpy as np  # noqa: PLC0415
 
         path = Path(path)

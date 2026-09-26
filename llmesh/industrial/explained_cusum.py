@@ -26,8 +26,8 @@ from __future__ import annotations
 
 import datetime as _dt
 import uuid
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Iterable
 
 from .explainer import AlarmEvent, IncidentReport, LLMExplainer
 from .spc_engine import CUSUMChart, SPCResult
@@ -91,7 +91,7 @@ class ExplainedCUSUM:
         self._explainer = explainer or LLMExplainer()
         self._sensor_id = str(sensor_id)
         self._dims = tuple(contributing_dims)
-        self._clock = clock or (lambda: _dt.datetime.now(_dt.timezone.utc))
+        self._clock = clock or (lambda: _dt.datetime.now(_dt.UTC))
         self._mk_id = incident_id_factory or (lambda: uuid.uuid4().hex)
 
     @property

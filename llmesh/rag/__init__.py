@@ -23,7 +23,7 @@ The numpy-backed store is loaded lazily so that simply importing
 import it directly via ``from llmesh.rag.numpy_store import
 NumpyVectorStore``.
 """
-from .embedder import Embedder, MockEmbedder, OllamaEmbedder, EmbeddingError
+from .embedder import Embedder, EmbeddingError, MockEmbedder, OllamaEmbedder
 from .multimodal import (
     InMemoryMultimodalStore,
     Modality,
@@ -33,17 +33,17 @@ from .multimodal import (
     MultimodalStoreBackend,
 )
 from .parsers import (
-    PDFExtractionError,
     ParserKind,
+    PDFExtractionError,
     parse_document,
     parse_html,
     parse_markdown,
     parse_pdf,
     parse_text,
 )
+from .retriever import RetrievalResult, Retriever
 from .sqlite_store import SqliteVectorStore
 from .store import Document, RetrievedDocument, VectorStore
-from .retriever import Retriever, RetrievalResult
 
 
 def __getattr__(name):

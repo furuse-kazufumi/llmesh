@@ -32,7 +32,8 @@ if TYPE_CHECKING:
 
 try:
     from aiosmtpd.controller import Controller
-    from aiosmtpd.smtp import SMTP as _SMTP, Envelope, Session
+    from aiosmtpd.smtp import SMTP as _SMTP
+    from aiosmtpd.smtp import Envelope, Session
     _AIOSMTPD_AVAILABLE = True
 except ImportError:
     _AIOSMTPD_AVAILABLE = False
@@ -67,9 +68,9 @@ class _LLMeshSMTPHandler:
 
     async def handle_DATA(
         self,
-        server: "_SMTP",
-        session: "Session",
-        envelope: "Envelope",
+        server: _SMTP,
+        session: Session,
+        envelope: Envelope,
     ) -> str:
         raw: bytes = envelope.content  # type: ignore[assignment]
         if len(raw) > _MAX_EMAIL_BYTES:
@@ -129,7 +130,7 @@ class _LLMeshSMTPHandler:
         return "250 OK"
 
 
-def _extract_text_body(msg: "_email_mod.message.Message") -> str | None:  # type: ignore[type-arg]
+def _extract_text_body(msg: _email_mod.message.Message) -> str | None:  # type: ignore[type-arg]
     """Return first text/plain part, or None if no plaintext found."""
     if msg.is_multipart():
         for part in msg.walk():
@@ -200,7 +201,7 @@ class SMTPAdapter(ProtocolAdapter):
         self._relay_port = relay_port
         self._node_id = node_id
         self._handler: MessageHandler | None = None
-        self._controller: "Controller | None" = None
+        self._controller: Controller | None = None
         self._running = False
         self._host = "0.0.0.0"
         self._port = 8025
@@ -244,7 +245,7 @@ class SMTPAdapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
     ) -> UnifiedMessage | None:
         """Send a UnifiedMessage as an email to target (SMTP relay).
 
@@ -275,7 +276,7 @@ class SMTPAdapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         if not targets:
             return

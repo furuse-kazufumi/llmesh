@@ -24,7 +24,7 @@ Security invariants:
 from __future__ import annotations
 
 import os
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -50,7 +50,7 @@ class AnnouncementError(Exception):
 def _signed_message(node_id: str, endpoint: str, timestamp_utc: str,
                     public_key_hex: str = "", did: str = "") -> bytes:
     """Canonical signed payload — must match rendezvous.server._signed_message."""
-    return f"{node_id}|{endpoint}|{timestamp_utc}|{public_key_hex}|{did}".encode("utf-8")
+    return f"{node_id}|{endpoint}|{timestamp_utc}|{public_key_hex}|{did}".encode()
 
 
 def build_announcement(
@@ -70,7 +70,7 @@ def build_announcement(
         Dict with keys: node_id, did, endpoint, public_key_hex,
         timestamp_utc, signature.
     """
-    timestamp_utc = datetime.now(timezone.utc).isoformat()
+    timestamp_utc = datetime.now(UTC).isoformat()
     message = _signed_message(identity.node_id, endpoint, timestamp_utc,
                               identity.public_key_hex, identity.did_key)
     signature_hex = identity.sign(message).hex()
@@ -119,7 +119,7 @@ def verify_announcement(ann: dict) -> str:
         raise AnnouncementError(f"invalid timestamp format: {exc}") from exc
     if ts.tzinfo is None:
         raise AnnouncementError("timestamp must include timezone info")
-    skew = abs((datetime.now(timezone.utc) - ts).total_seconds())
+    skew = abs((datetime.now(UTC) - ts).total_seconds())
     if skew > VERIFY_WINDOW_SECONDS:
         raise AnnouncementError(
             f"announcement timestamp too old or too far in future ({skew:.0f}s)"

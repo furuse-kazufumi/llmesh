@@ -114,7 +114,7 @@ class POP3Adapter(ProtocolAdapter):
     async def send(
         self,
         message: UnifiedMessage,
-        target: "NodeAddress",
+        target: NodeAddress,
     ) -> UnifiedMessage | None:
         """Send a UnifiedMessage as an email via SMTP relay.
 
@@ -144,7 +144,7 @@ class POP3Adapter(ProtocolAdapter):
     async def broadcast(
         self,
         message: UnifiedMessage,
-        targets: "list[NodeAddress] | None" = None,
+        targets: list[NodeAddress] | None = None,
     ) -> None:
         if not targets:
             return
@@ -254,7 +254,7 @@ class POP3Adapter(ProtocolAdapter):
         return False  # Always delete after processing
 
 
-def _extract_text_body(msg: "_email_mod.message.Message") -> str | None:  # type: ignore[type-arg]
+def _extract_text_body(msg: _email_mod.message.Message) -> str | None:  # type: ignore[type-arg]
     """Return first text/plain part, or None if no plaintext found."""
     if msg.is_multipart():
         for part in msg.walk():

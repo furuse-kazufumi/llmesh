@@ -89,7 +89,7 @@ class PredictivePush:
         self._h = float(h if h is not None else getattr(chart, "h"))
         self._warn_frac = float(warn_frac)
         self._dims = tuple(contributing_dims)
-        self._clock = clock or (lambda: _dt.datetime.now(_dt.timezone.utc))
+        self._clock = clock or (lambda: _dt.datetime.now(_dt.UTC))
         self._mk_id = incident_id_factory or (lambda: uuid.uuid4().hex)
         self._spec: _Speculation | None = None
         self.metrics = PredictiveMetrics()

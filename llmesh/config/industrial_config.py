@@ -73,7 +73,7 @@ class IndustrialConfig:
     # ------------------------------------------------------------------
 
     @classmethod
-    def from_dict(cls, d: dict[str, Any]) -> "IndustrialConfig":
+    def from_dict(cls, d: dict[str, Any]) -> IndustrialConfig:
         return cls(
             domain=str(d.get("domain", "")),
             device_types=[str(x) for x in d.get("device_types", [])],

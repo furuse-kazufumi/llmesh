@@ -16,8 +16,10 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Generic, TypeVar
 
-I = TypeVar("I")
-O = TypeVar("O")
+# Input / Output の TypeVar。1 文字が曖昧(E741)なのは承知の上で、
+# 入出力を表す慣用名なのでこの綴りを保つ(改名は公開名の変更になる)。
+I = TypeVar("I")  # noqa: E741
+O = TypeVar("O")  # noqa: E741
 
 
 @dataclass(frozen=True)

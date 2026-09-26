@@ -19,12 +19,12 @@ Strategy reference: ``C:/dev/projects/audit/STRATEGY_EAR_LOCAL_LLM_2026-05-17_PA
 from __future__ import annotations
 
 from .origins import (
-    Origins,
     OriginEntry,
+    Origins,
     audit_installed,
     audit_requirements_file,
 )
-from .risk import SupplyRisk, RiskEntry
+from .risk import RiskEntry, SupplyRisk
 
 __all__ = [
     "Origins",

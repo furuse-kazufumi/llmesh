@@ -279,7 +279,7 @@ class IndustrialMetrics:
                     )
                 writer.write(response)
                 await writer.drain()
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 pass
             except Exception as exc:
                 logger.debug("IndustrialMetrics HTTP handler error: %s", exc)

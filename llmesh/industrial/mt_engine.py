@@ -20,9 +20,9 @@ Graceful degradation: RuntimeError if not installed.
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass, field
 from pathlib import Path
-from collections.abc import Sequence
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:  # pragma: no cover — annotations only

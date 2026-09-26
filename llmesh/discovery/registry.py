@@ -185,7 +185,7 @@ class NodeRegistry:
 
     def find_matching(
         self,
-        query: "CapabilityQuery",
+        query: CapabilityQuery,
         *,
         k: int = 3,
     ) -> list[tuple[float, NodeEntry]]:

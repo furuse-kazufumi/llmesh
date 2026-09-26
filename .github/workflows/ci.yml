@@ -8,7 +8,11 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.11", "3.12"]
+        # 3.12 は入れられない: `requires-python = ">=3.11,<3.12"` で install 自体が
+        # 失敗し、2026-06-30 以降 6 ジョブ中 3 つが赤だった。上限の理由は依存が
+        # `asyncore` / `asynchat`(3.12 で標準ライブラリから削除)を使うことで、
+        # 宣言を広げても通らない。宣言している範囲だけを回す。
+        python-version: ["3.11"]
     runs-on: ${{ matrix.os }}
 
     steps:

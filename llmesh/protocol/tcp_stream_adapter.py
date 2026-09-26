@@ -43,7 +43,7 @@ _FRAME_HEADER = struct.Struct("!I")   # 4-byte big-endian uint32
 _MAX_FRAME    = 16 * 1024 * 1024      # 16 MiB hard cap
 
 
-async def _tick_loop(stream: ReliableStream, adapter: "_ConnAdapter") -> None:
+async def _tick_loop(stream: ReliableStream, adapter: _ConnAdapter) -> None:
     """Periodic maintenance for a server-side ReliableStream connection.
 
     Calls stream.tick() every _TICK_INTERVAL seconds to trigger retransmit
@@ -58,14 +58,14 @@ async def _tick_loop(stream: ReliableStream, adapter: "_ConnAdapter") -> None:
         pass
 
 
-async def _open_connection(host: str, port: int) -> "_PersistentConn":
+async def _open_connection(host: str, port: int) -> _PersistentConn:
     """Open one TCP connection and return it as a _PersistentConn."""
     try:
         reader, writer = await asyncio.wait_for(
             asyncio.open_connection(host, port),
             timeout=_CONNECT_TIMEOUT,
         )
-    except (OSError, asyncio.TimeoutError) as exc:
+    except (TimeoutError, OSError) as exc:
         raise TransportError(
             str(exc), protocol="tcp_stream", target=f"{host}:{port}"
         ) from exc
@@ -189,7 +189,7 @@ class _ConnPool:
                 conn = await asyncio.wait_for(
                     self._queue.get(), timeout=_POOL_ACQUIRE_TIMEOUT
                 )
-            except asyncio.TimeoutError as exc:
+            except TimeoutError as exc:
                 raise TransportError(
                     "pool_exhausted", protocol="tcp_stream", target=f"{host}:{port}"
                 ) from exc
@@ -357,7 +357,7 @@ class TCPStreamAdapter(ProtocolAdapter):
 
                 try:
                     body = await _read_frame_timeout(conn.reader, header_timeout=remaining)
-                except (asyncio.IncompleteReadError, asyncio.TimeoutError) as exc:
+                except (TimeoutError, asyncio.IncompleteReadError) as exc:
                     conn.writer.close()
                     raise TransportError(
                         f"connection_closed:{exc}",
@@ -462,7 +462,7 @@ class TCPStreamAdapter(ProtocolAdapter):
                     body = await _read_frame_timeout(
                         reader, header_timeout=_SERVER_IDLE_TIMEOUT
                     )
-                except (asyncio.IncompleteReadError, asyncio.TimeoutError, TransportError):
+                except (TimeoutError, asyncio.IncompleteReadError, TransportError):
                     break
 
                 try:

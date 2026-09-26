@@ -126,10 +126,10 @@ class PresidioDetector:
         )
         self._threshold = float(score_threshold)
         self._language = language
-        self._engine: "AnalyzerEngine | None" = self._try_load_engine()
+        self._engine: AnalyzerEngine | None = self._try_load_engine()
 
     @staticmethod
-    def _try_load_engine() -> "AnalyzerEngine | None":
+    def _try_load_engine() -> AnalyzerEngine | None:
         """Attempt to instantiate Presidio. Return ``None`` if unavailable.
 
         Import errors and missing-model errors both result in ``None`` —
@@ -199,7 +199,7 @@ class PresidioDetector:
 
     def _filter(
         self,
-        results: list["RecognizerResult"],
+        results: list[RecognizerResult],
         wanted: frozenset[str],
     ) -> list[str]:
         """Return distinct entity types from ``results`` that are in ``wanted``."""

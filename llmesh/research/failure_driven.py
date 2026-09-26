@@ -23,8 +23,9 @@ module's defaults.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from typing import Any, Iterable, Literal
+from typing import Any, Literal
 
 from llmesh.research.hypothesis import (
     Hypothesis,
@@ -32,7 +33,6 @@ from llmesh.research.hypothesis import (
     parse_hypothesis_result,
 )
 from llmesh.research.literature import ExtractFn
-
 
 # ---------------------------------------------------------------------------
 # Failure record
@@ -305,12 +305,12 @@ class FailureDrivenGenerator:
         return (
             "You are a research hypothesis inverter. Given the failed "
             "experiments below and a list of rule-based seed hypotheses, "
-            "produce UP TO {max} stronger, more falsifiable hypotheses. "
-            "Reply strict JSON: {{\"hypotheses\": [{{\"statement\": ..., "
+            f"produce UP TO {request.max_candidates} stronger, more falsifiable hypotheses. "
+            "Reply strict JSON: {\"hypotheses\": [{\"statement\": ..., "
             "\"independent_variable\": ..., \"dependent_variable\": ..., "
-            "\"expected_effect\": ..., \"falsifier\": ...}}, ...]}}.\n\n"
-            "Failures:\n{fail}\n\nSeeds:\n{seed}\n"
-        ).format(max=request.max_candidates, fail=failure_block, seed=seed_block)
+            "\"expected_effect\": ..., \"falsifier\": ...}, ...]}.\n\n"
+            f"Failures:\n{failure_block}\n\nSeeds:\n{seed_block}\n"
+        )
 
 
 # ---------------------------------------------------------------------------

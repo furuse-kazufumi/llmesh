@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from .node_id import NodeIdentity
@@ -73,10 +73,10 @@ class CapabilityManifest:
         subnets: list[str] | None = None,
         ttl_seconds: int = 86_400,
         owner_type: str = "individual",
-    ) -> "CapabilityManifest":
-        now = datetime.now(timezone.utc)
+    ) -> CapabilityManifest:
+        now = datetime.now(UTC)
         expires = datetime.fromtimestamp(
-            now.timestamp() + ttl_seconds, tz=timezone.utc
+            now.timestamp() + ttl_seconds, tz=UTC
         )
         return cls(
             schema_version="0.1.0",
@@ -121,7 +121,7 @@ class CapabilityManifest:
         return json.dumps(self.to_dict(), sort_keys=True, ensure_ascii=False, indent=2)
 
     @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "CapabilityManifest":
+    def from_dict(cls, data: dict[str, Any]) -> CapabilityManifest:
         return cls(**{k: v for k, v in data.items() if k in cls.__dataclass_fields__})
 
     # ------------------------------------------------------------------
@@ -150,7 +150,7 @@ class CapabilityManifest:
             expires = datetime.fromisoformat(self.expires_at)
         except ValueError as exc:
             raise ManifestVerificationError(f"invalid expires_at: {exc}") from exc
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         if now > expires:
             raise ManifestVerificationError(
                 f"manifest expired at {self.expires_at}"

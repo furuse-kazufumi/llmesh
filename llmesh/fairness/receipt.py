@@ -29,7 +29,7 @@ class ServiceReceipt:
         task_id: str,
         client_identity,  # NodeIdentity
         timestamp: float | None = None,
-    ) -> "ServiceReceipt":
+    ) -> ServiceReceipt:
         """Create and sign a receipt. client_identity must be the consuming node."""
         ts = timestamp if timestamp is not None else time.time()
         payload = _canonical_payload(server_node_id, client_node_id, tool_name, task_id, ts)
@@ -73,7 +73,7 @@ class ServiceReceipt:
         }
 
     @classmethod
-    def from_dict(cls, d: dict) -> "ServiceReceipt":
+    def from_dict(cls, d: dict) -> ServiceReceipt:
         return cls(
             server_node_id=d["server_node_id"],
             client_node_id=d["client_node_id"],

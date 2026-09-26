@@ -32,7 +32,6 @@ from typing import Protocol, runtime_checkable
 
 from llmesh.industrial.sensor_event import SensorEvent
 
-
 # ---------------------------------------------------------------------------
 # Type aliases
 # ---------------------------------------------------------------------------
