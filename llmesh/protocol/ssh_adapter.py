@@ -26,7 +26,14 @@ import socket
 import threading
 from typing import TYPE_CHECKING
 
-import paramiko
+try:
+    import paramiko
+    _PARAMIKO_AVAILABLE = True
+except ImportError:          # pragma: no cover - exercised by the base-install gate
+    # ★paramiko は `ssh` extra。素のインストールでも `llmesh.protocol` が
+    #   import できなければならない(パッケージの docstring の例が落ちる)。
+    paramiko = None  # type: ignore[assignment]
+    _PARAMIKO_AVAILABLE = False
 
 from ._key_utils import generate_ed25519_key, key_from_hex
 from .adapter import MessageHandler, ProtocolAdapter, TransportError
@@ -47,7 +54,11 @@ _SENTINEL_CMD = "llmesh"
 # Internal SSH server implementation
 # ---------------------------------------------------------------------------
 
-class _LLMeshServerInterface(paramiko.ServerInterface):
+_ServerInterfaceBase = (paramiko.ServerInterface if _PARAMIKO_AVAILABLE
+                        else object)
+
+
+class _LLMeshServerInterface(_ServerInterfaceBase):  # type: ignore[misc,valid-type]
     """Per-connection ServerInterface: public-key auth + exec channel."""
 
     def __init__(self, trusted_keys: dict[str, str] | None) -> None:
@@ -212,6 +223,10 @@ class SSHAdapter(ProtocolAdapter):
         timeout: int = 30,
         **_kwargs: object,
     ) -> None:
+        if not _PARAMIKO_AVAILABLE:
+            raise ImportError(
+                "paramiko is required for SSHAdapter: pip install llmesh[ssh]"
+            )
         self._host_key: paramiko.PKey = host_key or generate_ed25519_key()
         self._trusted_keys = trusted_keys
         self._timeout = timeout

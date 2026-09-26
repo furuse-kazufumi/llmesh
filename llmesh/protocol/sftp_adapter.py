@@ -32,7 +32,14 @@ import time
 import uuid
 from typing import TYPE_CHECKING, Any
 
-import paramiko
+try:
+    import paramiko
+    _PARAMIKO_AVAILABLE = True
+except ImportError:          # pragma: no cover - exercised by the base-install gate
+    # ★paramiko は `ssh` extra。素のインストールでも `llmesh.protocol` が
+    #   import できなければならない(パッケージの docstring の例が落ちる)。
+    paramiko = None  # type: ignore[assignment]
+    _PARAMIKO_AVAILABLE = False
 
 from ._key_utils import generate_ed25519_key, key_from_hex
 from .adapter import MessageHandler, ProtocolAdapter, TransportError
@@ -140,7 +147,14 @@ class _VirtualFS:
 # paramiko SFTP interfaces
 # ---------------------------------------------------------------------------
 
-class _SFTPHandleImpl(paramiko.SFTPHandle):
+_SFTPHandleBase = paramiko.SFTPHandle if _PARAMIKO_AVAILABLE else object
+_SFTPServerBase = (paramiko.SFTPServerInterface if _PARAMIKO_AVAILABLE
+                   else object)
+_ServerInterfaceBase = (paramiko.ServerInterface if _PARAMIKO_AVAILABLE
+                        else object)
+
+
+class _SFTPHandleImpl(_SFTPHandleBase):  # type: ignore[misc,valid-type]
     """Per-file handle; triggers prompt processing on close."""
 
     def __init__(
@@ -203,7 +217,7 @@ class _SFTPHandleImpl(paramiko.SFTPHandle):
             self._vfs.put(result_name, result_text.encode("utf-8"))
 
 
-class _SFTPServerImpl(paramiko.SFTPServerInterface):
+class _SFTPServerImpl(_SFTPServerBase):  # type: ignore[misc,valid-type]
     """Virtual-filesystem SFTP server interface."""
 
     def __init__(
@@ -271,7 +285,7 @@ class _SFTPServerImpl(paramiko.SFTPServerInterface):
 # SSH server interface for SFTP connections
 # ---------------------------------------------------------------------------
 
-class _LLMeshSFTPServer(paramiko.ServerInterface):
+class _LLMeshSFTPServer(_ServerInterfaceBase):  # type: ignore[misc,valid-type]
     """SSH layer for SFTP connections: pubkey auth + SFTP subsystem only."""
 
     def __init__(self, trusted_keys: dict[str, str] | None) -> None:
@@ -323,6 +337,10 @@ class SFTPAdapter(ProtocolAdapter):
         trusted_keys: dict[str, str] | None = None,
         **_kwargs: object,
     ) -> None:
+        if not _PARAMIKO_AVAILABLE:
+            raise ImportError(
+                "paramiko is required for SFTPAdapter: pip install llmesh[ssh]"
+            )
         self._host_key: paramiko.PKey = host_key or generate_ed25519_key()
         self._trusted_keys = trusted_keys
         self._handler: MessageHandler | None = None

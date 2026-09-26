@@ -2,6 +2,33 @@
 
 ## [Unreleased]
 
+### Fixed — 素の `pip install llmesh` が一切 import できなかった
+
+`paramiko` は `ssh` extra なので**任意**のはずだったが、`llmesh/protocol/__init__.py`
+が `ssh_adapter` / `sftp_adapter` を無条件 import し、その 2 本が `import paramiko` を
+top-level でやっていた。結果、extra 無しのインストールでは パッケージの docstring に
+書いてある `from llmesh.protocol import AdapterRegistry` そのものが
+`ModuleNotFoundError` で落ちていた。
+
+- `ssh_adapter.py` / `sftp_adapter.py` — paramiko を try/except で掴み、
+  `SSHAdapter` / `SFTPAdapter` の**構築のときに** `pip install llmesh[ssh]` と
+  言って `ImportError` を投げる。既に `smtp_adapter` (aiosmtpd) と `snmp_adapter`
+  (pysnmp) が採っていた形に揃えた。module-level の派生クラスは基底を別名にして逃がす。
+- `tests/test_base_install_imports.py` — **事故の起きる場所に門を立てる**。
+  CI は `pip install -e .[dev,all]` を入れるので、素のインストールを誰も測って
+  いなかった。`sys.meta_path` で名前を塞いだ子プロセスで import し、(a) 任意
+  extra 9 個を 1 つずつ欠いた場合 (b) 全部欠いた場合 の `llmesh.protocol`、
+  さらに (c) **任意 extra 26 個を全部欠いた状態で 32 個の部分パッケージ全部**を
+  見る。(c) は同じ欠陥が明日 `llmesh.industrial` に出た回に効く —— 実測では
+  今のところ全部通り、欠陥は `llmesh.protocol` だけだった。
+  門自身が効いていることを確かめる自己検査つき (塞いだ名前が本当に import
+  できないか / 数え上げた部分パッケージが 0 個でないか)。
+- `smtp_adapter.py` — `Controller.start()` が失敗したとき、aiosmtpd が thread の中で
+  握っている `_thread_exception` を添えて投げ直す。aiosmtpd の文面は「システムが
+  混んでいる、ready_timeout を増やせ」と言うが、**それは原因ではなかった**
+  (30 秒に伸ばしても macOS CI では落ちた)。すり替えられた文面だけが残ると、
+  次に見た人も同じ回り道をする。
+
 ### Added — decide: 生成せずに判断する層 (label-token readout, 実測つき)
 
 `llmesh/decide/` — 選択肢に **1 トークンの符号**を当て、次トークンのロジットから
