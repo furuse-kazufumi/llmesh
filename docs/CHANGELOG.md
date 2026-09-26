@@ -2,6 +2,38 @@
 
 ## [Unreleased]
 
+### Fixed — SMTP の起動検知を自前で何度も引く
+
+macOS CI で統合試験 3 件が "SMTP server started, but not responding" で
+落ち続けていた。aiosmtpd の文面は「システムが混んでいる、`ready_timeout` を
+増やせ」と言うが、**それは原因でない**。原典（`aiosmtpd/controller.py`）を読むと:
+
+```
+287  self._trigger_server()          # create_connection((host, port), 1.0) ← 1 回・1 秒
+288  except socket_timeout: pass     # ← その 1 秒を黙って捨てる
+294  if not self._factory_invoked.wait(respond_timeout):
+295      raise TimeoutError("SMTP server started, but not responding ...")
+```
+
+引き金は **1 回しか引かれない**ので、294 行で残りの時間（約 29 秒）を待つのは
+原理的に無駄。だから `ready_timeout` を 1 秒 → 30 秒にしても効かなかった（2026-09-26 実測）。
+また `_factory_invoker` は factory が例外を投げても `finally` で `_factory_invoked` を
+立てるので、**295 行に来た時点で `_thread_exception` は必ず None**　—— CI の実測でも
+`server thread raised ...` は 3 件とも出なかった。包み直しでは真因は出ない。
+
+- `smtp_adapter.py` — `Controller.start()` が第 2 段で落ちたとき、**自分で何度も
+  繋いで `220` を確かめる**（`_probe_smtp`、既定 12 回）。答えるなら落ちていたのは
+  aiosmtpd の 1 秒の引き金だけなので、警告を残して起動扱いで進む（controller は
+  **捨てない** —— 前の版はここで `None` にし、サーバスレッドと listen ソケットを
+  取り逸していた）。答えないなら `controller.stop()` で片付けてから、**探りが何を
+  見たか**を添えて落とす。
+- ★探りは「繋がる前に失敗」と「繋がったが無言」を**別の所見**として返す。
+  前者はサーバが立っていない、後者は別の何かが港を持っている —— 原因が別物。
+  （1 つの try にまとめると無言の港が recv の timeout として接続失敗と同じ所見になる。）
+- `tests/test_smtp_readiness_probe.py` — aiosmtpd を立てずにその状況だけを作る門。
+  成功側と失敗側の**両方**を固定し、所見の見分けも確かめる。文面は OS 依存の
+  語で判定しない（閉じた港への接続は Linux/macOS では Refused、Windows では timeout）。
+
 ### Fixed — 素の `pip install llmesh` が一切 import できなかった
 
 `paramiko` は `ssh` extra なので**任意**のはずだったが、`llmesh/protocol/__init__.py`

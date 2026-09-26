@@ -21,6 +21,8 @@ import email as _email_mod
 import email.policy
 import logging
 import smtplib
+import socket
+import time
 import uuid
 from typing import TYPE_CHECKING
 
@@ -42,6 +44,11 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 _MAX_EMAIL_BYTES = 1 * 1024 * 1024   # 1 MiB hard cap
+# 自前の readiness 探り。aiosmtpd の引き金が 1 回・1 秒しか引かれないので
+# ここは何度も引く。試験が差し替えられるよう module 定数に出してある。
+_PROBE_ATTEMPTS = 12
+_PROBE_TIMEOUT = 1.0                 # seconds per connect + recv
+_PROBE_PAUSE = 0.25                  # seconds between attempts
 _LLMESH_NODE = NodeAddress("0.0.0.0", 0, "smtp-server")
 
 
@@ -242,25 +249,94 @@ class SMTPAdapter(ProtocolAdapter):
         try:
             self._controller.start()
         except (TimeoutError, OSError) as exc:
-            # ★何が起きたかを言える形にして投げ直す。aiosmtpd は thread の中で
-            #   起きた例外を `_thread_exception` に持っているが、第 2 段
-            #   (応答待ち)ではそれを見ずに TimeoutError にすり替えてしまう。
-            #   すり替えられた文面だけが残ると、次に見た人も同じ回り道をする。
+            # ★aiosmtpd の第 2 段("started, but not responding")は、引き金を
+            #   **1 回・1 秒だけ**引いて諦める造りになっている
+            #   (controller.py: `_trigger_server()` の socket_timeout を捨て、
+            #   その後 `_factory_invoked` を待つだけ)。だから ready_timeout を
+            #   伸ばしても効かない —— 30 秒でも macOS CI は落ちた(2026-09-26 実測)。
+            #   同じ理由で、この経路の `_thread_exception` は必ず None。
+            #   サーバ自体は第 1 段を通って立っている可能性が高いので、**捨てる前に
+            #   自分で何度も繋いで確かめる**。
             inner = getattr(self._controller, "_thread_exception", None)
-            self._controller = None
-            from_thread = (
-                "" if inner is None
-                else f" (server thread raised {type(inner).__name__}: {inner})"
-            )
-            raise OSError(
-                f"SMTPAdapter: could not bring up the SMTP server on {host}:{port}"
-                f" — {type(exc).__name__}: {exc}{from_thread}. The port was chosen "
-                "as free moments earlier, so a collision is possible; aiosmtpd's own "
-                "message blames a busy system, which was measured not to be the cause "
-                "(raising ready_timeout to 30 s did not help on macOS CI, 2026-09-26)."
-            ) from exc
+            banner, probe_note = self._probe_smtp(host, port)
+            if banner and inner is None:
+                logger.warning(
+                    "SMTPAdapter: aiosmtpd's one-shot readiness trigger timed out on "
+                    "%s:%d, but the server answered our own retried probe (%s). "
+                    "Treating it as started; the library's message about a busy system "
+                    "does not apply (its trigger is a single 1 s connect).",
+                    host, port, banner,
+                )
+            else:
+                self._shutdown_controller_quietly()
+                from_thread = (
+                    "" if inner is None
+                    else f" (server thread raised {type(inner).__name__}: {inner})"
+                )
+                raise OSError(
+                    f"SMTPAdapter: could not bring up the SMTP server on {host}:{port}"
+                    f" — {type(exc).__name__}: {exc}{from_thread}. Our own retried "
+                    f"probe saw: {probe_note}."
+                ) from exc
         self._running = True
         logger.info("SMTPAdapter: listening on %s:%d", host, port)
+
+    # --- readiness ---
+
+    @staticmethod
+    def _probe_smtp(
+        host: str,
+        port: int,
+        attempts: int | None = None,
+        per_try: float | None = None,
+    ) -> tuple[str, str]:
+        """自分で繋いで SMTP の挨拶を読む。`(挨拶, 探りの所見)` を返す。
+
+        aiosmtpd の引き金が 1 回・1 秒しか引かれないので、ここは**何度も**引く。
+        所見は失敗時の文面に入れる —— 「接続拒否」と「繋がるが無言」は原因が
+        別物(前者はサーバが立っていない、後者は別の何かが港を持っている)。
+        """
+        last = "no attempt was made"
+        attempts = _PROBE_ATTEMPTS if attempts is None else attempts
+        per_try = _PROBE_TIMEOUT if per_try is None else per_try
+        for _ in range(attempts):
+            # ★接続の失敗と「繋がったが無言」を**別の枝**で捕まえる。1 つの
+            #   try にまとめると、無言の港は recv の timeout として接続失敗と
+            #   同じ所見になり、見分けがつかなくなる(2026-09-27 に踏んだ)。
+            try:
+                conn = socket.create_connection((host, port), per_try)
+            except OSError as err:
+                last = f"could not connect ({type(err).__name__}: {err})"
+                time.sleep(_PROBE_PAUSE)
+                continue
+            try:
+                conn.settimeout(per_try)
+                greeting = conn.recv(1024).decode("utf-8", "replace").strip()
+            except OSError as err:
+                last = f"connected but nothing arrived ({type(err).__name__})"
+                greeting = ""
+            finally:
+                conn.close()
+            if greeting.startswith("220"):
+                return greeting[:120], f"SMTP greeting {greeting[:60]!r}"
+            if greeting:
+                last = f"connected but the greeting was not 220: {greeting[:60]!r}"
+            time.sleep(_PROBE_PAUSE)
+        return "", last
+
+    def _shutdown_controller_quietly(self) -> None:
+        """立ち上げに失敗した controller を片付ける。
+
+        ★`self._controller = None` だけで済ませてはいけない —— サーバスレッドと
+        listen ソケットが残る(同じ港を次に使うテストが不可解に落ちる)。
+        """
+        controller, self._controller = self._controller, None
+        if controller is None:
+            return
+        try:
+            controller.stop(no_assert=True)
+        except Exception as err:      # noqa: BLE001 - 片付けで新しい失敗を被せない
+            logger.debug("SMTPAdapter: controller.stop() during cleanup: %s", err)
 
     async def stop(self) -> None:
         if self._controller is not None:
