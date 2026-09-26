@@ -408,3 +408,30 @@ def test_a_system_message_is_passed_through(monkeypatch) -> None:
                                   system="be terse")
     src.top_logprobs("p", 3)
     assert seen[0]["messages"][0] == {"role": "system", "content": "be terse"}
+
+
+def test_a_file_scheme_base_url_is_refused(monkeypatch) -> None:
+    """★`urlopen` は `file:` も開く。設定から来る値なので信頼境界で止める(CWE-22)。
+
+    止めないと `base_url="file:///etc/passwd"` でローカルファイルを読ませられる。
+    bandit B310 の指摘をコメントで黙らせず、検証で閉じた。
+    """
+    from llmesh.decide import OpenAICompatLogitSource, SourceError, check_base_url
+
+    for bad in ("file:///etc/passwd", "ftp://host/x", "gopher://h", "data:text/plain,x"):
+        with pytest.raises(SourceError, match="scheme"):
+            check_base_url(bad)
+    with pytest.raises(SourceError, match="ホスト"):
+        check_base_url("http:///no-host")
+    for good in ("http://127.0.0.1:11434/v1", "https://example.test/v1"):
+        assert check_base_url(good) == good
+
+    # 口そのものも、呼ばれた時点で拒否する(urlopen まで届かない)
+    called: list[int] = []
+    import urllib.request
+    monkeypatch.setattr(urllib.request, "urlopen",
+                        lambda *a, **k: called.append(1))       # noqa: ARG005
+    src = OpenAICompatLogitSource(base_url="file:///etc/passwd", model="m")
+    with pytest.raises(SourceError, match="scheme"):
+        src.top_logprobs("p", 3)
+    assert not called, "検証前に urlopen を呼んでいる"

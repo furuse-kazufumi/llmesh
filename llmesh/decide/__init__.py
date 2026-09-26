@@ -50,6 +50,7 @@ from llmesh.decide.sources import (
     ScriptedLogitSource,
     SourceError,
     TopLogprobs,
+    check_base_url,
 )
 
 __all__ = [
@@ -70,6 +71,7 @@ __all__ = [
     "ask_score",
     "ask_yes_no",
     "build_codebook",
+    "check_base_url",
     "fit_isotonic",
     "fit_temperature",
     "reliability",

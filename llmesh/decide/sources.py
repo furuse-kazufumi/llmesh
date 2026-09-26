@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import json
 import urllib.error
+import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
 from typing import Protocol
@@ -26,6 +27,32 @@ from typing import Protocol
 
 class SourceError(RuntimeError):
     """LLM の口が使えない、または応答の形が契約と違う。"""
+
+
+#: 許す scheme。``urlopen`` は ``file:`` も開くので、検証しないと
+#: ``file:///etc/passwd`` を渡してローカルファイルを読ませられる(CWE-22)。
+#: 設定や呼び出し側から来る値なので、信頼境界で必ず確かめる。
+_ALLOWED_SCHEMES = frozenset({"http", "https"})
+
+
+def check_base_url(base_url: str) -> str:
+    """``base_url`` が http/https のホストつき URL であることを確かめて返す。
+
+    Raises:
+        SourceError: scheme が許されていない / ホストが無い。
+            ★例外文に URL そのものは載せない(口の場所を漏らさない)。
+    """
+    try:
+        parts = urllib.parse.urlsplit(str(base_url))
+    except ValueError as exc:
+        raise SourceError("base_url を解釈できない") from exc
+    if parts.scheme.lower() not in _ALLOWED_SCHEMES:
+        raise SourceError(
+            "base_url の scheme %r は許していない(http / https のみ)。"
+            "urlopen は file: も開くので、ここで止める" % parts.scheme)
+    if not parts.netloc:
+        raise SourceError("base_url にホストが無い")
+    return str(base_url)
 
 
 @dataclass(frozen=True)
@@ -92,13 +119,19 @@ class OpenAICompatLogitSource:
             "logprobs": True,
             "top_logprobs": int(k),
         }
+        url = check_base_url(self.base_url).rstrip("/") + "/chat/completions"
         req = urllib.request.Request(
-            self.base_url.rstrip("/") + "/chat/completions",
+            url,
             data=json.dumps(body).encode("utf-8"),
             headers={"Content-Type": "application/json"},
             method="POST")
         try:
-            with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+            # scheme は check_base_url で http/https に限定済み
+            # nosec B310 —— scheme は直前の check_base_url で http/https に限定
+            # 済み(file: や独自 scheme は SourceError)。門 =
+            # tests/test_decide.py::test_a_file_scheme_base_url_is_refused
+            with urllib.request.urlopen(  # noqa: S310  # nosec B310
+                    req, timeout=self.timeout) as resp:
                 raw = json.loads(resp.read().decode("utf-8"))
         except (urllib.error.URLError, OSError, ValueError) as exc:
             raise SourceError(f"LLM の口に届かない: {type(exc).__name__}") from exc
