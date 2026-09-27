@@ -268,6 +268,11 @@ class SMTPAdapter(ProtocolAdapter):
                     host, port, banner,
                 )
             else:
+                # ★「繋がるのに何も来ない」= 港は開いているがループが受け付けて
+                #   いない。そのどちらなのかを言えるようにする。実際に結んだ
+                #   アドレスを出すのが決め手 —— 頼んだ港と違えば fd の入れ替わり、
+                #   同じでループが走っているなら selector 側(macOS の kqueue)の話。
+                state = self._controller_state()
                 self._shutdown_controller_quietly()
                 from_thread = (
                     "" if inner is None
@@ -276,7 +281,7 @@ class SMTPAdapter(ProtocolAdapter):
                 raise OSError(
                     f"SMTPAdapter: could not bring up the SMTP server on {host}:{port}"
                     f" — {type(exc).__name__}: {exc}{from_thread}. Our own retried "
-                    f"probe saw: {probe_note}."
+                    f"probe saw: {probe_note}. Controller state: {state}."
                 ) from exc
         self._running = True
         logger.info("SMTPAdapter: listening on %s:%d", host, port)
@@ -323,6 +328,43 @@ class SMTPAdapter(ProtocolAdapter):
                 last = f"connected but the greeting was not 220: {greeting[:60]!r}"
             time.sleep(_PROBE_PAUSE)
         return "", last
+
+    def _controller_state(self) -> str:
+        """controller が実際にどうなっているかを 1 行で言う(診断用)。
+
+        aiosmtpd が投げる TimeoutError には、サーバスレッドが生きているか・
+        ループが走っているか・**どのアドレスに結んだか**が入っていない。
+        「繋がるのに何も来ない」ときはそこが分かれ目なので、自分で読む。
+        """
+        c = self._controller
+        if c is None:
+            return "controller is None"
+        bits = []
+        thread = getattr(c, "_thread", None)
+        bits.append(f"thread alive={thread.is_alive() if thread else None}")
+        loop = getattr(c, "loop", None)
+        try:
+            bits.append(
+                f"loop running={loop.is_running() if loop else None} "
+                f"closed={loop.is_closed() if loop else None}"
+            )
+        except Exception as err:          # noqa: BLE001 - 診断で新しい失敗を被せない
+            bits.append(f"loop unreadable ({type(err).__name__})")
+        server = getattr(c, "server", None)
+        try:
+            if server is None:
+                bits.append("server is None")
+            else:
+                bound = [str(sock.getsockname()) for sock in (server.sockets or ())]
+                serving = getattr(server, "is_serving", lambda: None)()
+                bits.append(f"bound={bound or 'none'} serving={serving}")
+        except Exception as err:          # noqa: BLE001
+            bits.append(f"server unreadable ({type(err).__name__})")
+        bits.append(f"smtpd={getattr(c, 'smtpd', None) is not None}")
+        invoked = getattr(getattr(c, "_factory_invoked", None), "is_set",
+                          lambda: None)()
+        bits.append(f"factory_invoked={invoked}")
+        return ", ".join(bits)
 
     def _shutdown_controller_quietly(self) -> None:
         """立ち上げに失敗した controller を片付ける。

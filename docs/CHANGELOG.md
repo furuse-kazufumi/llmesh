@@ -30,6 +30,19 @@ macOS CI で統合試験 3 件が "SMTP server started, but not responding" で
 - ★探りは「繋がる前に失敗」と「繋がったが無言」を**別の所見**として返す。
   前者はサーバが立っていない、後者は別の何かが港を持っている —— 原因が別物。
   （1 つの try にまとめると無言の港が recv の timeout として接続失敗と同じ所見になる。）
+- ★**自前の探りが真因を名指しした(2026-09-27 の CI 実測)。** macOS の 3 件すべてで
+  `Our own retried probe saw: connected but nothing arrived (TimeoutError)` ——
+  **TCP 接続は成立するのに誰も何も送ってこない**(12 回・約 15 秒繰り返して同じ、
+  港は 3 つとも別)。つまり港は開いているが**イベントループが接続を受け付けていない**。
+  「混んでいる」でも「引き金が 1 回だけ」でもなかった。
+  同じログで FTP 試験(pyftpdlib の kqueue)が `OSError: [Errno 9] Bad file descriptor`
+  で死んでおり、pytest はファイル名順に走る(`test_ftp_adapter` → `test_smtp_adapter`)。
+  → **試験間の fd 汚染**の疑い。切り分けの段を 2 つ足した:
+  (a) `_controller_state()` が失敗時にスレッド生存・ループ稼働・**実際に結んだ
+  アドレス**・`factory_invoked` を 1 行で出す。頼んだ港と違えば fd の入れ替わり、
+  同じでループが走っているなら selector(kqueue)側。
+  (b) CI に macOS だけ「SMTP 試験を単独で先に走らせる」段(`continue-on-error`)。
+  **単独で通って全体で落ちるなら、原因は SMTP でなく試験間の fd 汚染**。
 - `tests/test_smtp_readiness_probe.py` — aiosmtpd を立てずにその状況だけを作る門。
   成功側と失敗側の**両方**を固定し、所見の見分けも確かめる。文面は OS 依存の
   語で判定しない（閉じた港への接続は Linux/macOS では Refused、Windows では timeout）。

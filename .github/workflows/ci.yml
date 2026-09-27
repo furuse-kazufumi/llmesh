@@ -31,6 +31,18 @@ jobs:
       - name: Lint with ruff
         run: ruff check llmesh/
 
+      # ★切り分けの 1 周(macOS だけ)。SMTP の統合試験は macOS でだけ
+      #   「繋がるのに何も来ない」で落ちる(自前の探りが 12 回そう報告した)。
+      #   港は開いているのにループが接続を受け付けていない状態で、同じログに
+      #   FTP 試験(pyftpdlib の kqueue)の `OSError: [Errno 9] Bad file descriptor`
+      #   が出ている。pytest はファイル名順に走るので test_ftp_adapter.py が先。
+      #   **単独で通って全体で落ちるなら、原因は SMTP でなく試験間の fd 汚染**。
+      #   continue-on-error: 判定材料を取るための段で、ここで CI を止めない。
+      - name: SMTP integration tests in isolation (macOS diagnostic)
+        if: matrix.os == 'macos-latest'
+        continue-on-error: true
+        run: python -m pytest tests/test_smtp_adapter.py tests/test_smtp_readiness_probe.py -q
+
       - name: Run tests with coverage
         run: python -m pytest --cov=llmesh --cov-fail-under=80 -q
 
