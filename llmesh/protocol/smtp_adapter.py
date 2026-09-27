@@ -367,6 +367,14 @@ class SMTPAdapter(ProtocolAdapter):
         #   するが挨拶が 1 秒以内に届かないほど遅い = **飢餓**。そして同じ試験は
         #   単独なら macOS で通る。残る容疑は「他の試験が残したスレッド/ループ」で、
         #   それを名指しするにはここで数えるしかない。
+        # ★2026-09-27 の CI: 生きているスレッドは MainThread と controller の _run の
+        #   2 本だけだった(他の試験のスレッドは居ない)。残る差はループの**種類**。
+        #   uvicorn[standard] は Linux/macOS に uvloop を入れる(Windows には入らない
+        #   = Windows だけ緑と合う)。先の試験がポリシーを差し替えていれば、ここの
+        #   asyncio.new_event_loop() は別スレッドで uvloop を作る。型を出して確かめる。
+        import asyncio as _aio
+        bits.append(f"loop type={type(loop).__name__} "
+                    f"policy={type(_aio.get_event_loop_policy()).__name__}")
         alive = sorted(t.name for t in threading.enumerate())
         bits.append(f"live threads={len(alive)} {alive[:14]}")
         bits.append(f"smtpd={getattr(c, 'smtpd', None) is not None}")

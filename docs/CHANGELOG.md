@@ -2,6 +2,21 @@
 
 ## [Unreleased]
 
+### Fixed — 結果ファイルを書きかけのまま読ませない(LocalFileAdapter)
+
+CI(Ubuntu)で `.result.txt` が**存在した瞬間**に読まれ、中身が空で
+`JSONDecodeError` になった(2026-09-27)。`.part` に書き切ってから `os.replace` で
+本名にする。出力先を見張る消費者(試験だけでなく本番の watcher も)が半分の JSON を
+読むのは fail-closed の反対。
+
+### Changed — SMTP の失敗時に、ループの型とポリシーも 1 行に出す
+
+生きているスレッドを数えたら **MainThread と controller の `_run` の 2 本だけ**だった
+(他の試験のスレッドが飢えさせている、という筋は否定)。残る差はループの種類。
+`uvicorn[standard]` は Linux/macOS に uvloop を入れる(Windows には入らない = Windows
+だけ緑と合う)。先の試験がポリシーを差し替えていれば `asyncio.new_event_loop()` は
+別スレッドで uvloop を作る。型を出して確かめる巡。
+
 ### Fixed — SMTP の起動検知を自前で何度も引く
 
 macOS CI で統合試験 3 件が "SMTP server started, but not responding" で

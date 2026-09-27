@@ -93,6 +93,19 @@ def _is_image_prompt(path: str) -> bool:
     return any(path.endswith(s) for s in _IMAGE_PROMPT_SUFFIXES)
 
 
+
+def _write_atomic(out, text: str) -> None:
+    """同じディレクトリの仮の名前に書き切ってから、1 回の rename で本名にする。
+
+    ★書きかけのファイルを読ませない。CI(Ubuntu)で `.result.txt` が**存在した瞬間**に
+    読まれ、中身が空で JSONDecodeError になった(2026-09-27)。出力先を見張る消費者
+    (試験だけでなく本番の watcher も)が半分の JSON を読むのは fail-closed の反対。
+    os.replace は同一ファイルシステム内で原子的。
+    """
+    tmp = out.with_name(out.name + ".part")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, out)
+
 class _PromptEventHandler(FileSystemEventHandler):  # type: ignore[misc]
     """Watchdog event handler that processes new .prompt.txt files."""
 
@@ -450,11 +463,11 @@ class LocalFileAdapter(ProtocolAdapter):
 
     def _write_result(self, stem: str, content: str) -> None:
         out = self._out_dir / f"{stem}{_RESULT_SUFFIX}"
-        out.write_text(content, encoding="utf-8")
+        _write_atomic(out, content)
 
     def _write_error(self, stem: str, reason: str) -> None:
         out = self._out_dir / f"{stem}{_RESULT_SUFFIX}"
-        out.write_text(json.dumps({"error": reason}), encoding="utf-8")
+        _write_atomic(out, json.dumps({"error": reason}))
 
     def _archive(self, p: Path) -> None:
         dest = self._processed_dir / p.name
