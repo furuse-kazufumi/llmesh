@@ -9,6 +9,15 @@ CI(Ubuntu)で `.result.txt` が**存在した瞬間**に読まれ、中身が空
 本名にする。出力先を見張る消費者(試験だけでなく本番の watcher も)が半分の JSON を
 読むのは fail-closed の反対。
 
+### Changed — SMTP の失敗時に「ループはコールバックを配るか」も出す
+
+macOS CI(0061315)の失敗行で、ループは素の `_UnixSelectorEventLoop`(uvloop ではない)と分かり、
+「ループの種類」の仮説は落ちた。港は結ばれ serving、接続は成功、なのに accept のコールバックが
+走らない。次の切り分けとして、失敗時に別スレッドから `call_soon_threadsafe` で印を頼み、
+1 秒以内に立つかを 1 行に足す(立てば selector 側、立たなければループが塞がれている)。
+CI の macOS ジョブは 60 分(Ubuntu 13 分・Windows 15 分)なので `--durations=25` を足して
+どのテストが食っているかを log に残す。
+
 ### Changed — SMTP の失敗時に、ループの型とポリシーも 1 行に出す
 
 生きているスレッドを数えたら **MainThread と controller の `_run` の 2 本だけ**だった

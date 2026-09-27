@@ -375,6 +375,19 @@ class SMTPAdapter(ProtocolAdapter):
         import asyncio as _aio
         bits.append(f"loop type={type(loop).__name__} "
                     f"policy={type(_aio.get_event_loop_policy()).__name__}")
+        # ★2026-09-27 の CI(0061315): ループは素の _UnixSelectorEventLoop(uvloop ではない)。
+        #   港は結ばれ serving=True、接続は成功、なのに accept のコールバックが一度も走らない
+        #   (factory_invoked=False)。次の切り分け = **ループはコールバックを配っているか**。
+        #   別スレッドから call_soon_threadsafe で印を頼み、1 秒以内に立てば「ループは
+        #   生きていて selector が accept を報告していない」、立たなければ「ループ自体が
+        #   何かに塞がれている」。
+        if loop is not None:
+            flag = threading.Event()
+            try:
+                loop.call_soon_threadsafe(flag.set)
+                bits.append(f"loop dispatches callbacks={flag.wait(1.0)}")
+            except Exception as err:      # noqa: BLE001
+                bits.append(f"loop dispatch unprobeable ({type(err).__name__})")
         alive = sorted(t.name for t in threading.enumerate())
         bits.append(f"live threads={len(alive)} {alive[:14]}")
         bits.append(f"smtpd={getattr(c, 'smtpd', None) is not None}")

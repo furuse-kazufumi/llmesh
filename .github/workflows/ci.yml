@@ -44,7 +44,9 @@ jobs:
         run: python -m pytest tests/test_smtp_adapter.py tests/test_smtp_readiness_probe.py -q
 
       - name: Run tests with coverage
-        run: python -m pytest --cov=llmesh --cov-fail-under=80 -q
+        # --durations: macOS だけ 60 分かかる(Ubuntu 13 分 / Windows 15 分、2026-09-27)。
+        #   どのテストが食っているかを log に残す。
+        run: python -m pytest --cov=llmesh --cov-fail-under=80 -q --durations=25
 
       - name: Bandit security scan
         # ★`-c pyproject.toml` を必ず渡す。渡さないと pyproject.toml に理由まで
