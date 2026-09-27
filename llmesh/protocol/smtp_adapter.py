@@ -22,6 +22,7 @@ import email.policy
 import logging
 import smtplib
 import socket
+import threading
 import time
 import uuid
 from typing import TYPE_CHECKING
@@ -360,6 +361,14 @@ class SMTPAdapter(ProtocolAdapter):
                 bits.append(f"bound={bound or 'none'} serving={serving}")
         except Exception as err:          # noqa: BLE001
             bits.append(f"server unreadable ({type(err).__name__})")
+        # ★生きているスレッドを名前つきで出す。2026-09-27 の CI で分かったこと:
+        #   港は正しく結ばれ(bound が要求と一致)、ループも走り、3 件のうち 2 件は
+        #   探りの 15 秒の間に factory が**最終的には**呼ばれていた。つまり受け付けは
+        #   するが挨拶が 1 秒以内に届かないほど遅い = **飢餓**。そして同じ試験は
+        #   単独なら macOS で通る。残る容疑は「他の試験が残したスレッド/ループ」で、
+        #   それを名指しするにはここで数えるしかない。
+        alive = sorted(t.name for t in threading.enumerate())
+        bits.append(f"live threads={len(alive)} {alive[:14]}")
         bits.append(f"smtpd={getattr(c, 'smtpd', None) is not None}")
         invoked = getattr(getattr(c, "_factory_invoked", None), "is_set",
                           lambda: None)()
